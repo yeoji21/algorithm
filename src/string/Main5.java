@@ -1,11 +1,13 @@
+package string;
+
 import java.io.*;
 
-public class Main {
+public class Main5 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String targetStr = in.readLine();
 
-        new Main().solution(targetStr);
+        new Main5().solution(targetStr);
     }
 
     public void solution(String targetStr) {
