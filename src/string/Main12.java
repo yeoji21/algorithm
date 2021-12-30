@@ -24,5 +24,5 @@ public class Main12 {
             int decimalVocab = Integer.parseInt(replacedVocab, 2);
             System.out.print((char)decimalVocab);
         }
-    }xw
+    }
 }
