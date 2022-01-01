@@ -1,7 +1,9 @@
+package array;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Main12 {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
 
@@ -16,7 +18,7 @@ public class Main {
             }
         }
 
-        new Main().solution(nums, n, m);
+        new Main12().solution(nums, n, m);
     }
 
     public void solution(int[][] nums, int studentNum, int examNum) {
