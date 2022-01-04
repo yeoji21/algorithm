@@ -1,14 +1,16 @@
+package hashmapset;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Main5 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         Integer[] nk = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
         List<Integer> nums = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).collect(Collectors.toList());
 
-        new Main().solution(nk[0], nk[1], nums);
+        new Main5().solution(nk[0], nk[1], nums);
     }
 
     public void solution(Integer n, Integer k, List<Integer> nums) {
