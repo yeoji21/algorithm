@@ -1,11 +1,13 @@
+package stack_queue;
+
 import java.io.*;
 import java.util.Stack;
 
-public class Main {
+public class Main4 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         char[] targetChars = in.readLine().toCharArray();
-        new Main().solution(targetChars);
+        new Main4().solution(targetChars);
     }
 
     public void solution(char[] targetChars) {
