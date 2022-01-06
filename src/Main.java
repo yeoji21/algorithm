@@ -4,27 +4,22 @@ import java.util.Stack;
 public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        char[] targetChars = in.readLine().toCharArray();
-        new Main().solution(targetChars);
+        String str = in.readLine();
+        new Main().solution(str);
     }
 
-    public void solution(char[] targetChars) {
-        Stack<Integer> nums = new Stack<>();
+    public void solution(String str) {
+        Stack<Character> stack = new Stack<>();
+        int result = 0;
 
-        for (char ch : targetChars) {
-            if(Character.isDigit(ch))
-                nums.push(Integer.parseInt(String.valueOf(ch)));
+        for (int i = 0; i < str.length(); i++) {
+            if(str.charAt(i) == '(') stack.push('(');
             else{
-                Integer y = nums.pop();
-                Integer x = nums.pop();
-
-                if(ch == '+') nums.push(x + y);
-                else if(ch == '-') nums.push(x - y);
-                else if(ch == '*') nums.push(x * y);
-                else nums.push(x / y);
+                stack.pop();
+                if(str.charAt(i-1) == '(') result += stack.size();
+                else result++;
             }
         }
-
-        System.out.println(nums.pop());
+        System.out.println(result);
     }
 }
