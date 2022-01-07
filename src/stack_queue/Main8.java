@@ -1,12 +1,14 @@
+package stack_queue;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main8 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         Integer[] nm = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
         Integer[] priority = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
-        new Main().solution(nm[0], nm[1], priority);
+        new Main8().solution(nm[0], nm[1], priority);
     }
 
     public void solution(Integer n, Integer m, Integer[] priority) {
