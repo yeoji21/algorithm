@@ -1,12 +1,14 @@
+package sort;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main4 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         Integer[] sn = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
         Integer[] num = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
-        new Main().solution(sn[0], sn[1], num);
+        new Main4().solution(sn[0], sn[1], num);
     }
 
     public void solution(int s, int n, Integer[] num) {
