@@ -1,13 +1,14 @@
+package sort;
+
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class Main {
+public class Main9 {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         int[] nm = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).mapToInt(x -> x).toArray();
         int[] music = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).mapToInt(x -> x).toArray();
-        new Main().solution(nm[0], nm[1], music);
+        new Main9().solution(nm[0], nm[1], music);
     }
 
     public void solution(int n, int m, int[] music) {
