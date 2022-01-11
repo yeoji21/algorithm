@@ -20,7 +20,6 @@ public class Main9 {
             int mid = (lt + rt) / 2;
 
             int count = count(music, mid);
-//            System.out.println("count : " + count);
             if(count <= m) {
                 result = Math.min(result, mid);
                 rt = mid-1;
