@@ -1,15 +1,17 @@
+package rtg;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class Main {
+public class Main6 {
     static int n;
     static int[] ch;
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         n = Integer.parseInt(in.readLine());
         ch = new int[n + 1];
-        new Main().DFS(1);
+        new Main6().DFS(1);
     }
 
     public void DFS(int L) {
