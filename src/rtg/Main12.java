@@ -1,7 +1,9 @@
+package rtg;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main12 {
     static int n, m, result = 0;
     static int[][] mat;
     static int[] checked;
@@ -19,12 +21,14 @@ public class Main {
             mat[points[0]][points[1]] = 1;
         }
         checked[1] = 1;
-        new Main().solution(1);
+        new Main12().solution(1);
         System.out.println(result);
     }
 
     public void solution(int vertex) {
-        if (vertex == n) result++;
+        if (vertex == n) {
+            result++;
+        }
         else {
             for (int i = 1; i <= n; i++) {
                 if (mat[vertex][i] == 1 && checked[i] == 0) {
