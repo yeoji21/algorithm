@@ -1,6 +1,8 @@
+package dfs_bfs;
+
 import java.util.*;
 
-public class Main {
+public class Main1 {
     static int n, total;
     static int[] num;
     static boolean flag = false;
@@ -13,7 +15,7 @@ public class Main {
             num[i] = sc.nextInt();
         }
         total = Arrays.stream(num).sum();
-        new Main().DFS(0, 0);
+        new Main1().DFS(0, 0);
         if(flag) System.out.println("YES");
         else System.out.println("NO");
     }
