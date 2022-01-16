@@ -29,7 +29,7 @@ public class Main1 {
         }
         else{
             DFS(level+1, sum + num[level]);
-            DFS(level + 1, sum);
+            DFS(level+1, sum);
         }
     }
 }
