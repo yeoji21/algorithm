@@ -1,6 +1,8 @@
+package dfs_bfs;
+
 import java.util.*;
 
-public class Main {
+public class Main9_1 {
     static int n, m;
     static int[] combi;
 
@@ -10,8 +12,7 @@ public class Main {
         m = sc.nextInt();
         combi = new int[m];
 
-
-        new Main().solution(0, 1);
+        new Main9_1().solution(0, 1);
     }
 
     public void solution(int L, int s) {
