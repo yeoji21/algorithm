@@ -1,29 +1,14 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int n, m;
-    static int[] combi;
-
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
-        combi = new int[m];
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-
-        new Main().solution(0, 1);
+        new Main().solution();
     }
 
-    public void solution(int L, int s) {
-        if (L == m) {
-            Arrays.stream(combi).forEach(x -> System.out.print(x + " "));
-            System.out.println();
-        }
-        else{
-            for (int i = s; i <= n; i++) {
-                combi[L] = i;
-                solution(L+1, i+1);
-            }
-        }
+    public void solution() {
+
     }
 }
