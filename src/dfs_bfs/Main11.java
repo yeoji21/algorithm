@@ -1,5 +1,5 @@
+package dfs_bfs;
 
-import java.awt.*;
 import java.util.*;
 
 public class Main11 {

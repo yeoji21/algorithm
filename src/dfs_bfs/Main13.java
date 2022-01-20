@@ -1,7 +1,8 @@
+package dfs_bfs;
 
 import java.util.*;
 
-public class Main {
+public class Main13 {
     static int result = 0, n;
     static int[][] map;
 
@@ -22,7 +23,7 @@ public class Main {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (map[i][j] == 1) {
-                    new Main().solution(i, j);
+                    new Main13().solution(i, j);
                     result ++;
                 }
             }
