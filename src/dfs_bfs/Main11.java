@@ -42,15 +42,15 @@ public class Main11 {
             }
         }
     }
-}
+    // inner class로 두면 체점 사이트에서 컴파일 에러뜸
+    class Point{
+        int x, y;
 
-// inner class로 두면 체점 사이트에서 컴파일 에러뜸
-class Point{
-    int x, y;
-
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }
+
 

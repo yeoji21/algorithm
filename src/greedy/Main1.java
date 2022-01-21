@@ -1,7 +1,9 @@
+package greedy;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Main1 {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
@@ -13,7 +15,7 @@ public class Main {
             bodies.add(new Body(h, w));
         }
 
-        new Main().solution(bodies);
+        new Main1().solution(bodies);
     }
 
     private void solution(List<Body> bodies) {
@@ -29,13 +31,14 @@ public class Main {
         }
         System.out.println(result);
     }
-}
+    static class Body{
+        int h, w;
 
-class Body{
-    int h, w;
-
-    public Body(int h, int w) {
-        this.h = h;
-        this.w = w;
+        public Body(int h, int w) {
+            this.h = h;
+            this.w = w;
+        }
     }
 }
+
+
