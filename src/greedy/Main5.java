@@ -1,7 +1,9 @@
+package greedy;
+
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class Main {
+public class Main5 {
     static int n, m;
     static List<List<Edge>> edgeList;
     static int[] distance;
@@ -26,7 +28,7 @@ public class Main {
             edgeList.get(from).add(new Edge(to, cost));
         }
 
-        new Main().solution(1);
+        new Main5().solution(1);
 
         IntStream.range(2, n+1).forEach(i -> {
             if (distance[i] == Integer.MAX_VALUE)
@@ -55,21 +57,21 @@ public class Main {
             }
         }
     }
-}
 
-class Edge{
-    int vertex, cost;
+    static class Edge {
+        int vertex, cost;
 
-    public Edge(int vertex, int cost) {
-        this.vertex = vertex;
-        this.cost = cost;
-    }
+        public Edge(int vertex, int cost) {
+            this.vertex = vertex;
+            this.cost = cost;
+        }
 
-    @Override
-    public String toString() {
-        return "Edge{" +
-                "vertex=" + vertex +
-                ", cost=" + cost +
-                '}';
+        @Override
+        public String toString() {
+            return "Edge{" +
+                    "vertex=" + vertex +
+                    ", cost=" + cost +
+                    '}';
+        }
     }
 }
