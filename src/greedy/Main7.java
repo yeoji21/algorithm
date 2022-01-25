@@ -1,8 +1,9 @@
+package greedy;
+
 import java.util.*;
 
-public class Main {
+public class Main7 {
     static int[] unf;
-//    static List<Edge> edgeList = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
@@ -16,7 +17,7 @@ public class Main {
             edgeList.add(new Edge(sc.nextInt(), sc.nextInt(), sc.nextInt()));
         }
 
-        new Main().solution(edgeList);
+        new Main7().solution(edgeList);
     }
 
     public void solution(List<Edge> edgeList) {
@@ -44,14 +45,15 @@ public class Main {
         if (vertex == unf[vertex]) return unf[vertex];
         else return unf[vertex] = find(unf[vertex]);
     }
-}
 
-class Edge{
-    int from, to, cost;
+    static class Edge{
+        int from, to, cost;
 
-    public Edge(int from, int to, int cost) {
-        this.from = from;
-        this.to = to;
-        this.cost = cost;
+        public Edge(int from, int to, int cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
+        }
     }
+
 }
