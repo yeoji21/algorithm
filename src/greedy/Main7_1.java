@@ -1,15 +1,16 @@
+package greedy;
+
 import java.util.*;
 
-public class Main {
+public class Main7_1 {
     static int[] checked;
-
+    static List<List<Edge>> edgeList;
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
         int v = sc.nextInt();
         int e = sc.nextInt();
-        checked = new int[v + 1];
-        List<List<Edge>> edgeList = new ArrayList<>();
-        for (int i = 0; i <= v; i++) edgeList.add(new ArrayList<>());
+        initializeCheckedArr(v);
+        initializeEdgeList(v);
 
         for (int i = 0; i < e; i++) {
             int a = sc.nextInt();
@@ -19,13 +20,14 @@ public class Main {
             edgeList.get(b).add(new Edge(a, c));
         }
 
-        new Main().solution(edgeList);
+        new Main7_1().solution(1);
     }
 
-    public void solution(List<List<Edge>> edgeList) {
+    public void solution(int vertex) {
         int result = 0;
         PriorityQueue<Edge> queue = new PriorityQueue<>(Comparator.comparing(e -> e.cost));
-        queue.add(new Edge(1, 0));
+        queue.add(new Edge(vertex, 0));
+
         while (!queue.isEmpty()) {
             Edge removed = queue.remove();
             int removedVertex = removed.vertex;
@@ -37,16 +39,22 @@ public class Main {
                 }
             }
         }
-
         System.out.println(result);
     }
-}
 
-class Edge{
-    int vertex, cost;
+    static class Edge{
+        int vertex, cost;
+        public Edge(int vertex, int cost) {
+            this.vertex = vertex;
+            this.cost = cost;
+        }
 
-    public Edge(int vertex, int cost) {
-        this.vertex = vertex;
-        this.cost = cost;
+    }
+    private static void initializeCheckedArr(int size) {
+        checked = new int[size + 1];
+    }
+    private static void initializeEdgeList(int size) {
+        edgeList = new ArrayList<>();
+        for (int i = 0; i <= size; i++) edgeList.add(new ArrayList<>());
     }
 }
