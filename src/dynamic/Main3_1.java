@@ -1,6 +1,8 @@
+package dynamic;
+
 import java.util.*;
 
-public class Main {
+public class Main3_1 {
     static int n;
     static int[] dp;
 
@@ -14,7 +16,7 @@ public class Main {
             num[i] = sc.nextInt();
         }
 
-        new Main().solution(num);
+        new Main3_1().solution(num);
     }
 
     public void solution(int[] num) {
@@ -32,9 +34,8 @@ public class Main {
     }
 
     private int binarySearch(int left, int right, int key) {
-        int mid = 0;
         while (left < right) {
-            mid = (left + right) / 2;
+            int mid = (left + right) / 2;
             if (dp[mid] < key)
                 left = mid + 1;
             else
