@@ -30,6 +30,8 @@ public class Main3_1 {
                 dp[idx] = num[i];
             }
         }
+        Arrays.stream(dp).forEach(System.out::print);
+        System.out.println();
         System.out.println(Arrays.stream(dp).filter(x -> x!=0).count());
     }
 

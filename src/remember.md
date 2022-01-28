@@ -43,3 +43,4 @@
 
 ### 10. Dynamic Programming
 - 3번. 최대부분증가수열(LIS)
+- 4번. 가장 높은 탑 쌓기

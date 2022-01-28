@@ -1,45 +1,71 @@
 import java.util.*;
 
 public class Main {
-    static int n;
-    static int[] dp;
+    static Block[] dp;
 
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        int[] num = new int[n];
-        dp = new int[n];
+        int n = sc.nextInt();
+        Block[] blocks = new Block[n];
+        dp = new Block[n];
+        for (int i = 0; i < n; i++) dp[i] = new Block(0, 0, 0);
 
         for (int i = 0; i < n; i++) {
-            num[i] = sc.nextInt();
+            blocks[i] = new Block(sc.nextInt(), sc.nextInt(), sc.nextInt());
         }
 
-        new Main().solution(num);
+        new Main().solution(blocks);
     }
 
-    public void solution(int[] num) {
+    public void solution(Block[] blocks) {
+        Block[] sortedBlocks = Arrays.stream(blocks).sorted(Comparator.comparing(b -> b.width)).toArray(Block[]::new);
+        dp[0] = sortedBlocks[0];
         int len = 0;
-        for (int i = 0; i < n; i++) {
-            if (num[i] > dp[len]) {
-                len ++;
-                dp[len] = num[i];
-            }else{
-                int idx = binarySearch(0, len, num[i]);
-                dp[idx] = num[i];
+        for (int i = 1; i < sortedBlocks.length; i++) {
+            if (sortedBlocks[i].weight > dp[len].weight) {
+                dp[++len] = sortedBlocks[i];
+            }
+            else{
+//                int idx = binarySearch(0, len, sortedBlocks[i].weight);
+//                dp[idx] = sortedBlocks[i];
+                if (sortedBlocks[i].height > dp[len].height)
+                    dp[len] = sortedBlocks[i];
             }
         }
-        System.out.println(Arrays.stream(dp).filter(x -> x!=0).count());
+
+        Arrays.stream(dp).forEach(System.out::print);
+        System.out.println();
+        System.out.println(Arrays.stream(dp).mapToInt(d -> d.height).sum());
     }
 
     private int binarySearch(int left, int right, int key) {
-        int mid = 0;
         while (left < right) {
-            mid = (left + right) / 2;
-            if (dp[mid] < key)
+            int mid = (left + right) / 2;
+            if (dp[mid].weight < key) {
                 left = mid + 1;
-            else
+            }else{
                 right = mid;
+            }
+
         }
         return right;
+    }
+
+
+    static class Block {
+        int width, height, weight;
+
+        public Block(int width, int height, int weight) {
+            this.width = width;
+            this.height = height;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "Block{" +
+                    "width=" + width +
+                    '}';
+        }
     }
 }
