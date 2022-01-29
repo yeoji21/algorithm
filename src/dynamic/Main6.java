@@ -1,6 +1,8 @@
+package dynamic;
+
 import java.util.*;
 
-public class Main {
+public class Main6 {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
@@ -15,7 +17,7 @@ public class Main {
             probTime[i] = sc.nextInt();
         }
 
-        new Main().solution(times, probScore, probTime);
+        new Main6().solution(times, probScore, probTime);
     }
 
     public void solution(int[] times, int[] probScore, int[] probTime) {
