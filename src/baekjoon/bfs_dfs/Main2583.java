@@ -1,6 +1,8 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main2583 {
     static int n, m, k;
     static int[] dx = {0, 1, 0, -1};
     static int[] dy = {1, 0, -1, 0};
@@ -20,7 +22,7 @@ public class Main {
             spots[i] = new Spot(sc.nextInt(), sc.nextInt(), sc.nextInt(), sc.nextInt());
         }
 
-        new Main().solution(map, spots);
+        new Main2583().solution(map, spots);
     }
 
     public void solution(int[][] map, Spot[] spots) {
