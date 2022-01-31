@@ -1,78 +1,56 @@
 import java.util.*;
 
 public class Main {
-    static int n, m, k;
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
-    static int[][] map;
-    static int count = 0;
-
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
-        m = sc.nextInt();
-        n = sc.nextInt();
-        k = sc.nextInt();
+        int n = sc.nextInt();
+        int[] num = new int[n];
 
-        map = new int[m][n];
-
-        Spot[] spots = new Spot[k];
-        for (int i = 0; i < k; i++) {
-            spots[i] = new Spot(sc.nextInt(), sc.nextInt(), sc.nextInt(), sc.nextInt());
+        for (int i = 0; i < n; i++) {
+            num[i] = sc.nextInt();
         }
-
-        new Main().solution(map, spots);
+        new Main().solution(num, 0, n - 1);
+        Arrays.stream(num).forEach(x -> System.out.print(x + " "));
     }
 
-    public void solution(int[][] map, Spot[] spots) {
-        for (Spot spot : spots) {
-            for (int a = spot.leftY; a < spot.rightY; a++) {
-                for (int b = spot.leftX; b < spot.rightX; b++) {
-                    map[a][b] = 1;
-                }
-            }
-        }
-        List<Integer> result = new ArrayList<>();
+    public void solution(int[] num, int start, int end) {
+        if (start >= end) return;
 
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (map[i][j] == 0) {
-                    count = 0;
-                    dfs(i, j);
-                    result.add(count);
-                }
-            }
-        }
-
-        System.out.println(result.size());
-        Collections.sort(result);
-        result.forEach(x -> System.out.print(x + " "));
+        int part = partition(num, start, end);
+        Arrays.stream(num).forEach(x -> System.out.print(x + " "));
+        System.out.println();
+        solution(num, start, part - 1);
+        solution(num, part+1, end);
     }
 
-    private void dfs(int i, int j) {
-        map[i][j] = 1;
-        count ++;
+    private int partition(int[] num, int start, int end) {
+        int pivot = start;
+        int left = start + 1;
+        int right = end;
 
-        for (int l = 0; l < 4; l++) {
-            int nx = i + dx[l];
-            int ny = j + dy[l];
+        System.out.println("left = "+left);
+        System.out.println("right = "+right);
 
-            if(nx < m && nx >= 0 && ny < n && ny >= 0){
-                if(map[nx][ny] == 0){
-                    dfs(nx, ny);
-                }
+        while (left <= right) {
+            while(left <= end && num[left] < num[pivot]) left++;
+            while(right > start && num[right] >= num[pivot]) right--;
+
+            System.out.println("left = "+left);
+            System.out.println("right = "+right);
+            if (left > right) {
+                swap(num, right, pivot);
+            }
+            else{
+                swap(num, left, right);
             }
         }
+        System.out.println(right);
+        return right;
     }
 
-    static class Spot{
-        private int leftX, leftY;
-        private int rightX, rightY;
-
-        public Spot(int leftX, int leftY, int rightX, int rightY) {
-            this.leftX = leftX;
-            this.leftY = leftY;
-            this.rightX = rightX;
-            this.rightY = rightY;
-        }
+    private void swap(int[] num, int start, int end) {
+        int temp = num[start];
+        num[start] = num[end];
+        num[end] = temp;
     }
 }
