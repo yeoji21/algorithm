@@ -1,6 +1,8 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main2667 {
     static int[][] map;
     static int[] dx = {1, 0, -1, 0};
     static int[] dy = {0, 1, 0, -1};
@@ -20,7 +22,7 @@ public class Main {
                 map[i][j] = chars[j] - '0';
             }
         }
-        new Main().solution();
+        new Main2667().solution();
     }
 
     public void solution() {
