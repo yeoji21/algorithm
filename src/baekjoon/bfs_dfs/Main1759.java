@@ -1,6 +1,8 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main1759 {
     static char[] alphabets;
     static int[] checked;
     static int L, C;
@@ -18,17 +20,27 @@ public class Main {
         }
 
         Arrays.sort(alphabets);
-        new Main().solution("", 0);
+        new Main1759().solution(0, 0);
     }
 
-    public void solution(String pw, int i) {
-        if (pw.length() == L) {
-            if(check(pw.toCharArray())) System.out.println(pw);
-            return;
+    public void solution(int level, int count) {
+        if (count == L) {
+            StringBuilder pw = new StringBuilder();
+            for (int i = 0; i < C; i++) {
+                if(checked[i] == 1){
+                    pw.append(alphabets[i]);
+                }
+            }
+            if(check(pw.toString().toCharArray()))
+                System.out.println(pw);
         }
-        if(alphabets.length <= i) return;
-        solution(pw + alphabets[i], i + 1);
-        solution(pw, i+1);
+        else{
+            for (int i = level; i < C; i++) {
+                checked[i] = 1;
+                solution(i + 1, count + 1);
+                checked[i] = 0;
+            }
+        }
     }
 
     private boolean check(char[] pwd) {
