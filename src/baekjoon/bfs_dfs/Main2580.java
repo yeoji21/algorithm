@@ -1,9 +1,11 @@
+package baekjoon.bfs_dfs;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class Main2580 {
     static int[][] map = new int[9][9];
     static int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1, 0};
     static int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1, 0};
@@ -20,7 +22,7 @@ public class Main {
             }
         }
 
-        new Main().solution( 0);
+        new Main2580().solution( 0);
     }
 
     public void solution(int count) {
