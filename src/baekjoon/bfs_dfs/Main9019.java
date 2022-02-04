@@ -1,6 +1,8 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main9019 {
     static boolean[] memo;
 
     public static void main(String[] args) throws Exception {
@@ -13,7 +15,7 @@ public class Main {
         }
 
         for (int i = 0; i < n; i++) {
-            new Main().solution(targets.get(i));
+            new Main9019().solution(targets.get(i));
         }
     }
 
@@ -51,7 +53,6 @@ public class Main {
                 memo[remove.calculateR()] = true;
             }
         }
-
     }
 
     static class Register {
