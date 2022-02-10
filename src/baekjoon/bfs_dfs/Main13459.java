@@ -1,8 +1,10 @@
+package baekjoon.bfs_dfs;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class Main {
+public class Main13459 {
     static int N, M;
     static char[][] map;
     static boolean[][] checked;
@@ -42,7 +44,9 @@ public class Main {
         int count = 0;
 
         while (!queue.isEmpty() && count++ < 10) {
+
             int size = queue.size();
+
             for (int k = 0; k < size; k++) {
                 Ball[] current = queue.poll();
 
