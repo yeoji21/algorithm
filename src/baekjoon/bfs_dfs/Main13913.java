@@ -1,6 +1,8 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main13913 {
     static int[] checked = new int[100_001];
     static int[] before = new int[100_001];
 

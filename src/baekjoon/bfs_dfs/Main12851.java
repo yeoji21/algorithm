@@ -1,11 +1,10 @@
+package baekjoon.bfs_dfs;
+
 import java.util.*;
 
-public class Main {
+public class Main12851 {
     static int[] checked = new int[100_001];
-    static int[] before = new int[100_001];
-
-    static Stack<Integer> stack = new Stack<>();
-//    static List<Integer> stack = new ArrayList<>();
+    static int[] distance = new int[100_001];
 
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
@@ -13,46 +12,35 @@ public class Main {
         int dongsang = sc.nextInt();
 
         jump(subin, dongsang);
-
-        StringBuilder sb = new StringBuilder();
-        stack.push(dongsang);
-
-        int index = dongsang;
-        while (index != subin) {
-            stack.push(before[index]);
-            index = before[index];
-        }
-
-        System.out.println(checked[dongsang]-1);
-        while (!stack.isEmpty()) {
-            sb.append(stack.pop() + " ");
-        }
-        System.out.println(sb.toString());
     }
 
     private static void jump(int subin, int dongsang) {
         Queue<Integer> queue = new LinkedList<>();
         queue.add(subin);
         checked[subin] = 1;
+        int count = 0;
 
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty() && checked[dongsang] == 0) {
             int size = queue.size();
+            count++;
             for (int i = 0; i < size; i++) {
                 Integer poll = queue.poll();
 
-                if(poll == dongsang) return;
-
                 for (int way : jumpToThreeWay(poll)) {
                     if (way < 0 || way > 100_000) continue;
-
-                    if(checked[way] == 0) {
+                    if(checked[way] == 0){
                         queue.add(way);
-                        checked[way] = checked[poll]+1;
-                        before[way] = poll;
+                        checked[way]++;
+                        distance[way] = distance[poll] + 1;
+                    } else if (distance[way] == distance[poll] + 1) {
+                        queue.add(way);
+                        checked[way]++;
                     }
                 }
             }
         }
+        System.out.println(count);
+        System.out.println(checked[dongsang]);
     }
 
     private static int[] jumpToThreeWay(Integer poll) {

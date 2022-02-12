@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class Main13459 {
+public class Main13460 {
     static int N, M;
     static char[][] map;
+    static boolean[][] checked;
     static Ball red, blue;
     static int[] dx = {-1, 1, 0, 0};
     static int[] dy = {0, 0, -1, 1};
@@ -17,6 +18,7 @@ public class Main13459 {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         map = new char[N][M];
+        checked = new boolean[N][M];
 
         for (int i = 0; i < N; i++) {
             char[] chars = br.readLine().toCharArray();
@@ -28,11 +30,11 @@ public class Main13459 {
             }
         }
 
-        if(BFS()) System.out.println("1");
-        else System.out.println("0");
+        int result = BFS();
+        System.out.println(result);
     }
 
-    private static boolean BFS() {
+    private static int BFS() {
         Queue<Ball[]> queue = new LinkedList<>();
         queue.add(new Ball[]{red, blue});
 
@@ -60,17 +62,19 @@ public class Main13459 {
                         setOrder(r, b, i, redFirst);
 
                     if(map[r.x][r.y] == 'O')
-                        return true;
+                        return count;
 
                     if(checked[r.x][r.y][b.x][b.y]) continue;
                     checked[r.x][r.y][b.x][b.y] = true;
 
                     queue.add(new Ball[]{r, b});
                 }
+
             }
+
         }
 
-        return false;
+        return -1;
     }
 
     private static void setOrder(Ball r, Ball b, int i, boolean redFirst) {
