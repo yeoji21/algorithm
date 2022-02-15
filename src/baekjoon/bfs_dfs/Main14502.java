@@ -1,8 +1,10 @@
+package baekjoon.bfs_dfs;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class Main {
+public class Main14502 {
     static int N, M;
     static int[][] map;
     static int[] dx = {1, -1, 0, 0};
