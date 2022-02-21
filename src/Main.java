@@ -1,105 +1,122 @@
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.List;
 
 public class Main {
-    static int N, M;
-    static int[][] map;
-    static Point start, dest;
-    static boolean[][][] checked;
-    static int[] dx = {0, 0, 0, 1, -1};
-    static int[] dy = {0, 1, -1, 0, 0};
+    static char[][] map;
+    private static int[][] distance;
+    static int W, H, answer;
+    static boolean[] selected;
+    private static List<Point> list = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        while(true){
+            StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+            H = Integer.parseInt(st.nextToken());
+            W = Integer.parseInt(st.nextToken());
 
-        map = new int[N+1][M+1];
-        checked = new boolean[N + 1][M + 1][5];
+            if(W == 0 && H == 0) break;
 
-        for (int i = 1; i <= N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 1; j <= M; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
+            map = new char[W][H];
+            for (int i = 0; i < W; i++) {
+                char[] chars = br.readLine().toCharArray();
+                for (int j = 0; j < H; j++) {
+                    map[i][j] = chars[j];
+                    if(chars[j] == 'o') list.add(0, new Point(i, j));
+                    if(chars[j] == '*') list.add(new Point(i, j));
+                }
+            }
+
+            int size = list.size();
+            distance = new int[size][size];
+            selected = new boolean[size];
+
+            for (int idx = 0; idx < size; idx++) {
+                if(BFS(idx) == -1){
+                    answer = -1;
+                    break;
+                }
+            }
+            if(answer == -1){
+                System.out.println(answer);
+                continue;
+            }else{
+                answer = Integer.MAX_VALUE;
+                selected[0] = true;
+                DFS(0, 0, 0);
+                System.out.println(answer);
             }
         }
-
-        st = new StringTokenizer(br.readLine());
-        start = new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
-                Integer.parseInt(st.nextToken()), 0);
-        st = new StringTokenizer(br.readLine());
-        dest = new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
-                Integer.parseInt(st.nextToken()), 0);
-        BFS();
     }
 
-    private static void BFS() {
+    private static void DFS(int from, int dist, int depth) {
+        if (depth == selected.length - 1) {
+            answer = Math.min(answer, dist);
+            return;
+        }
+        for (int to = 1; to < selected.length; to++) {
+            if (!selected[to]) {
+                selected[to] = true;
+                DFS(to, dist + distance[from][to], depth++);
+                selected[to] = false;
+            }
+        }
+    }
+
+    private static int BFS(int from) {
+        boolean[][] visited = new boolean[W][H];
+        int[] dx = {1, 0, -1, 0};
+        int[] dy = {0, -1, 0, 1};
         Queue<Point> queue = new LinkedList<>();
-        checked[start.x][start.y][start.d] = true;
+
+        int dust = 0, cnt = 0;
+        Point start = list.get(from);
+        visited[start.x][start.y] = true;
         queue.offer(start);
 
         while (!queue.isEmpty()) {
-            Point now = queue.poll();
-            int x = now.x;
-            int y = now.y;
-            int dir = now.d;
-            int count = now.count;
+            int size = queue.size();
+            cnt++;
 
-            if (isAnswer(x, y, dir)) {
-                System.out.println(count);
-                return;
-            }
+            for (int i = 0; i < size; i++) {
+                Point cur = queue.poll();
 
-            for (int i = 1; i <= 3; i++) {
-                int nx = x + dx[dir] * i;
-                int ny = y + dy[dir] * i;
+                for (int d = 0; d < 4; d++) {
+                    int nx = cur.x + dx[d];
+                    int ny = cur.y + dy[d];
 
-                if(rangeCheck(nx, ny) || map[nx][ny] == 1) break;
-                if(checked[nx][ny][dir]) continue;
+                    if(nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+                    if(visited[nx][ny] || map[nx][ny] == 'x') continue;
 
-                checked[nx][ny][dir] = true;
-                queue.offer(new Point(nx, ny, dir, count + 1));
-            }
-
-            for (int i = 1; i <= 4; i++) {
-                if(i != dir && !checked[x][y][i]) {
-                    queue.offer(new Point(x, y, i, count + directionCheck(dir, i)));
-                    checked[x][y][i] = true;
+                    if (map[nx][ny] == 'o' || map[nx][ny] == '*') {
+                        for (int to = 0; to < list.size(); to++) {
+                            Point end = list.get(to);
+                            if(end.x == nx && end.y == ny){
+                                distance[from][to] = distance[to][from] = cnt;
+                                dust++;
+                            }
+                        }
+                    }
+                    visited[nx][ny] = true;
+                    queue.offer(new Point(nx, ny));
                 }
             }
         }
-    }
-
-    private static boolean isAnswer(int x, int y, int d) {
-        return x == dest.x && y == dest.y && d == dest.d;
-    }
-
-    private static int directionCheck(int now, int next) {
-        int result = 1;
-        if(now == 1 && next == 2) result = 2;
-        else if(now == 2 && next == 1) result = 2;
-        else if(now == 3 && next == 4) result = 2;
-        else if(now == 4 && next == 3) result = 2;
-        return result;
-    }
-
-    private static boolean rangeCheck(int nx, int ny) {
-        return nx <= 0 || ny <= 0 || nx > N || ny > M;
+        if(dust != list.size() - 1)
+            return -1;
+        return 0;
     }
 
     static class Point{
-        int x, y, d, count;
+        int x, y;
 
-        public Point(int x, int y, int d, int count) {
+        public Point(int x, int y) {
             this.x = x;
             this.y = y;
-            this.d = d;
-            this.count = count;
         }
     }
 }
