@@ -1,9 +1,11 @@
+package baekjoon.bfs_dfs;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 
-public class Main {
+public class Main4991 {
     private static char[][] map;
     private static int[][] distance;
     private static int W, H, result, dirty;
