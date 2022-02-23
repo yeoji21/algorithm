@@ -2,13 +2,12 @@ package baekjoon.bfs_dfs;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
-public class Main15684 {
-    static int N, M, H;
-    static int map[][];
-    static final int RIGHT = 1;
-    static final int LEFT = 2;
+public class Main15684_1 {
+    private static int[][] map;
+    private static int N, M, H;
+    private static int RIGHT = 1, LEFT = 2;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -17,16 +16,14 @@ public class Main15684 {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         H = Integer.parseInt(st.nextToken());
+        map = new int[H + 1][N + 1];
 
-        map = new int[H+1][N+1];
-
-        for (int i = 0; i < M; i++) {
+        for (int i = 1; i <= M; i++) {
             st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-
-            map[a][b] = RIGHT;
-            map[a][b + 1] = LEFT;
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
+            map[x][y] = RIGHT;
+            map[x][y + 1] = LEFT;
         }
 
         for (int i = 0; i <= 3; i++) {
@@ -35,29 +32,26 @@ public class Main15684 {
                 return;
             }
         }
-        System.out.println("-1");
+        System.out.println(-1);
     }
 
-    private static boolean DFS(int x, int y, int count, int size) {
-        if (count == size) {
+    private static boolean DFS(int x, int y, int count, int limit) {
+        if (count == limit) {
             return check();
-
         }
-        else{
-            for (int i = x; i < H+1; i++) {
-                for (int j = y; j < N; j++) {
-                    if(map[i][j] != 0 || map[i][j+1] != 0) continue;
 
-                    map[i][j] = RIGHT;
-                    map[i][j + 1] = LEFT;
+        for (int i = x; i <= H; i++) {
+            for (int j = y; j < N; j++) {
+                if(map[i][j] != 0 || map[i][j+1] != 0) continue;
 
-                    if(DFS(i, j + 2, count + 1, size)) return true;
+                map[i][j] = RIGHT;
+                map[i][j + 1] = LEFT;
 
-                    map[i][j] = 0;
-                    map[i][j + 1] = 0;
-                }
-                y = 0;
+                if(DFS(i, j + 2, count + 1, limit)) return true;
+                map[i][j] = 0;
+                map[i][j + 1] = 0;
             }
+            y = 0;
         }
         return false;
     }
@@ -70,9 +64,8 @@ public class Main15684 {
                 else if(map[x][y] == LEFT) y--;
                 x++;
             }
-            if( y != i) return false;
+            if(y != i) return false;
         }
         return true;
     }
-
 }

@@ -1,111 +1,60 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
-import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
-    private static char[][] map;
-    private static int[][] distance;
-    private static int W, H, result, dirty;
-    static boolean[][] visited;
-    private static boolean[] checked;
-    private static List<Point> list;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, -1, 0, 1};
+    private static int[] dx = {-1, 0, 1, 0};
+    private static int[] dy = {0, 1, 0, -1};
+    private static int[][] map;
+    private static int N, M;
+    private static Point robot;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getNextIntToken(st);
+        M = getNextIntToken(st);
 
-        while(true){
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            H = Integer.parseInt(st.nextToken());
-            W = Integer.parseInt(st.nextToken());
+        map = new int[N][M];
+        st = new StringTokenizer(br.readLine());
+        robot = new Point(getNextIntToken(st), getNextIntToken(st), getNextIntToken(st));
 
-            if(W == 0 && H == 0) break;
-
-            list = new ArrayList<>();
-            map = new char[W][H];
-
-            for (int i = 0; i < W; i++) {
-                char[] chars = br.readLine().toCharArray();
-                for (int j = 0; j < H; j++) {
-                    map[i][j] = chars[j];
-                    if(chars[j] == 'o') list.add(0, new Point(i, j, 0));
-                    if(chars[j] == '*') list.add(new Point(i, j, 0));
-                }
-            }
-
-            int size = list.size();
-            distance = new int[size][size];
-            dirty = 0;
-
-            for (int i = 0; i < size; i++) {
-                BFS(list.get(i), i);
-            }
-
-            if(dirty == list.size()-1){
-                result = Integer.MAX_VALUE;
-                checked = new boolean[size];
-                checked[0] = true;
-                DFS(0, 0, 0);
-                sb.append(result + "\n");
-            }else{
-                sb.append(-1 + "\n");
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = getNextIntToken(st);
             }
         }
-        System.out.print(sb);
+
+        clean();
     }
 
-    private static void DFS(int start, int cnt, int dist) {
-        if(cnt == list.size()-1)
-            result = Math.min(result, dist);
-        for (int i = 0; i < list.size(); i++) {
-            if(!checked[i]){
-                checked[i] = true;
-                DFS(i, cnt + 1, dist + distance[start][i]);
-                checked[i] = false;
-            }
-        }
+    private static void clean() {
+
+        map[robot.x][robot.y] = 1;
+        int leftDirection = getLeftDirection(robot.d);
+
     }
 
-    private static void BFS(Point point, int start) {
-        visited = new boolean[W][H];
-        Queue<Point> queue = new LinkedList<>();
-        queue.offer(point);
-        visited[point.x][point.y] = true;
-
-        while (!queue.isEmpty()) {
-            Point next = queue.poll();
-
-            if (map[next.x][next.y] == '*') {
-                if(start == 0) dirty++;
-                for (int to = 1; to < list.size(); to++) {
-                    if(next.x == list.get(to).x && next.y == list.get(to).y)
-                        distance[start][to] = next.move;
-                }
-            }
-
-            for (int i = 0; i < 4; i++) {
-                int nx = next.x + dx[i];
-                int ny = next.y + dy[i];
-
-                if(nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
-                if(visited[nx][ny] || map[nx][ny] == 'x') continue;
-
-                queue.offer(new Point(nx, ny, next.move + 1));
-                visited[nx][ny] = true;
-            }
-        }
+    private static int getLeftDirection(int now) {
+        if(now == 0) return 3;
+        else if(now == 1) return 0;
+        else if(now == 2) return 1;
+        else if(now == 3) return 2;
+        return -1;
     }
 
-    static class Point{
-        int x, y, move;
+    private static class Point{
+        int x, y, d;
 
-        public Point(int x, int y, int move) {
+        public Point(int x, int y, int d) {
             this.x = x;
             this.y = y;
-            this.move = move;
+            this.d = d;
         }
+    }
+
+    private static int getNextIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 }
