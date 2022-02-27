@@ -1,3 +1,5 @@
+package baekjoon.bfs_dfs;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -5,11 +7,11 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main17140_1 {
     static int R, C, K;
     static final int LIMIT = 100;
     static int[][] map = new int[LIMIT][LIMIT];
-    static int XLength = 3, YLength = 3;
+    static int ROW_SIZE = 3, COL_SIZE = 3;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,11 +34,11 @@ public class Main {
     private static int getTime() {
         int time = 0;
         while (map[R][C] != K && ++time <= LIMIT) {
-            if(XLength >= YLength)
-                for (int i = 0; i < XLength; i++)
+            if(ROW_SIZE >= COL_SIZE)
+                for (int i = 0; i < ROW_SIZE; i++)
                     RSort(i);
             else
-                for (int i = 0; i < YLength; i++)
+                for (int i = 0; i < COL_SIZE; i++)
                     CSort(i);
 
         }
@@ -47,7 +49,7 @@ public class Main {
         PriorityQueue<Point> queue = new PriorityQueue<>();
         Map<Integer, Integer> dict = new HashMap<>();
 
-        for (int i = 0; i < YLength; i++) {
+        for (int i = 0; i < COL_SIZE; i++) {
             if(map[key][i] == 0) continue;
             dict.put(map[key][i], dict.getOrDefault(map[key][i], 0) + 1);
         }
@@ -60,7 +62,7 @@ public class Main {
             map[key][i++] = poll.count;
         }
 
-        YLength = Math.max(YLength, i);
+        COL_SIZE = Math.max(COL_SIZE, i);
 
         while(i < LIMIT) map[key][i++] = 0;
     }
@@ -69,7 +71,7 @@ public class Main {
         PriorityQueue<Point> queue = new PriorityQueue<>();
         Map<Integer, Integer> dict = new HashMap<>();
 
-        for (int i = 0; i < XLength; i++) {
+        for (int i = 0; i < ROW_SIZE; i++) {
             if(map[i][key] == 0) continue;
             dict.put(map[i][key], dict.getOrDefault(map[i][key], 0) + 1);
         }
@@ -82,7 +84,7 @@ public class Main {
             map[i++][key] = poll.count;
         }
 
-        XLength = Math.max(XLength, i);
+        ROW_SIZE = Math.max(ROW_SIZE, i);
 
         while(i < LIMIT) map[i++][key] = 0;
     }
