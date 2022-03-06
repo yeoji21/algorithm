@@ -1,138 +1,112 @@
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class Main {
-    static int R, C, T;
-    static int[][] map;
+    static int result = 0;
+    static char[][] map;
     static int[] dx = {1, 0, -1, 0};
     static int[] dy = {0, 1, 0, -1};
-    static int[] robot = new int[2];
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        R = getIntToken(st);
-        C = getIntToken(st);
-        T = getIntToken(st);
+        map = new char[12][6];
 
-        map = new int[R][C];
+        for (int i = 0; i < 12; i++) {
+            map[i] = br.readLine().toCharArray();
+        }
 
-        for (int i = 0; i < R; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < C; j++) {
-                map[i][j] = getIntToken(st);
-                if(map[i][j] == -1) {
-                    int idx = robot[0] == 0 ? 0 : 1;
-                    robot[idx] = i;
-                }
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 6; j++) {
+                System.out.print(map[i][j]);
             }
+            System.out.println();
         }
 
-        while (T-- > 0) {
-            spread();
-        }
-
-        int result = 0;
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
-                result += map[i][j];
-            }
-        }
-        System.out.println(result+2);
+//        puyoPuyo();
     }
 
-    private static void spread() {
-        int[][] sum = new int[R][C];
+    private static void puyoPuyo() {
+        for (int i = 11; i >= 0; i--) {
+            for (int j = 0; j < 6; j++) {
+//                int cnt = 0;
+//                while(BFS(i, j)){cnt++;}
+//                if(cnt > 0) result++;
+                if (BFS(i, j)) result++;
+            }
+        }
+        System.out.println(result);
+    }
 
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
-                if(map[i][j] < 5) {
-                    sum[i][j] += map[i][j];
-                    continue;
-                }
+    private static boolean BFS(int i, int j) {
+        int cnt = 0;
+        boolean[][] checked = new boolean[12][6];
+        Queue<Point> queue = new LinkedList<>();
 
-                int cnt = 0;
+        queue.add(new Point(i, j));
+        checked[i][j] = true;
+        int[] columns = new int[6];
+        List<Point> boom = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+            cnt++;
+            int size = queue.size();
+            while (--size >= 0) {
+                Point now = queue.poll();
+                System.out.println("now : " + map[now.x][now.y]);
+                columns[now.y]++;
+
                 for (int d = 0; d < 4; d++) {
-                    int nx = i + dx[d];
-                    int ny = j + dy[d];
+                    int nx = now.x + dx[d];
+                    int ny = now.y + dy[d];
 
-                    if(nx < 0 || ny < 0 || nx >= R || ny >= C || map[nx][ny] == -1) continue;
-                    cnt++;
-                    sum[nx][ny] += map[i][j] / 5;
+                    if(nx < 0|| ny < 0|| nx >=12 || ny >= 6) continue;
+                    if(checked[nx][ny] || map[now.x][now.y] != map[nx][ny]) continue;
+
+                    queue.add(new Point(nx, ny));
+                    checked[nx][ny] = true;
                 }
-                sum[i][j] += map[i][j] - (map[i][j] / 5 * cnt);
-            }
-        }
-        upperMove(sum);
-        lowerMove(sum);
-    }
-
-    private static void upperMove(int[][] sum) {
-        int row = robot[0];
-
-        map[row][1] = 0;
-        for (int nc = 2; nc < C; nc++) {
-            map[row][nc] = sum[row][nc - 1];
-        }
-        map[row - 1][C - 1] = sum[row][C - 1];
-        for (int nr = row - 2; nr >= 0; nr--) {
-            map[nr][C - 1] = sum[nr + 1][C - 1];
-        }
-        map[0][C - 2] = sum[0][C - 1];
-        for (int nc = C-3; nc >= 0; nc--) {
-            map[0][nc] = sum[0][nc + 1];
-        }
-        map[1][0] = sum[0][0];
-        for (int nr = 2; nr < row; nr++) {
-            map[nr][0] = sum[nr - 1][0];
-        }
-
-        for (int i = 1; i < row; i++) {
-            for (int j = 1; j < C-1; j++) {
-                map[i][j] = sum[i][j];
-            }
-        }
-    }
-
-    private static void lowerMove(int[][] sum) {
-        int row = robot[1];
-
-        map[row][1] = 0;
-        for (int nc = 2; nc < C; nc++) {
-            map[row][nc] = sum[row][nc - 1];
-        }
-        map[row + 1][C - 1] = sum[row][C - 1];
-        for (int nr = row + 2; nr < R; nr++) {
-            map[nr][C - 1] = sum[nr - 1][C - 1];
-        }
-
-        map[R-1][C - 2] = sum[R-1][C - 1];
-        for (int nc = 0; nc < C-1; nc++) {
-            map[R - 1][nc] = sum[R - 1][nc + 1];
-        }
-
-        map[R-2][0] = sum[R-1][0];
-        for (int nr = R-3; nr > row; nr--) {
-            map[nr][0] = sum[nr + 1][0];
-        }
-
-        for (int i = row+1; i < R-1; i++) {
-            for (int j = 1; j < C-1; j++) {
-                map[i][j] = sum[i][j];
             }
         }
 
-//        for (int i = 0; i < R; i++) {
-//            for (int j = 0; j < C; j++) {
-//                System.out.print(map[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
+        System.out.println("*****************");
+        boom.forEach(System.out::println);
+
+        if(cnt < 4) return false;
+
+//        boom.forEach(p -> columns[p.y]++);
+
+        IntStream.range(0, 6).filter(idx -> columns[idx] > 0)
+                .forEach(idx -> {
+                    int columnCount = columns[idx];
+                    System.out.println(columnCount);
+                    char[] saveRow = new char[12 - columnCount];
+                    for (int l = 0; l < saveRow.length; l++) saveRow[l] = map[l][idx];
+
+                    for (int l = columnCount; l < 12; l++)
+                        map[l][idx] = saveRow[l];
+                });
+
+        return true;
     }
 
-    private static int getIntToken(StringTokenizer st) {
-        return Integer.parseInt(st.nextToken());
+    static class Point{
+        int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "Point{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+        }
     }
 }
