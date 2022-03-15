@@ -1,43 +1,34 @@
 package inflean.string;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main10 {
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        String targetStr = in.readLine();
-        String[] strs = targetStr.split(" ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        String T = st.nextToken();
+        char N = st.nextToken().charAt(0);
+        int[] result = new int[T.length()];
 
-        new Main10().solution(strs[0], strs[1].charAt(0));
-    }
-
-    private void solution(String targetString, char findChar) {
-        char[] targetChars = targetString.toCharArray();
-        StringBuilder builder = new StringBuilder("");
-        int[] result = new int[targetChars.length];
-
-        int score = 1000;
-
-        for (int i = 0; i<targetString.length(); i++){
-            if (targetString.charAt(i) == findChar){
-                score = 0;
-                result[i] = score;
-            }
-            else
-                result[i] = ++score;
+        int k = 1000;
+        for (int i = T.length()-1; i >= 0; i--) {
+            char c = T.charAt(i);
+            if(c == N) k = 0;
+            result[i] = k++;
         }
 
-        score = 1000;
-        for (int i = targetChars.length-1; i >= 0; i--) {
-            if (targetString.charAt(i) == findChar)
-                score = 0;
-            else
-                result[i] = Math.min(result[i], ++score);
+        k = 1000;
+        for (int i = 0; i < T.length(); i++) {
+            char c = T.charAt(i);
+            if(c == N) k = 0;
+            result[i] = Math.min(result[i], k);
+            k++;
         }
 
-        Arrays.stream(result).forEach(r -> System.out.print(r + " "));
+        Arrays.stream(result).forEach(c -> System.out.print(c + " "));
     }
 }
-
 

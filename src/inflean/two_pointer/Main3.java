@@ -2,30 +2,32 @@ package inflean.two_pointer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main3 {
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        Integer[] nk = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
-        Integer[] nums = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = getIntToken(st);
+        int M = getIntToken(st);
+        int[] num = new int[N];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < num.length; i++) num[i] = getIntToken(st);
 
-        new Main3().solution(nk[0], nk[1], nums);
+        int sum = 0;
+        for (int i = 0; i < M; i++) sum += num[i];
+
+        int max = sum;
+        int left = 0;
+        for (int i = M; i < num.length; i++) {
+            sum -= num[left++];
+            sum += num[i];
+            max = Math.max(max, sum);
+        }
+        System.out.println(max);
     }
 
-    private void solution(Integer n, Integer k, Integer[] nums) {
-        int max = Integer.MIN_VALUE;
-
-        int formal = 0;
-        for (int i = 0; i < k; i++)
-            formal += nums[i];
-
-        for (int i = k; i < n; i++) {
-            int now = formal - nums[i - k] + nums[i];
-            max = Math.max(formal, Math.max(max, now));
-            formal = now;
-        }
-
-        System.out.println(max);
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 }

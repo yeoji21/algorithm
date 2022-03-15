@@ -1,42 +1,46 @@
 package inflean.array;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main12 {
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = getIntToken(st);
+        int M = getIntToken(st);
+        int[][] scores = new int[N][M];
+        int[] order = new int[N];
 
-        int n = sc.nextInt(); //4
-        int m = sc.nextInt(); //3
-
-        int[][]nums = new int[m][n];
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                nums[i][j] = sc.nextInt();
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 1; j <= N; j++) {
+                int value = getIntToken(st) - 1;
+                scores[value][i] = j;
+                order[j-1] = value;
             }
         }
 
-        new Main12().solution(nums, n, m);
-    }
-
-    public void solution(int[][] nums, int studentNum, int examNum) {
         int count = 0;
 
-        for (int i = 1; i < studentNum+1; i++) {
-            for (int j = 1; j < studentNum+1; j++) {
-                if (i == j) continue;
-                int rank = 0;
-                for (int k = 0; k < examNum; k++) {
-                    List<Integer> rankList = Arrays.stream(nums[k]).boxed().collect(Collectors.toList());
-                    if (rankList.indexOf(i) < rankList.indexOf(j))
-                        rank ++;
+        for (int i = 0; i < order.length; i++) {
+            for (int j = i+1; j < order.length; j++) {
+                boolean flag = true;
+                for (int t = 0; t < M; t++) {
+                    if(scores[order[i]][t] > scores[order[j]][t]){
+                        flag = false;
+                        break;
+                    }
                 }
-                if (rank == examNum) count ++;
+                if(flag) count++;
             }
         }
-        System.out.println(count);
 
+        System.out.println(count);
+    }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 }
