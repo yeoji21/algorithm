@@ -1,39 +1,32 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String S = br.readLine();
-        String T = br.readLine();
-        Map<Character, Integer> map = new HashMap<>();
-        for (char c : T.toCharArray()) {
-            map.put(c, map.getOrDefault(c, 0) + 1);
-        }
+        int N = Integer.parseInt(br.readLine());
+        int[] nums = new int[N];
 
-        int count = 0;
-        char[] target = S.toCharArray();
-        int lt = 0 , rt = 0;
-        Map<Character, Integer> anagram = new HashMap<>();
-        while (lt <= rt && rt < target.length) {
-            anagram.put(target[rt], anagram.getOrDefault(target[rt], 0) + 1);
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < nums.length; i++) nums[i] = Integer.parseInt(st.nextToken());
 
-            if(rt - lt + 1 == T.length()){
-                boolean flag = true;
-                for (Character c : map.keySet()) {
-                    if (!map.get(c).equals(anagram.get(c))){
-                        flag = false;
-                        break;
-                    }
-                }
-                if(flag) count++;
-                anagram.put(target[lt], anagram.get(target[lt]) - 1);
-                lt++;
+        int[] clone = nums.clone();
+        for (int i = 1; i < clone.length; i++) {
+            int num = clone[i];
+            int j = i - 1;
+            for (; j >= 0 && clone[j] > num; j--) {
+                clone[j + 1] = clone[j];
             }
-            rt++;
+            clone[j + 1] = num;
         }
-        System.out.println(count);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != clone[i]) {
+                sb.append((i + 1) + " ");
+            }
+        }
+        System.out.println(sb.toString());
     }
 }

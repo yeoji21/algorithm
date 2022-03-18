@@ -1,76 +1,34 @@
 package inflean.sort;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main6 {
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(in.readLine());
-        Integer[] num = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).toArray(Integer[]::new);
-        new Main6().solution(n, num);
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+        int[] nums = new int[N];
 
-    public void solution(int n, Integer[] num) {
-        Rank[] ranks = new Rank[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < nums.length; i++) nums[i] = Integer.parseInt(st.nextToken());
 
-        for (int i = 0; i < n; i++) {
-            Rank rank = new Rank(i + 1, num[i]);
-            ranks[i] = rank;
+        int[] clone = nums.clone();
+        for (int i = 1; i < clone.length; i++) {
+            int num = clone[i];
+            int j = i - 1;
+            for (; j >= 0 && clone[j] > num; j--) {
+                clone[j + 1] = clone[j];
+            }
+            clone[j + 1] = num;
         }
 
-        Arrays.sort(ranks);
-
-        for (int i = 0; i < n; i++) {
-            if (ranks[i].getNumber() != i+1 && ranks[i].getHeight() != num[i]) System.out.print((i+1) + " ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != clone[i]) {
+                sb.append((i + 1) + " ");
+            }
         }
-    }
-
-    private static class Rank implements Comparable<Rank>{
-        private int number;
-        private int height;
-
-        public Rank(int number, int height) {
-            this.number = number;
-            this.height = height;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        @Override
-        public String toString() {
-            return "Rank{" +
-                    "number=" + number +
-                    ", height=" + height +
-                    '}';
-        }
-
-        @Override
-        public int compareTo(Rank o) {
-            return this.getHeight() - o.getHeight() > 0 ? 1 : -1;
-        }
-    }
-}
-
-class Main6_2 {
-    public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(in.readLine());
-        int[] num = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).mapToInt(x -> x).toArray();
-        new Main6_2().solution(n, num);
-    }
-
-    public void solution(int n, int[] num) {
-        int[] temp = num.clone();
-        Arrays.sort(temp);
-        for (int i = 0; i < n; i++) {
-            if(num[i] != temp[i]) System.out.print((i+1) + " ");
-        }
+        System.out.println(sb.toString());
     }
 }
