@@ -1,43 +1,45 @@
 package inflean.sort;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main10 {
+    static int N, C;
+    static int[] arr;
+    static int result = Integer.MIN_VALUE;
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        int[] nc = Arrays.stream(in.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        int[] num = Arrays.stream(in.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        new Main10().solution(nc[0], nc[1], num);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        arr = new int[N];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(st.nextToken());
+        Arrays.sort(arr);
+
+        getMinDistance(1, Arrays.stream(arr).max().getAsInt());
+        System.out.println(result);
     }
 
-    public void solution(int n, int c, int[] num) {
-        Arrays.sort(num);
-        List<Integer> results = new ArrayList<>();
-        int lt=1, rt = num[n-1];
-
-        while (lt <= rt) {
-            int mid = (lt + rt) / 2;
-            if(getCount(num, mid) >= c) {
-                results.add(mid);
-                lt = mid+1;
-            }
-            else{
-                rt = mid-1;
-            }
-        }
-        System.out.println(results.stream().mapToInt(x->x).max().getAsInt());
-    }
-
-    private int getCount(int[] num, int mid) {
+    private static void getMinDistance(int left, int right) {
+        if(left > right) return;
+        int mid = (left + right) / 2;
         int count = 1;
-        int preIdx = 0;
-        for (int i = 1; i < num.length; i++) {
-            if (num[i] - num[preIdx] >= mid) {
-                preIdx = i;
-                count ++;
+        int beforeIdx = 0;
+        for (int i = 1; i < N; i++) {
+            if(arr[i] - arr[beforeIdx] >= mid){
+                count++;
+                beforeIdx = i;
             }
         }
-        return count;
+
+        if(count < C){
+            getMinDistance(left, mid - 1);
+        } else {
+            result = Math.max(result, mid);
+            getMinDistance(mid + 1, right);
+        }
     }
 }

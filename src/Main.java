@@ -1,32 +1,20 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 public class Main {
+    static int[] arr;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        int[] nums = new int[N];
+        arr = new int[N+1];
+        fibo(N);
+        IntStream.range(1, N+1).forEach(i -> System.out.print(arr[i] + " "));
+    }
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < nums.length; i++) nums[i] = Integer.parseInt(st.nextToken());
-
-        int[] clone = nums.clone();
-        for (int i = 1; i < clone.length; i++) {
-            int num = clone[i];
-            int j = i - 1;
-            for (; j >= 0 && clone[j] > num; j--) {
-                clone[j + 1] = clone[j];
-            }
-            clone[j + 1] = num;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] != clone[i]) {
-                sb.append((i + 1) + " ");
-            }
-        }
-        System.out.println(sb.toString());
+    private static int fibo(int n) {
+        if(n == 1 || n == 2) return arr[n] = 1;
+        if(arr[n] > 0) return arr[n];
+        return arr[n] = fibo(n - 1) + fibo(n - 2);
     }
 }

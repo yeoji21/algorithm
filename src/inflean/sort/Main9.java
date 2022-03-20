@@ -1,46 +1,47 @@
 package inflean.sort;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main9 {
+    static int N, M;
+    static int[] mugics;
+    static int result = Integer.MAX_VALUE;
+
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        int[] nm = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).mapToInt(x -> x).toArray();
-        int[] music = Arrays.stream(in.readLine().split(" ")).map(Integer::parseInt).mapToInt(x -> x).toArray();
-        new Main9().solution(nm[0], nm[1], music);
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        mugics = new int[N];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) mugics[i] = Integer.parseInt(st.nextToken());
 
-    public void solution(int n, int m, int[] music) {
-        int lt = Arrays.stream(music).max().getAsInt();
-        int rt = Arrays.stream(music).sum();
-
-        int result = Integer.MAX_VALUE;
-        while (lt <= rt) {
-            int mid = (lt + rt) / 2;
-
-            int count = count(music, mid);
-            if(count <= m) {
-                result = Math.min(result, mid);
-                rt = mid-1;
-            }
-            else lt = mid+1;
-        }
-
+        int left = Arrays.stream(mugics).max().getAsInt();
+        int right = Arrays.stream(mugics).sum();
+        getRecordSize(left, right);
         System.out.println(result);
     }
 
-    private int count(int[] music, int mid) {
+    private static void getRecordSize(int left, int right) {
+        if(left > right) return;
+        int recordSize = (left + right) / 2;
+        int nowSize = 0;
         int count = 1;
-        int sum = 0;
-
-        for (int i = 0; i < music.length; i++) {
-            sum += music[i];
-            if(sum > mid){
+        for (int i = 0; i < N; i++) {
+            nowSize += mugics[i];
+            if (nowSize > recordSize) {
                 count++;
-                sum = music[i];
+                nowSize = mugics[i];
             }
         }
-        return count;
+
+        if (count <= M) {
+            result = Math.min(result, recordSize);
+            getRecordSize(left, recordSize - 1);
+        }
+        else getRecordSize(recordSize+1, right);
     }
 }
