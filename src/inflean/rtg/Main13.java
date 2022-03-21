@@ -1,54 +1,61 @@
 package inflean.rtg;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 public class Main13 {
-    static int n, m;
-    static ArrayList<ArrayList<Integer>> graph;
+    static int N, M;
+    static boolean[][] map;
+    static boolean[] checked;
+    static int[] distance;
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
-        graph = new ArrayList<>();
-        for (int i = 0; i <= n; i++) {
-            graph.add(new ArrayList<>());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getIntToken(st);
+        M = getIntToken(st);
+        map = new boolean[N + 1][N + 1];
+        checked = new boolean[N + 1];
+        distance = new int[N + 1];
+
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int x = getIntToken(st);
+            int y = getIntToken(st);
+            map[x][y] = true;
         }
 
-        for (int i = 0; i < m; i++) {
-            int x = sc.nextInt();
-            int y = sc.nextInt();
-            graph.get(x).add(y);
-        }
-        new Main13().solution();
+        BFS(1);
+        IntStream.range(2, N+1).forEach(i -> System.out.println(i + " : " + distance[i]));
     }
 
-    public void solution() {
+    private static void BFS(int n) {
         Queue<Integer> queue = new LinkedList<>();
-        queue.addAll(graph.get(1));
-        int level;
-        boolean flag = false;
-        for (int target = 2; target <= n; target++) {
-            level = 1;
-            flag = false;
-            queue.clear();
-            queue.addAll(graph.get(1));
-            while (!queue.isEmpty()) {
-                int size = queue.size();
-                for (int i = 0; i < size; i++) {
-                    Integer removed = queue.remove();
-                    if (removed == target) {
-                        flag = true;
-                        break;
+        queue.add(n);
+        checked[n] = true;
+        int count = 0;
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            count++;
+            while (--size >= 0) {
+                Integer now = queue.poll();
+                for (int i = 1; i < N + 1; i++) {
+                    if(map[now][i] && !checked[i]){
+                        queue.add(i);
+                        checked[i] = true;
+                        distance[i] = count;
                     }
-                    queue.addAll(graph.get(removed));
                 }
-                if (flag) {
-                    System.out.println(target + " : " + level);
-                    break;
-                }
-                level++;
             }
         }
+    }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 }

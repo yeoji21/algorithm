@@ -1,31 +1,27 @@
 package inflean.rtg;
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.stream.IntStream;
 
 public class Main6 {
-    static int n;
-    static int[] ch;
+    static int T;
+    static int[] checked;
     public static void main(String[] args) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(in.readLine());
-        ch = new int[n + 1];
-        new Main6().DFS(1);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        T = Integer.parseInt(br.readLine());
+        checked = new int[T + 1];
+        DFS(1);
     }
 
-    public void DFS(int L) {
-        if (L == n + 1) {
-            StringBuilder tmp = new StringBuilder();
-            for (int i = 1; i <= n; i++) {
-                if(ch[i] == 1) tmp.append(i).append(" ");
-            }
-            if(tmp.length() > 0) System.out.println(tmp);
-        }
-        else{
-            ch[L] = 1;
+    private static void DFS(int L) {
+        if (L == T + 1) {
+            IntStream.range(1, T+1).filter(i -> checked[i] == 1).forEach(i -> System.out.print(i + " "));
+            System.out.println();
+        }else{
+            checked[L] = 1;
             DFS(L + 1);
-            ch[L] = 0;
+            checked[L] = 0;
             DFS(L + 1);
         }
     }
