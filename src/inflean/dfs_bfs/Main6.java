@@ -1,37 +1,43 @@
 package inflean.dfs_bfs;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 public class Main6 {
-    static int n, m;
-    static int[] num, arr, checked;
+    static int N, M;
+    static int[] arr, result;
+    static boolean[] checked;
+
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
-        num = new int[n];
-        checked = new int[n];
-        arr = new int[m];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        arr = new int[N];
+        result = new int[M];
+        checked = new boolean[N];
 
-        for (int i = 0; i < num.length; i++) {
-            num[i] = sc.nextInt();
-        }
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++)
+            arr[i] = Integer.parseInt(st.nextToken());
 
-        new Main6().solution( 0);
+        DFS(0);
     }
 
-    public void solution(int L) {
-        if(L == m){
-            Arrays.stream(arr).forEach(x -> System.out.print(x + " "));
+    private static void DFS(int L) {
+        if (L == M) {
+            IntStream.range(0, M).forEach(i -> System.out.print(result[i] + " "));
             System.out.println();
         }
         else{
-            for (int i = 0; i < n; i++) {
-                if (checked[i] == 0){
-                    checked[i] = 1;
-                    arr[L] = num[i];
-                    solution(L+1);
-                    checked[i] = 0;
+            for (int i = 0; i < N; i++) {
+                if (!checked[i]) {
+                    checked[i] = true;
+                    result[L] = arr[i];
+                    DFS(L + 1);
+                    checked[i] = false;
                 }
             }
         }

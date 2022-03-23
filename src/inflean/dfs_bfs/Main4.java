@@ -1,30 +1,31 @@
 package inflean.dfs_bfs;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 public class Main4 {
-    static int[] pm;
-    static int n, m;
-
+    static int N, M;
+    static int[] result;
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
-        pm = new int[m];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        result = new int[M];
 
-        new Main4().solution(0);
+        DFS(0);
     }
 
-    public void solution(int level) {
-        if(level == m){
-            for (int x : pm)
-                System.out.print(x + " ");
+    private static void DFS(int L) {
+        if (L == M) {
+            IntStream.range(0, M).forEach(i -> System.out.print(result[i] + " "));
             System.out.println();
-        }
-        else{
-            for (int i = 1; i <= n; i++) {
-                pm[level] = i;
-                solution(level+1);
+        }else{
+            for (int i = 1; i < N + 1; i++) {
+                result[L] = i;
+                DFS(L + 1);
             }
         }
     }
