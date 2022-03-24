@@ -1,29 +1,31 @@
 package inflean.dfs_bfs;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main7 {
-    int[][] checked = new int[34][34];
-
+    static int[][] memo;
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int r = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int R = Integer.parseInt(st.nextToken());
+        memo = new int[N+1][R+1];
 
-        System.out.println(new Main7().solution(n, r));
+        System.out.println(nCr(N, R));
     }
 
-    public int solution(int n, int r) {
-        if(checked[n][r] != 0) return checked[n][r];
-        if(r == 0 || r == n) {
-            checked[n][r] = 1;
+    private static int nCr(int n, int r) {
+        if(memo[n][r] != 0) return memo[n][r];
+        else if(n == 0 || n == r) {
+            memo[n][r] = 1;
             return 1;
         }
-        if(r == 1) {
-            checked[n][r] = n;
+        else if(r == 1){
+            memo[n][r] = n;
             return n;
         }
-
-        return solution(n - 1, r - 1) + solution(n -1, r);
+        return nCr(n - 1, r - 1) + nCr(n - 1, r);
     }
 }

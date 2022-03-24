@@ -1,39 +1,31 @@
 package inflean.dfs_bfs;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main9 {
-    static int[][] checked = new int[11][11];
-    static int n, m;
-    static int[] arr, dup;
-
+    static int N, M;
+    static int[] result;
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
-        arr = new int[m];
-        dup = new int[n + 1];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        result = new int[M];
 
-        new Main9().solution(0);
+        DFS(0, 1);
     }
 
-    public void solution(int L) {
-        if (L == m) {
-            if (checked[arr[0]][arr[1]] == 0) {
-                checked[arr[0]][arr[1]] = 1;
-                checked[arr[1]][arr[0]] = 1;
-                Arrays.stream(arr).forEach(x -> System.out.print(x + " "));
-                System.out.println();
-            }
-        }
-        else{
-            for (int i = 1; i <= n; i++) {
-                if (dup[i] == 0) {
-                    dup[i] = 1;
-                    arr[L] = i;
-                    solution(L+1);
-                    dup[i] = 0;
-                }
+    private static void DFS(int L, int n) {
+        if (L == M) {
+            Arrays.stream(result).forEach(num -> System.out.print(num + " "));
+            System.out.println();
+        }else{
+            for (int i = n; i < N + 1; i++) {
+                result[L] = i;
+                DFS(L + 1, i + 1);
             }
         }
     }
