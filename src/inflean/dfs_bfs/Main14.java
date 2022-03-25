@@ -1,55 +1,59 @@
 package inflean.dfs_bfs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main14 {
-    static List<Point> house = new ArrayList<>();
-    static List<Point> pizza = new ArrayList<>();
-    static int result = Integer.MAX_VALUE, m, n;
-    static int[] selected;
+    static int N, M, result = Integer.MAX_VALUE;
+    static int[][] map;
+    static int[] combi;
+    static List<Point> pizza, house;
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        m = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getIntToken(st);
+        M = getIntToken(st);
 
-        selected = new int[m];
+        map = new int[N][N];
+        combi = new int[M];
+        pizza = new ArrayList<>();
+        house = new ArrayList<>(100);
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int nextInt = sc.nextInt();
-                if(nextInt == 1) house.add(new Point(i, j));
-                if(nextInt == 2) pizza.add(new Point(i, j));
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < N; j++) {
+                int value = getIntToken(st);
+                map[i][j] = value;
+                if(value == 1) house.add(new Point(i, j));
+                else if(value == 2) pizza.add(new Point(i, j));
             }
         }
-        new Main14().solution(0, 0);
+
+        DFS(0, 0);
         System.out.println(result);
     }
 
-    public void solution(int L, int s) {
-        if (L == m) {
-
-            int sum = 0;
-            for (int i = 0; i < house.size(); i++) {
-                int minLength = Integer.MAX_VALUE;
-                for (int j = 0; j < m; j++) {
-                    Point housePoint = house.get(i);
-                    Point pizzaPoint = pizza.get(selected[j]);
-
-                    int length = Math.abs(housePoint.x - pizzaPoint.x) + Math.abs(housePoint.y - pizzaPoint.y);
-                    minLength = Math.min(length, minLength);
-                }
-                sum += minLength;
-            }
-            result = Math.min(sum, result);
-        }
-        else{
-            for (int i = s; i < pizza.size(); i++) {
-                selected[L] = i;
-                solution(L+1, i+1);
+    private static void DFS(int L, int n) {
+        if (L == M) {
+            int sum = house.stream().map(h -> Arrays.stream(combi)
+                            .map(i -> Math.abs(h.x - pizza.get(i).x) + Math.abs(h.y - pizza.get(i).y))
+                            .min().getAsInt())
+                    .mapToInt(x -> x).sum();
+            result = Math.min(result, sum);
+        }else{
+            for (int i = n; i < pizza.size(); i++) {
+                combi[L] = i;
+                DFS(L + 1, i + 1);
             }
         }
     }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
+    }
+
     static class Point{
         int x, y;
 

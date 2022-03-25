@@ -2,52 +2,72 @@ package inflean.dfs_bfs;
 
 import java.util.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class Main12 {
+    static int zeroCount = 0, M, N;
+    static int[][] map;
+    static boolean[][] checked;
+    static List<Point> tomato = new ArrayList<>(100);
     static int[] dx = {1, 0, -1, 0};
     static int[] dy = {0, 1, 0, -1};
-    static int m, n;
-    static int[][] tomatoes, day;
-    static Queue<Point> queue = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        m = sc.nextInt();
-        n = sc.nextInt();
-        tomatoes = new int[n][m];
-        day = new int[n][m];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        M = getIntToken(st);
+        N = getIntToken(st);
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                int data = sc.nextInt();
-                if (data == 1) queue.add(new Point(i, j));
-                tomatoes[i][j] = data;
+        map = new int[N][M];
+        checked = new boolean[N][M];
+
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = getIntToken(st);
+                if(map[i][j] == 0) zeroCount++;
+                else if(map[i][j] == 1) tomato.add(new Point(i, j));
             }
         }
 
-        if (queue.isEmpty()) System.out.println(-1);
-        else {
-            new Main12().solution();
-            OptionalInt optionalInt = Arrays.stream(tomatoes).flatMapToInt(Arrays::stream).filter(x -> x == 0).findAny();
-            if (optionalInt.isPresent()) System.out.println(-1);
-            else System.out.println(Arrays.stream(day).flatMapToInt(Arrays::stream).max().getAsInt());
+        if(zeroCount == 0){
+            System.out.println(0);
+            return;
         }
+
+        tomato.forEach(p -> checked[p.x][p.y] = true);
+        BFS();
     }
 
-    public void solution() {
-
+    private static void BFS() {
+        Queue<Point> queue = new LinkedList<>(tomato);
+        int days = 0;
         while (!queue.isEmpty()) {
-            Point removed = queue.remove();
-            for (int i = 0; i < 4; i++) {
-                int nx = removed.x + dx[i];
-                int ny = removed.y + dy[i];
+            int size = queue.size();
+            while (--size >= 0) {
+                Point now = queue.poll();
+                for (int d = 0; d < 4; d++) {
+                    int nx = now.x + dx[d];
+                    int ny = now.y + dy[d];
 
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m || tomatoes[nx][ny] != 0) continue;
-
-                tomatoes[nx][ny] = 1;
-                day[nx][ny] = day[removed.x][removed.y] + 1;
-                queue.add(new Point(nx, ny));
+                    if(nx < 0 || ny < 0|| nx >= N || ny >= M) continue;
+                    if(map[nx][ny] == -1 || checked[nx][ny]) continue;
+                    checked[nx][ny] = true;
+                    zeroCount--;
+                    queue.add(new Point(nx, ny));
+                }
             }
+            days++;
         }
+        if (zeroCount == 0)
+            System.out.println(days-1);
+        else
+            System.out.println(-1);
+    }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 
     static class Point{

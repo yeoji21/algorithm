@@ -1,42 +1,63 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
+    static int N, M, result = Integer.MAX_VALUE;
     static int[][] map;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
-    static int result = 0;
-    public static void main(String[] args) throws Exception {
-        map = new int[7][7];
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+    static int[] combi;
+    static List<Point> pizza, house;
 
-        for (int i = 0; i < 7; i++) {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getIntToken(st);
+        M = getIntToken(st);
+
+        map = new int[N][N];
+        combi = new int[M];
+        pizza = new ArrayList<>();
+        house = new ArrayList<>(100);
+
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < 7; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < N; j++) {
+                int value = getIntToken(st);
+                map[i][j] = value;
+                if(value == 1) house.add(new Point(i, j));
+                else if(value == 2) pizza.add(new Point(i, j));
             }
         }
 
-        map[0][0] = 1;
         DFS(0, 0);
         System.out.println(result);
     }
 
-    private static void DFS(int x, int y) {
-        if(x == 6 && y == 6){
-            result++;
-            return;
+    private static void DFS(int L, int n) {
+        if (L == M) {
+            int sum = house.stream().map(h -> Arrays.stream(combi)
+                            .map(i -> Math.abs(h.x - pizza.get(i).x) + Math.abs(h.y - pizza.get(i).y))
+                            .min().getAsInt())
+                    .mapToInt(x -> x).sum();
+            result = Math.min(result, sum);
+        }else{
+            for (int i = n; i < pizza.size(); i++) {
+                combi[L] = i;
+                DFS(L + 1, i + 1);
+            }
         }
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (nx < 0 || ny < 0 || nx >= 7 || ny >= 7) continue;
-            if(map[nx][ny] == 1) continue;
-            map[nx][ny] = 1;
-            DFS(nx, ny);
-            map[nx][ny] = 0;
+    }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
+    }
+
+    static class Point{
+        int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
     }
 }
