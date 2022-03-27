@@ -1,4 +1,4 @@
-package thinkDataStructures.ch2;
+package thinkDataStructures.ch3;
 
 import java.util.*;
 
