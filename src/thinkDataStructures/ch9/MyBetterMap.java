@@ -5,20 +5,22 @@ import java.util.*;
 public class MyBetterMap<K, V> implements Map<K, V> {
     protected List<MyLinearMap<K, V>> maps;
 
+    public MyBetterMap() {
+        makeMaps(10);
+    }
+
     public MyBetterMap(int k) {
         makeMaps(k);
     }
 
-    private void makeMaps(int k) {
+    protected void makeMaps(int k) {
         maps = new ArrayList<>(k);
         for (int i = 0; i < k; i++) maps.add(new MyLinearMap<>());
     }
 
     protected MyLinearMap<K, V> chooseMap(Object key) {
         int index = 0;
-        if (key != null) {
-            index = Math.abs(key.hashCode()) % maps.size();
-        }
+        if (key != null) index = Math.abs(key.hashCode()) % maps.size();
         return maps.get(index);
     }
 

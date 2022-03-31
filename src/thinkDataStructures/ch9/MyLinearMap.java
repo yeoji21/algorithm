@@ -71,7 +71,7 @@ public class MyLinearMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         Entry entry = findEntry(key);
         if(entry == null){
-            put(key, value);
+            entries.add(new Entry(key, value));
             return null;
         }
         else{
@@ -119,5 +119,9 @@ public class MyLinearMap<K, V> implements Map<K, V> {
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         return new HashSet<>(entries);
+    }
+
+    public Collection<? extends java.util.Map.Entry<K, V>> getEntries() {
+        return entries;
     }
 }
