@@ -44,6 +44,7 @@ public class Index {
         WikiFetcher wf = new WikiFetcher();
         Index indexer = new Index();
 
+
         String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
         Elements paragraphs = wf.fetchWikipedia(url);
         indexer.indexPage(url, paragraphs);
