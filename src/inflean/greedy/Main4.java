@@ -1,46 +1,51 @@
 package inflean.greedy;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main4 {
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int maxDay = 0;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        int N = Integer.parseInt(br.readLine());
+        int lastDay = Integer.MIN_VALUE;
 
-        List<Meeting> meetings = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            int pay = sc.nextInt();
-            int day = sc.nextInt();
-            maxDay = Math.max(day, maxDay);
-            meetings.add(new Meeting(pay, day));
+        PriorityQueue<Lecture> queue = new PriorityQueue<>(Comparator.comparing(Lecture::getPay).thenComparing(Lecture::getDay).reversed());
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            int pay = Integer.parseInt(st.nextToken());
+            int day = Integer.parseInt(st.nextToken());
+            if(day > lastDay) lastDay = day;
+            queue.offer(new Lecture(pay, day - 1));
         }
 
-        new Main4().solution(meetings, maxDay);
-    }
+        int[] lectures = new int[lastDay];
 
-    public void solution(List<Meeting> meetings, int maxDay) {
-        meetings.sort(Comparator.comparing(Meeting::getDay));
-        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
-        int sum = 0;
-
-        for (int today = maxDay; today >= 1; today--) {
-            for (int j = 0; j < meetings.size(); j++) {
-                if(meetings.get(j).day == today) queue.offer(meetings.get(j).pay);
-            }
-
-            if(!queue.isEmpty()) {
-                sum += queue.poll();
+        while (!queue.isEmpty()) {
+            Lecture now = queue.poll();
+            if(lectures[now.day] == 0)
+                lectures[now.day] = now.pay;
+            else{
+                int tmp = now.day;
+                while (--tmp >= 0)
+                    if(lectures[tmp] == 0) {
+                        lectures[tmp] = now.pay;
+                        break;
+                    }
             }
         }
 
-        System.out.println(sum);
+        System.out.println(Arrays.stream(lectures).sum());
     }
 
-    static class Meeting{
+    static class Lecture{
         int pay, day;
 
-        public Meeting(int pay, int day) {
+        public Lecture(int pay, int day) {
             this.pay = pay;
             this.day = day;
         }
@@ -50,16 +55,7 @@ public class Main4 {
         }
 
         public int getDay() {
-            return -day;
-        }
-
-        @Override
-        public String toString() {
-            return "Meeting{" +
-                    "pay=" + pay +
-                    ", day=" + day +
-                    '}';
+            return day;
         }
     }
-
 }

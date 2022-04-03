@@ -1,50 +1,57 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Main {
-    static int N, M, result = Integer.MAX_VALUE;
-    static int[][] map;
-    static int[] combi;
-    static List<Point> pizza, house;
+    static List<List<Node>> edgeList = new LinkedList<>();
+    static int[] distance;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = getIntToken(st);
-        M = getIntToken(st);
+        int N = getIntToken(st);
+        int M = getIntToken(st);
+        for (int i = 0; i <= N; i++) edgeList.add(new LinkedList<>());
+        distance = new int[N + 1];
+        Arrays.fill(distance, Integer.MAX_VALUE);
 
-        map = new int[N][N];
-        combi = new int[M];
-        pizza = new ArrayList<>();
-        house = new ArrayList<>(100);
-
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                int value = getIntToken(st);
-                map[i][j] = value;
-                if(value == 1) house.add(new Point(i, j));
-                else if(value == 2) pizza.add(new Point(i, j));
-            }
+            int from = getIntToken(st);
+            int to = getIntToken(st);
+            int weight = getIntToken(st);
+
+            edgeList.get(from).add(new Node(to, weight));
         }
 
-        DFS(0, 0);
-        System.out.println(result);
+        move(1);
+
+        IntStream.range(2, N + 1).forEach(i -> {
+            if (distance[i] == Integer.MAX_VALUE)
+                System.out.println(i + " : impossible");
+            else
+                System.out.println(i + " : " + distance[i]);
+        });
     }
 
-    private static void DFS(int L, int n) {
-        if (L == M) {
-            int sum = house.stream().map(h -> Arrays.stream(combi)
-                            .map(i -> Math.abs(h.x - pizza.get(i).x) + Math.abs(h.y - pizza.get(i).y))
-                            .min().getAsInt())
-                    .mapToInt(x -> x).sum();
-            result = Math.min(result, sum);
-        }else{
-            for (int i = n; i < pizza.size(); i++) {
-                combi[L] = i;
-                DFS(L + 1, i + 1);
-            }
+    private static void move(int startNode) {
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(Comparator.comparing(node -> -node.weight));
+        queue.add(new Node(startNode, 0));
+        distance[startNode] = 0;
+
+        while (!queue.isEmpty()) {
+            Node now = queue.poll();
+            int nowNode = now.vertex;
+            int weight = now.weight;
+            if(weight > distance[nowNode]) continue;
+            edgeList.get(nowNode).stream().forEach(node -> {
+                int newWeight = node.weight + weight;
+                if(distance[node.vertex] > newWeight) {
+                    distance[node.vertex] = newWeight;
+                    queue.add(new Node(node.vertex, newWeight));
+                }
+            });
         }
     }
 
@@ -52,12 +59,12 @@ public class Main {
         return Integer.parseInt(st.nextToken());
     }
 
-    static class Point{
-        int x, y;
+    static class Node{
+        int vertex, weight;
 
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Node(int vertex, int weight) {
+            this.vertex = vertex;
+            this.weight = weight;
         }
     }
 }
