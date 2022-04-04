@@ -4,55 +4,53 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 public class Main {
-    static List<List<Node>> edgeList = new LinkedList<>();
-    static int[] distance;
+    static int V, E;
+    static int[] unf;
+    static List<Node> edges;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = getIntToken(st);
-        int M = getIntToken(st);
-        for (int i = 0; i <= N; i++) edgeList.add(new LinkedList<>());
-        distance = new int[N + 1];
-        Arrays.fill(distance, Integer.MAX_VALUE);
+        V = getIntToken(st);
+        E = getIntToken(st);
 
-        for (int i = 0; i < M; i++) {
+        unf = new int[V + 1];
+        IntStream.range(1, V + 1).forEach(i -> unf[i] = i);
+        edges = new ArrayList<>(E + 10);
+        for (int i = 0; i < E; i++) {
             st = new StringTokenizer(br.readLine());
-            int from = getIntToken(st);
-            int to = getIntToken(st);
-            int weight = getIntToken(st);
-
-            edgeList.get(from).add(new Node(to, weight));
+            edges.add(new Node(getIntToken(st), getIntToken(st), getIntToken(st)));
         }
 
-        move(1);
-
-        IntStream.range(2, N + 1).forEach(i -> {
-            if (distance[i] == Integer.MAX_VALUE)
-                System.out.println(i + " : impossible");
-            else
-                System.out.println(i + " : " + distance[i]);
-        });
+        System.out.println(unionFind());
     }
 
-    private static void move(int startNode) {
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(Comparator.comparing(node -> -node.weight));
-        queue.add(new Node(startNode, 0));
-        distance[startNode] = 0;
+    private static int unionFind() {
+        edges.sort(Comparator.comparing(e -> e.cost));
+        int sum = 0;
 
-        while (!queue.isEmpty()) {
-            Node now = queue.poll();
-            int nowNode = now.vertex;
-            int weight = now.weight;
-            if(weight > distance[nowNode]) continue;
-            edgeList.get(nowNode).stream().forEach(node -> {
-                int newWeight = node.weight + weight;
-                if(distance[node.vertex] > newWeight) {
-                    distance[node.vertex] = newWeight;
-                    queue.add(new Node(node.vertex, newWeight));
-                }
-            });
+        for (int i = 0; i < edges.size(); i++) {
+            Node node = edges.get(i);
+            if(union(node.from, node.to))
+                sum += node.cost;
         }
+
+        return sum;
+    }
+
+    private static boolean union(int from, int to) {
+        int fromValue = find(from);
+        int toValue = find(to);
+        if (fromValue != toValue) {
+            unf[toValue] = fromValue;
+            return true;
+        }
+        return false;
+    }
+
+    private static int find(int vertex) {
+        if(unf[vertex] == vertex) return vertex;
+        else return unf[vertex] = find(unf[vertex]);
     }
 
     private static int getIntToken(StringTokenizer st) {
@@ -60,11 +58,12 @@ public class Main {
     }
 
     static class Node{
-        int vertex, weight;
+        int from, to, cost;
 
-        public Node(int vertex, int weight) {
-            this.vertex = vertex;
-            this.weight = weight;
+        public Node(int from, int to, int cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
         }
     }
 }

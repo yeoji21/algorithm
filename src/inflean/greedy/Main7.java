@@ -1,55 +1,68 @@
 package inflean.greedy;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Main7 {
+    static int V, E;
     static int[] unf;
+    static List<Node> edges;
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int v = sc.nextInt();
-        int e = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        V = getIntToken(st);
+        E = getIntToken(st);
 
-        initializeUnionArr(v);
-        List<Edge> edgeList = new ArrayList<>();
-        for (int i = 0; i < e; i++)
-            edgeList.add(new Edge(sc.nextInt(), sc.nextInt(), sc.nextInt()));
+        unf = new int[V + 1];
+        IntStream.range(1, V + 1).forEach(i -> unf[i] = i);
+        edges = new ArrayList<>(E + 10);
+        for (int i = 0; i < E; i++) {
+            st = new StringTokenizer(br.readLine());
+            edges.add(new Node(getIntToken(st), getIntToken(st), getIntToken(st)));
+        }
 
-        new Main7().solution(edgeList);
+        System.out.println(unionFind());
     }
 
-    public void solution(List<Edge> edgeList) {
-        edgeList.sort(Comparator.comparing(e -> e.cost));
+    private static int unionFind() {
+        edges.sort(Comparator.comparing(e -> e.cost));
+        int sum = 0;
 
-        System.out.println(edgeList.stream().filter(edge -> union(edge.from, edge.to))
-                                            .mapToInt(edge -> edge.cost)
-                                            .sum());
+        for (int i = 0; i < edges.size(); i++) {
+            Node node = edges.get(i);
+            if(union(node.from, node.to))
+                sum += node.cost;
+        }
+
+        return sum;
     }
 
-    private boolean union(int from, int to) {
-        int findIdxFrom = find(from);
-        int findIdxTo = find(to);
-
-        if (findIdxFrom != findIdxTo) {
-            unf[findIdxFrom] = findIdxTo;
+    private static boolean union(int from, int to) {
+        int fromValue = find(from);
+        int toValue = find(to);
+        if (fromValue != toValue) {
+            unf[toValue] = fromValue;
             return true;
         }
-        else return false;
+        return false;
     }
 
-    private int find(int vertex) {
-        if (vertex == unf[vertex]) return unf[vertex];
+    private static int find(int vertex) {
+        if(unf[vertex] == vertex) return vertex;
         else return unf[vertex] = find(unf[vertex]);
     }
 
-    private static void initializeUnionArr(int size) {
-        unf = new int[size + 1];
-        for (int i = 1; i <= size; i++) unf[i] = i;
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 
-    static class Edge{
+    static class Node{
         int from, to, cost;
-        public Edge(int from, int to, int cost) {
+
+        public Node(int from, int to, int cost) {
             this.from = from;
             this.to = to;
             this.cost = cost;
