@@ -1,35 +1,42 @@
 package inflean.dfs_bfs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main5 {
-    static int[] money;
-    static int n, m, minLevel = Integer.MAX_VALUE;
+    private static int N, M;
+    private static int[] coins;
+    private static int minLevel = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        money = new int[n];
-        for (int i = 0; i < n; i++)
-            money[i] = sc.nextInt();
-        m = sc.nextInt();
-        new Main5().solution(0, 0);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getIntToken(st);
+
+        coins = new int[N];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) coins[i] = getIntToken(st);
+
+        st = new StringTokenizer(br.readLine());
+        M = getIntToken(st);
+
+        DFS(0, 0);
         System.out.println(minLevel);
     }
 
-    public void solution(int level, int totalMoney) {
-        if(totalMoney > m) return;
-        if(level >= minLevel) return;
-        if(totalMoney == m){
-            minLevel = Math.min(minLevel, level);
-        }
-        else {
-            for (int i = n-1; i >= 0; i--) {
-                solution(level+1, totalMoney+money[i]);
+    private static void DFS(int L, int sum) {
+        if(L >= minLevel) return;
+        if(sum > M) return;
+        if(sum == M) minLevel = Math.min(minLevel, L);
+        else{
+            for (int i = coins.length-1; i >= 0; i--) {
+                DFS(L+1, sum + coins[i]);
             }
-//            solution(level + 1, totalMoney + money[2]);
-//            solution(level + 1, totalMoney + money[1]);
-//            solution(level + 1, totalMoney + money[0]);
         }
+    }
+
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
     }
 }

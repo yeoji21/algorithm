@@ -6,47 +6,48 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class Main8 {
-    static boolean[] checked;
-    static int[] selected;
-    static int N, F;
-    static boolean flag = false;
-
+    private static int N, F;
+    private static int[] result;
+    private static boolean[] checked;
+    private static boolean flag = false;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         F = Integer.parseInt(st.nextToken());
+        result = new int[N];
+        checked = new boolean[N + 1];
 
-        checked = new boolean[N+1];
-        selected = new int[N];
-        permutation(0);
+        solution(0);
     }
 
-    private static void permutation(int L) {
+    private static void solution(int L) {
         if(flag) return;
-        if(L == N){
-            if(calc()) {
-                Arrays.stream(selected).forEach(num -> System.out.print(num + " "));
+        if (L == N) {
+            if(verify()){
+                System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(" ")));
                 flag = true;
                 return;
             }
-        }else{
+        }
+        else{
             for (int i = 1; i < N + 1; i++) {
                 if (!checked[i]) {
                     checked[i] = true;
-                    selected[L] = i;
-                    permutation(L + 1);
+                    result[L] = i;
+                    solution(L + 1);
                     checked[i] = false;
                 }
             }
         }
-
     }
-    private static boolean calc() {
+
+    private static boolean verify() {
         Queue<Integer> queue = new LinkedList<>();
-        Arrays.stream(selected).forEach(queue::add);
+        Arrays.stream(result).forEach(queue::add);
 
         while (queue.size() != 1) {
             int size = queue.size();

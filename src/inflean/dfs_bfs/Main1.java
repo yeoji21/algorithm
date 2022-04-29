@@ -30,7 +30,7 @@ public class Main1 {
 
     private static void calculate(int L, int sum) {
         if(flag) return;
-        if(sum > totalSum/2) return;
+        if (sum > totalSum / 2) return;
         if (N == L) {
             if(totalSum - sum == sum)
                 flag = true;
