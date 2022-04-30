@@ -1,79 +1,58 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    private static int[][] map;
-    private static int M, N;
-    private static ArrayList<Point> redTomatoes;
-    private static int earlyTomatoCount = 0;
+    private static int N;
+    private static int[] num, dp;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        num = new int[N];
+        dp = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
-        M = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
-        redTomatoes = new ArrayList<>(M * N);
-        map = new int[M][N];
+        for (int i = 0; i < N; i++) num[i] = Integer.parseInt(st.nextToken());
 
-        for (int i = 0; i < N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < M; j++) {
-                int value = Integer.parseInt(st.nextToken());
-                map[j][i] = value;
-                if(value == 1) redTomatoes.add(new Point(j, i));
-                if(value == 0) earlyTomatoCount++;
-            }
-        }
-
-        if(earlyTomatoCount == 0) {
-            System.out.println(0);
-            return;
-        }
-
-        spread();
+//        DP();
+        binarySearch();
     }
 
-    private static void spread() {
-        Queue<Point> queue = new LinkedList<>();
-        int[] dx = {1, 0, -1, 0};
-        int[] dy = {0, 1, 0, -1};
-
-        queue.addAll(redTomatoes);
-        int count = 0;
-
-        while (!queue.isEmpty() && earlyTomatoCount > 0) {
-            int size = queue.size();
-            while (--size >= 0) {
-                Point redTomato = queue.poll();
-
-                for (int i = 0; i < 4; i++) {
-                    int nx = redTomato.x + dx[i];
-                    int ny = redTomato.y + dy[i];
-
-                    if(nx >= M || nx < 0 || ny >= N || ny < 0) continue;
-                    if(map[nx][ny] == 1 || map[nx][ny] == -1) continue;
-
-                    map[nx][ny] = 1;
-                    queue.add(new Point(nx, ny));
-                    earlyTomatoCount--;
+    private static void DP() {
+        for (int i = 0; i < num.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (num[i] > num[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
-            count++;
         }
-        if (earlyTomatoCount == 0)
-            System.out.println(count);
-        else System.out.println(-1);
+        System.out.println(Arrays.stream(dp).max().getAsInt());
     }
 
-    static class Point{
-        int x, y;
+    private static void binarySearch() {
+        int idx = 0;
+        dp[idx++] = num[0];
 
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
+        for (int i = 1; i < num.length; i++) {
+            if (num[i] > dp[idx - 1]) {
+                dp[idx++] = num[i];
+            }
+            else {
+                int index = lowerBound(num[i], 0, idx);
+                dp[index] = num[i];
+            }
         }
+
+        System.out.println(Arrays.stream(dp).filter(n -> n != 0).count());
+    }
+
+    private static int lowerBound(int value, int left, int right) {
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if(value <= dp[mid]) right = mid;
+            else left = mid + 1;
+        }
+        return left;
     }
 }

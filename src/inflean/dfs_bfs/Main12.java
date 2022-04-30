@@ -6,68 +6,66 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Main12 {
-    static int zeroCount = 0, M, N;
-    static int[][] map;
-    static boolean[][] checked;
-    static List<Point> tomato = new ArrayList<>(100);
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
-
+    private static int[][] map;
+    private static int M, N;
+    private static ArrayList<Point> redTomatoes;
+    private static int earlyTomatoCount = 0;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        M = getIntToken(st);
-        N = getIntToken(st);
-
-        map = new int[N][M];
-        checked = new boolean[N][M];
+        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        redTomatoes = new ArrayList<>(M * N);
+        map = new int[M][N];
 
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
-                map[i][j] = getIntToken(st);
-                if(map[i][j] == 0) zeroCount++;
-                else if(map[i][j] == 1) tomato.add(new Point(i, j));
+                int value = Integer.parseInt(st.nextToken());
+                map[j][i] = value;
+                if(value == 1) redTomatoes.add(new Point(j, i));
+                if(value == 0) earlyTomatoCount++;
             }
         }
 
-        if(zeroCount == 0){
+        if(earlyTomatoCount == 0) {
             System.out.println(0);
             return;
         }
 
-        tomato.forEach(p -> checked[p.x][p.y] = true);
-        BFS();
+        spread();
     }
 
-    private static void BFS() {
-        Queue<Point> queue = new LinkedList<>(tomato);
-        int days = 0;
-        while (!queue.isEmpty()) {
+    private static void spread() {
+        Queue<Point> queue = new LinkedList<>();
+        int[] dx = {1, 0, -1, 0};
+        int[] dy = {0, 1, 0, -1};
+
+        queue.addAll(redTomatoes);
+        int count = 0;
+
+        while (!queue.isEmpty() && earlyTomatoCount > 0) {
             int size = queue.size();
             while (--size >= 0) {
-                Point now = queue.poll();
-                for (int d = 0; d < 4; d++) {
-                    int nx = now.x + dx[d];
-                    int ny = now.y + dy[d];
+                Point redTomato = queue.poll();
 
-                    if(nx < 0 || ny < 0|| nx >= N || ny >= M) continue;
-                    if(map[nx][ny] == -1 || checked[nx][ny]) continue;
-                    checked[nx][ny] = true;
-                    zeroCount--;
+                for (int i = 0; i < 4; i++) {
+                    int nx = redTomato.x + dx[i];
+                    int ny = redTomato.y + dy[i];
+
+                    if(nx >= M || nx < 0 || ny >= N || ny < 0) continue;
+                    if(map[nx][ny] == 1 || map[nx][ny] == -1) continue;
+
+                    map[nx][ny] = 1;
                     queue.add(new Point(nx, ny));
+                    earlyTomatoCount--;
                 }
             }
-            days++;
+            count++;
         }
-        if (zeroCount == 0)
-            System.out.println(days-1);
-        else
-            System.out.println(-1);
-    }
-
-    private static int getIntToken(StringTokenizer st) {
-        return Integer.parseInt(st.nextToken());
+        if (earlyTomatoCount == 0)
+            System.out.println(count);
+        else System.out.println(-1);
     }
 
     static class Point{

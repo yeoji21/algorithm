@@ -21,7 +21,6 @@ public class Main3 {
 
         for (int i = 0; i < num.length; i++) {
             distance[i] = 1;
-
             for (int j = 0; j < i; j++) {
                 if(num[i] > num[j]){
                     distance[i] = Math.max(distance[j] + 1, distance[i]);
