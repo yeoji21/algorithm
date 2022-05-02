@@ -1,30 +1,31 @@
 package inflean.dynamic;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main5 {
+    private static int[] coins, dp;
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++) coins[i] = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        coins = new int[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) coins[i] = Integer.parseInt(st.nextToken());
 
-        int targetMoney = sc.nextInt();
-        int[] money = new int[targetMoney + 1];
-        for (int i = 1; i < money.length; i++) money[i] = Integer.MAX_VALUE;
-
-        new Main5().solution(coins, money);
+        int change = Integer.parseInt(br.readLine());
+        dp = new int[change + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        minimumCoinChange();
+        System.out.println(dp[change]);
     }
 
-    public void solution(int[] coins, int[] money) {
-
+    private static void minimumCoinChange() {
         for (int i = 0; i < coins.length; i++) {
-            for (int j = coins[i]; j < money.length; j++) {
-                money[j] = Math.min(money[j - coins[i]]+1, money[j]);
+            for (int j = coins[i]; j < dp.length; j++) {
+                dp[j] = Math.min(dp[j], dp[j - coins[i]] + 1);
             }
         }
-
-//        Arrays.stream(money).forEach(x -> System.out.print(x + " "));
-        System.out.println(money[money.length-1]);
     }
 }

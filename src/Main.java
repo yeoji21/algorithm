@@ -4,55 +4,27 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    private static int N;
-    private static int[] num, dp;
+    private static int[] coins, dp;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        num = new int[N];
-        dp = new int[N];
+        int n = Integer.parseInt(br.readLine());
+        coins = new int[n];
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) num[i] = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < n; i++) coins[i] = Integer.parseInt(st.nextToken());
 
-//        DP();
-        binarySearch();
+        int change = Integer.parseInt(br.readLine());
+        dp = new int[change + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        minimumCoinChange();
+        System.out.println(dp[change]);
     }
 
-    private static void DP() {
-        for (int i = 0; i < num.length; i++) {
-            dp[i] = 1;
-            for (int j = 0; j < i; j++) {
-                if (num[i] > num[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
+    private static void minimumCoinChange() {
+        for (int i = 0; i < coins.length; i++) {
+            for (int j = coins[i]; j < dp.length; j++) {
+                dp[j] = Math.min(dp[j], dp[j - coins[i]] + 1);
             }
         }
-        System.out.println(Arrays.stream(dp).max().getAsInt());
-    }
-
-    private static void binarySearch() {
-        int idx = 0;
-        dp[idx++] = num[0];
-
-        for (int i = 1; i < num.length; i++) {
-            if (num[i] > dp[idx - 1]) {
-                dp[idx++] = num[i];
-            }
-            else {
-                int index = lowerBound(num[i], 0, idx);
-                dp[index] = num[i];
-            }
-        }
-
-        System.out.println(Arrays.stream(dp).filter(n -> n != 0).count());
-    }
-
-    private static int lowerBound(int value, int left, int right) {
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if(value <= dp[mid]) right = mid;
-            else left = mid + 1;
-        }
-        return left;
     }
 }

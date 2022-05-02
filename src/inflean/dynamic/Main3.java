@@ -1,33 +1,59 @@
 package inflean.dynamic;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main3 {
-
+    private static int N;
+    private static int[] num, dp;
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int[] distance = new int[n];
-        int[] num = new int[n];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        num = new int[N];
+        dp = new int[N];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) num[i] = Integer.parseInt(st.nextToken());
 
-        for (int i = 0; i < n; i++) {
-            num[i] = sc.nextInt();
-        }
-
-        new Main3().solution(num, distance);
+//        DP();
+        binarySearch();
     }
 
-    public void solution(int[] num, int[] distance) {
-
+    private static void DP() {
         for (int i = 0; i < num.length; i++) {
-            distance[i] = 1;
+            dp[i] = 1;
             for (int j = 0; j < i; j++) {
-                if(num[i] > num[j]){
-                    distance[i] = Math.max(distance[j] + 1, distance[i]);
+                if (num[i] > num[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
         }
+        System.out.println(Arrays.stream(dp).max().getAsInt());
+    }
 
-        System.out.println(Arrays.stream(distance).max().getAsInt());
+    private static void binarySearch() {
+        int idx = 0;
+        dp[idx++] = num[0];
+
+        for (int i = 1; i < num.length; i++) {
+            if (num[i] > dp[idx - 1]) {
+                dp[idx++] = num[i];
+            }
+            else {
+                int index = lowerBound(num[i], 0, idx);
+                dp[index] = num[i];
+            }
+        }
+
+        System.out.println(Arrays.stream(dp).filter(n -> n != 0).count());
+    }
+
+    private static int lowerBound(int value, int left, int right) {
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if(value <= dp[mid]) right = mid;
+            else left = mid + 1;
+        }
+        return left;
     }
 }

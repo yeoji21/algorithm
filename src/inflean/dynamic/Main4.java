@@ -1,42 +1,51 @@
 package inflean.dynamic;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main4 {
-    static int[] dp;
+    private static List<Block> blockList;
+
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        Block[] blocks = new Block[n];
-        dp = new int[n];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        int n = Integer.parseInt(br.readLine());
+        blockList = new ArrayList<>(n);
 
         for (int i = 0; i < n; i++) {
-            blocks[i] = new Block(sc.nextInt(), sc.nextInt(), sc.nextInt());
+            st = new StringTokenizer(br.readLine());
+            blockList.add(new Block(getIntToken(st), getIntToken(st), getIntToken(st)));
         }
 
-        new Main4().solution(blocks);
+        blockList.sort(Comparator.comparing(Block::getWidth).reversed());
+        buildTower();
     }
 
-    public void solution(Block[] blocks) {
-        Block[] sortedBlocks = Arrays.stream(blocks).sorted(Comparator.comparing(b -> -b.width)).toArray(Block[]::new);
-        dp[0] = sortedBlocks[0].height;
+    private static void buildTower() {
+        blockList.get(0).setMaxTopHeight(blockList.get(0).height);
 
-        for (int i = 1; i < sortedBlocks.length; i++) {
-            dp[i] = sortedBlocks[i].height;
-            for (int j = i-1; j >= 0; j--) {
-                if(sortedBlocks[i].weight < sortedBlocks[j].weight)
-                    dp[i] = Math.max(dp[j] + sortedBlocks[i].height, dp[i]);
+        for (int i = 1; i < blockList.size(); i++) {
+            Block top = blockList.get(i);
+            top.setMaxTopHeight(top.height);
+            for (int j = i - 1; j >= 0; j--) {
+                Block bottom = blockList.get(j);
+                if (top.weight < bottom.weight) {
+                    top.setMaxTopHeight(Math.max(bottom.getMaxTopHeight() + top.height, top.getMaxTopHeight()));
+                }
             }
         }
-        Arrays.stream(dp).forEach(x -> System.out.print(x + " "));
-        System.out.println();
-        System.out.println(Arrays.stream(dp).max().getAsInt());
+        System.out.println(blockList.stream().max(Comparator.comparing(Block::getMaxTopHeight)).get().maxTopHeight);
     }
 
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
+    }
 
-    static class Block {
+    static class Block{
         int width, height, weight;
+        int maxTopHeight;
 
         public Block(int width, int height, int weight) {
             this.width = width;
@@ -44,11 +53,16 @@ public class Main4 {
             this.weight = weight;
         }
 
-        @Override
-        public String toString() {
-            return "Block{" +
-                    "width=" + width +
-                    '}';
+        public int getWidth() {
+            return width;
+        }
+
+        public int getMaxTopHeight() {
+            return maxTopHeight;
+        }
+
+        public void setMaxTopHeight(int maxTopHeight) {
+            this.maxTopHeight = maxTopHeight;
         }
     }
 }
