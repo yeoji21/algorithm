@@ -1,56 +1,63 @@
 package baekjoon.bfs_dfs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main1759 {
-    static char[] alphabets;
-    static int[] checked;
-    static int L, C;
+    private static int L, C;
+    private static char[] alphabets;
+    private static boolean[] checked;
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        L = sc.nextInt();
-        C = sc.nextInt();
-
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        L = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
         alphabets = new char[C];
-        checked = new int[C];
+        checked = new boolean[C];
 
-        for (int i = 0; i < C; i++) {
-            alphabets[i] = sc.next().charAt(0);
-        }
-
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < C; i++) alphabets[i] = st.nextToken().charAt(0);
         Arrays.sort(alphabets);
-        new Main1759().solution(0, 0);
+
+        solvePassword(0, 0);
     }
 
-    public void solution(int level, int count) {
-        if (count == L) {
-            StringBuilder pw = new StringBuilder();
-            for (int i = 0; i < C; i++) {
-                if(checked[i] == 1){
-                    pw.append(alphabets[i]);
-                }
-            }
-            if(check(pw.toString().toCharArray()))
-                System.out.println(pw);
+    private static void solvePassword(int level, int select) {
+        if (select == L) {
+            Password password = new Password();
+            if(password.validation())
+                System.out.println(password.password);
         }
         else{
             for (int i = level; i < C; i++) {
-                checked[i] = 1;
-                solution(i + 1, count + 1);
-                checked[i] = 0;
+                checked[i] = true;
+                solvePassword(i + 1, select + 1);
+                checked[i] = false;
             }
         }
     }
 
-    private boolean check(char[] pwd) {
-        int mo = 0;
-        int ja = 0;
-        for (int i = 0; i < L; i++) {
-            if(pwd[i] == 'a' || pwd[i] == 'e' || pwd[i] == 'i' || pwd[i] == 'o' || pwd[i] == 'u')
-                mo ++;
-            else ja ++;
+    private static class Password{
+        private String password;
+        public Password() {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < checked.length; i++) {
+                if(checked[i]) sb.append(alphabets[i]);
+            }
+            password = sb.toString();
         }
-        return mo >= 1 && ja >= 2;
+
+        private boolean validation() {
+            int mo = 0, ja = 0;
+            for (char alphabet : password.toCharArray()) {
+                if (alphabet == 'a' || alphabet == 'e' || alphabet == 'i' || alphabet == 'o' || alphabet == 'u') mo++;
+                else ja++;
+            }
+
+            if(mo < 1 || ja < 2) return false;
+            return true;
+        }
     }
 }
