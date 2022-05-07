@@ -1,73 +1,70 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
-    private static int[][] ladder;
-    private static int N, M, H;
-    private static final int RIGHT = 1, LEFT = -1;
+    private static int N, K;
+    private static int[] count = new int[100_001], before = new int[100_001];
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = getIntToken(st);
-        M = getIntToken(st);
-        H = getIntToken(st);
-        ladder = new int[H + 1][N + 1];
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            int x = getIntToken(st);
-            int y = getIntToken(st);
-
-            ladder[x][y] = RIGHT;
-            ladder[x][y + 1] = LEFT;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            if(cheatingLadder(1, 1, 0, i)) {
-                System.out.println(i);
-                return;
-            }
-        }
-        System.out.println(-1);
+        moveToSister();
+        printResult();
     }
 
-    private static boolean cheatingLadder(int x, int y, int count, int limit) {
-        if (count == limit) {
-            return ladderCheck();
+    private static void printResult() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(count[K] - 1 + "\n");
+
+        Stack<Integer> stack = new Stack<>();
+        stack.push(K);
+
+        int idx = K;
+        while (idx != N) {
+            stack.push(before[idx]);
+            idx = before[idx];
         }
 
-        for (int i = x; i < H + 1; i++) {
-            for (int j = y; j < N; j++) {
-                if(ladder[i][j] != 0 || ladder[i][j+1] != 0) continue;
-                ladder[i][j] = RIGHT;
-                ladder[i][j + 1] = LEFT;
-
-                if (cheatingLadder(i, j + 2, count + 1, limit)) return true;
-
-                ladder[i][j] = 0;
-                ladder[i][j + 1] = 0;
-            }
-            y = 0;
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop() + " ");
         }
-        return false;
+        System.out.println(sb);
     }
 
-    private static boolean ladderCheck() {
-        for (int i = 1; i < N + 1; i++) {
-            int x = 1, y = i;
-            for (int j = 1; j < H + 1; j++) {
-                if(ladder[x][y] == RIGHT) y++;
-                else if(ladder[x][y] == LEFT) y--;
-                x++;
+    private static void moveToSister() {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(N);
+        count[N] = 1;
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (--size >= 0) {
+                Integer nowLocation = queue.poll();
+                if (nowLocation == K) return;
+
+                for (int way : getThreeWays(nowLocation)) {
+                    if (way < 0 || way >= 100_000) continue;
+
+                    if(count[way] == 0) {
+                        queue.add(way);
+                        count[way] = count[nowLocation]+1;
+                        before[way] = nowLocation;
+                    }
+                }
             }
-            if(y != i) return false;
         }
-        return true;
+
     }
 
-    private static int getIntToken(StringTokenizer st) {
-        return Integer.parseInt(st.nextToken());
+    private static int[] getThreeWays(int now) {
+        int[] ways = new int[3];
+        ways[0] = now + 1;
+        ways[1] = now - 1;
+        ways[2] = now * 2;
+        return ways;
     }
 }

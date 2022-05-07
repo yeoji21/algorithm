@@ -1,67 +1,72 @@
 package baekjoon.bfs_dfs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main13913 {
-    static int[] checked = new int[100_001];
-    static int[] before = new int[100_001];
-
-    static Stack<Integer> stack = new Stack<>();
-//    static List<Integer> stack = new ArrayList<>();
+    private static int N, K;
+    private static int[] count = new int[100_001], before = new int[100_001];
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int subin = sc.nextInt();
-        int dongsang = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-        jump(subin, dongsang);
+        moveToSister();
+        printResult();
+    }
 
+    private static void printResult() {
         StringBuilder sb = new StringBuilder();
-        stack.push(dongsang);
+        sb.append(count[K] - 1 + "\n");
 
-        int index = dongsang;
-        while (index != subin) {
-            stack.push(before[index]);
-            index = before[index];
+        Stack<Integer> stack = new Stack<>();
+        stack.push(K);
+
+        int idx = K;
+        while (idx != N) {
+            stack.push(before[idx]);
+            idx = before[idx];
         }
 
-        System.out.println(checked[dongsang]-1);
         while (!stack.isEmpty()) {
             sb.append(stack.pop() + " ");
         }
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
-    private static void jump(int subin, int dongsang) {
+    private static void moveToSister() {
         Queue<Integer> queue = new LinkedList<>();
-        queue.add(subin);
-        checked[subin] = 1;
+        queue.add(N);
+        count[N] = 1;
 
         while (!queue.isEmpty()) {
             int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                Integer poll = queue.poll();
+            while (--size >= 0) {
+                Integer nowLocation = queue.poll();
+                if (nowLocation == K) return;
 
-                if(poll == dongsang) return;
+                for (int way : getThreeWays(nowLocation)) {
+                    if (way < 0 || way >= 100_000) continue;
 
-                for (int way : jumpToThreeWay(poll)) {
-                    if (way < 0 || way > 100_000) continue;
-
-                    if(checked[way] == 0) {
+                    if(count[way] == 0) {
                         queue.add(way);
-                        checked[way] = checked[poll]+1;
-                        before[way] = poll;
+                        count[way] = count[nowLocation]+1;
+                        before[way] = nowLocation;
                     }
                 }
             }
         }
+
     }
 
-    private static int[] jumpToThreeWay(Integer poll) {
-        int[] results = new int[3];
-        results[0] = poll - 1;
-        results[1] = poll + 1;
-        results[2] = poll * 2;
-        return results;
+    private static int[] getThreeWays(int now) {
+        int[] ways = new int[3];
+        ways[0] = now + 1;
+        ways[1] = now - 1;
+        ways[2] = now * 2;
+        return ways;
     }
 }
