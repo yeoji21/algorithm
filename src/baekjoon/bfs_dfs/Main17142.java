@@ -6,98 +6,91 @@ import java.util.*;
 import java.util.List;
 
 public class Main17142 {
-    static int N, M;
-    static int[][] map;
-    static List<Point> viruses = new ArrayList<>();
-    static Point[] selectedViruses;
-    static int[] dx = {1, -1, 0, 0};
-    static int[] dy = {0, 0, 1, -1};
-    static int result = Integer.MAX_VALUE;
-    static int emptySpace = 0;
+    private static int[][] lab;
+    private static int N, M;
+    private static int result = Integer.MAX_VALUE, zeroCount = 0;
+    private static List<Point> enableToPutVirus;
+    private static int[] selected;
+    private static int[] dx = {1, 0, -1, 0};
+    private static int[] dy = {0, 1, 0, -1};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        map = new int[N][N];
-        selectedViruses = new Point[M];
+        lab = new int[N][N];
+        selected = new int[M];
+        enableToPutVirus = new ArrayList<>(20);
 
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                int value = Integer.parseInt(st.nextToken());
-                map[i][j] = value;
-                if(value == 2) viruses.add(new Point(i, j));
-                if(value == 0) emptySpace++;
+                lab[i][j] = Integer.parseInt(st.nextToken());
+                if(lab[i][j] == 0) zeroCount++;
+                if(lab[i][j] == 2) enableToPutVirus.add(new Point(i, j));
             }
         }
-
-        if(emptySpace == 0){
-            System.out.println("0");
+        if(zeroCount == 0) {
+            System.out.println(0);
             return;
         }
 
         spreadVirus(0, 0);
-
-        if(result == Integer.MAX_VALUE)
-            System.out.println(-1);
+        if(result == Integer.MAX_VALUE) System.out.println(-1);
         else System.out.println(result);
     }
 
-    private static void spreadVirus(int count, int level) {
+    private static void spreadVirus(int level, int count) {
         if (count == M) {
-            int[][] copy = Arrays.stream(map).map(int[]::clone).toArray(int[][]::new);
-            BFS(copy, emptySpace);
-            return;
+            result = Math.min(result, calculateSpreadTime(zeroCount));
         }
-        for (int i = level; i < viruses.size(); i++) {
-            Point point = viruses.get(i);
-            selectedViruses[count] = point;
-            map[point.x][point.y] = 3;
-            spreadVirus(count + 1, i+1);
-            map[point.x][point.y] = 2;
+        else{
+            for (int i = level; i < enableToPutVirus.size(); i++) {
+                selected[count] = i;
+                spreadVirus(i + 1, count + 1);
+            }
         }
     }
 
-    private static void BFS(int[][] copy, int emptySpace) {
+    private static int calculateSpreadTime(int zeroCount) {
         Queue<Point> queue = new LinkedList<>();
-        int count = 0;
         boolean[][] checked = new boolean[N][N];
-        Arrays.stream(selectedViruses).forEach(x -> {
-            queue.add(x);
-            checked[x.x][x.y] = true;
+        Arrays.stream(selected).forEach(i -> {
+            Point point = enableToPutVirus.get(i);
+            queue.add(point);
+            checked[point.x][point.y] = true;
         });
 
+        int time = 0;
         while (!queue.isEmpty()) {
             int size = queue.size();
+            while (--size >= 0) {
+                Point now = queue.poll();
 
-            for (int i = 0; i < size; i++) {
-                Point poll = queue.poll();
+                for (int i = 0; i < 4; i++) {
+                    int nx = now.x + dx[i];
+                    int ny = now.y + dy[i];
 
-                for (int j = 0; j < 4; j++) {
-                    int nx = poll.x + dx[j];
-                    int ny = poll.y + dy[j];
+                    if(nx >= N || nx < 0 || ny >= N || ny < 0) continue;
+                    if(lab[nx][ny] == 1 || checked[nx][ny]) continue;
 
-                    if (nx < 0 || ny < 0 || nx >= N || ny >= N) continue;
-                    if(copy[nx][ny] == 1 || checked[nx][ny]) continue;
-
-                    if(map[nx][ny] == 0) emptySpace--;
-
-                    queue.add(new Point(nx, ny));
                     checked[nx][ny] = true;
+                    queue.add(new Point(nx, ny));
+                    if(lab[nx][ny] == 0) zeroCount--;
                 }
             }
-            count++;
-            if(count >= result) return;
-            if(emptySpace <= 0) result = count;
+            time++;
+            if (zeroCount == 0) {
+                return time;
+            }
         }
-
+        return Integer.MAX_VALUE;
     }
 
-    static class Point{
+    private static class Point{
         int x, y;
+
         public Point(int x, int y) {
             this.x = x;
             this.y = y;
