@@ -6,108 +6,127 @@ import java.util.*;
 import java.util.List;
 
 public class Main4991 {
+    private static int N, M;
     private static char[][] map;
+    private static List<Point> robotsAndDust;
     private static int[][] distance;
-    private static int W, H, result, dirty;
-    static boolean[][] visited;
-    private static boolean[] checked;
-    private static List<Point> list;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, -1, 0, 1};
+    private static int[] dx = {1, 0, -1, 0};
+    private static int[] dy = {0, 1, 0, -1};
+    private static int checkedDustCount, minDistance;
+    private static boolean[] visited;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        StringTokenizer st;
+        StringBuilder result = new StringBuilder();
 
-        while(true){
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            H = Integer.parseInt(st.nextToken());
-            W = Integer.parseInt(st.nextToken());
+        while (true) {
+            st = new StringTokenizer(br.readLine());
+            M = getIntToken(st);
+            N = getIntToken(st);
+            if(N == 0 && M == 0) break;
 
-            if(W == 0 && H == 0) break;
+            map = new char[N][M];
+            robotsAndDust = new ArrayList<>(20);
 
-            list = new ArrayList<>();
-            map = new char[W][H];
-
-            for (int i = 0; i < W; i++) {
-                char[] chars = br.readLine().toCharArray();
-                for (int j = 0; j < H; j++) {
-                    map[i][j] = chars[j];
-                    if(chars[j] == 'o') list.add(0, new Point(i, j, 0));
-                    if(chars[j] == '*') list.add(new Point(i, j, 0));
+            for (int i = 0; i < N; i++) {
+                char[] tokens = br.readLine().toCharArray();
+                for (int j = 0; j < M; j++) {
+                    map[i][j] = tokens[j];
+                    if (map[i][j] == 'o') robotsAndDust.add(0, new Point(i, j));
+                    if (map[i][j] == '*') robotsAndDust.add(new Point(i, j));
                 }
             }
 
-            int size = list.size();
-            distance = new int[size][size];
-            dirty = 0;
-
-            for (int i = 0; i < size; i++) {
-                BFS(list.get(i), i);
+            int robotAndDustSize = robotsAndDust.size();
+            checkedDustCount = 0;
+            distance = new int[robotAndDustSize][robotAndDustSize];
+            for (int i = 0; i < robotAndDustSize; i++) {
+                setDistanceBetweenDust(i);
             }
 
-            if(dirty == list.size()-1){
-                result = Integer.MAX_VALUE;
-                checked = new boolean[size];
-                checked[0] = true;
-                DFS(0, 0, 0);
-                sb.append(result + "\n");
+            if (checkedDustCount == robotAndDustSize - 1) {
+                minDistance = Integer.MAX_VALUE;
+                visited = new boolean[robotAndDustSize];
+                visited[0] = true;
+                getMinDistance(0, 0, 0);
+                result.append(minDistance + "\n");
             }else{
-                sb.append(-1 + "\n");
+                result.append(-1 + "\n");
             }
         }
-        System.out.print(sb);
+
+        System.out.println(result);
     }
 
-    private static void DFS(int start, int cnt, int dist) {
-        if(cnt == list.size()-1)
-            result = Math.min(result, dist);
-        for (int i = 0; i < list.size(); i++) {
-            if(!checked[i]){
-                checked[i] = true;
-                DFS(i, cnt + 1, dist + distance[start][i]);
-                checked[i] = false;
+    private static void getMinDistance(int start, int dist, int count) {
+        if (count == robotsAndDust.size() - 1) {
+            minDistance = Math.min(minDistance, dist);
+        }
+        else{
+            for (int to = 1; to < robotsAndDust.size(); to++) {
+                if (!visited[to]) {
+                    visited[to] = true;
+                    getMinDistance(to, dist + distance[start][to], count + 1);
+                    visited[to] = false;
+                }
             }
         }
     }
 
-    private static void BFS(Point point, int start) {
-        visited = new boolean[W][H];
+    private static void setDistanceBetweenDust(int sequence) {
         Queue<Point> queue = new LinkedList<>();
-        queue.offer(point);
-        visited[point.x][point.y] = true;
+        boolean[][] checked = new boolean[N][M];
+
+        Point targetDust = robotsAndDust.get(sequence);
+        queue.add(targetDust);
+        checked[targetDust.x][targetDust.y] = true;
+        int time = 0;
 
         while (!queue.isEmpty()) {
-            Point next = queue.poll();
+            int size = queue.size();
 
-            if (map[next.x][next.y] == '*') {
-                if(start == 0) dirty++;
-                for (int to = 1; to < list.size(); to++) {
-                    if(next.x == list.get(to).x && next.y == list.get(to).y)
-                        distance[start][to] = next.move;
+            while (size-- > 0) {
+                Point now = queue.poll();
+
+                if(map[now.x][now.y] == '*') {
+                    if (sequence == 0) checkedDustCount++;
+
+                    for (int i = 1; i < robotsAndDust.size(); i++) {
+                        Point point = robotsAndDust.get(i);
+                        if (point.x == now.x && point.y == now.y) {
+                            distance[sequence][i] = time;
+                            distance[i][sequence] = time;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    int nx = now.x + dx[i];
+                    int ny = now.y + dy[i];
+
+                    if(nx >= N || nx <0 || ny >= M || ny < 0) continue;
+                    if(checked[nx][ny] || map[nx][ny] == 'x') continue;
+
+                    queue.add(new Point(nx, ny));
+                    checked[nx][ny] = true;
                 }
             }
-
-            for (int i = 0; i < 4; i++) {
-                int nx = next.x + dx[i];
-                int ny = next.y + dy[i];
-
-                if(nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
-                if(visited[nx][ny] || map[nx][ny] == 'x') continue;
-
-                queue.offer(new Point(nx, ny, next.move + 1));
-                visited[nx][ny] = true;
-            }
+            time++;
         }
     }
 
-    static class Point{
-        int x, y, move;
 
-        public Point(int x, int y, int move) {
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
+    }
+
+    private static class Point{
+        int x, y;
+
+        public Point(int x, int y) {
             this.x = x;
             this.y = y;
-            this.move = move;
         }
     }
 }

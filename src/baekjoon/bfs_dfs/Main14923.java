@@ -7,92 +7,89 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main14923 {
-    static int N, M;
-    static int[][] map;
+    private static int N, M, Ex, Ey;
+    private static int[][] map;
+    private static int[] dx = {0, 1, 0, -1};
+    private static int[] dy = {1, 0, -1, 0};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        map = new int[N][M];
+        N = getIntToken(st);
+        M = getIntToken(st);
+        map = new int[N+1][M+1];
 
         st = new StringTokenizer(br.readLine());
-        int Hx = Integer.parseInt(st.nextToken()) - 1;
-        int Hy = Integer.parseInt(st.nextToken()) - 1;
+        int Hx = getIntToken(st);
+        int Hy = getIntToken(st);
 
         st = new StringTokenizer(br.readLine());
-        int Ex = Integer.parseInt(st.nextToken()) - 1;
-        int Ey = Integer.parseInt(st.nextToken()) - 1;
+        Ex = getIntToken(st);
+        Ey = getIntToken(st);
 
-        for (int i = 0; i < N; i++) {
+        for (int i = 1; i < N + 1; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < M; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
+            for (int j = 1; j < M + 1; j++) {
+                map[i][j] = getIntToken(st);
             }
         }
 
-        BFS(Hx, Hy, Ex, Ey);
+        escapeMaze(Hx, Hy);
     }
 
-    private static void BFS(int x, int y, int ex, int ey) {
-        int time = 0;
-        boolean[][][] checked = new boolean[N][M][2];
+    private static void escapeMaze(int hx, int hy) {
         Queue<Point> queue = new LinkedList<>();
+        boolean[][][] checked = new boolean[N+1][M+1][2];
+        int time = 0;
 
-        int[] dx = {1, -1, 0, 0};
-        int[] dy = {0, 0, 1, -1};
-
-        queue.add(new Point(x, y, 0));
-        checked[x][y][0] = true;
+        queue.add(new Point(hx, hy, 0));
+        checked[hx][hy][0] = true;
 
         while (!queue.isEmpty()) {
-            time++;
             int size = queue.size();
-
-            while(size-- > 0){
+            while (size-- > 0) {
                 Point now = queue.poll();
+                if(now.x == Ex && now.y == Ey){
+                    System.out.println(time);
+                    return;
+                }
 
-                for (int d = 0; d < 4; d++) {
-                    int nx = now.x + dx[d];
-                    int ny = now.y + dy[d];
+                for (int i = 0; i < 4; i++) {
+                    int nx = now.x + dx[i];
+                    int ny = now.y + dy[i];
 
-                    if(nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+                    if (nx > N || nx < 0 || ny > M || ny < 0) continue;
 
                     if(map[nx][ny] == 1){
-                        if(now.chance == 0 && !checked[nx][ny][now.chance+1]){
-                            if(nx == ex && ny == ey){
-                                System.out.println(time);
-                                return;
-                            }
-                            queue.add(new Point(nx, ny, now.chance+1));
-                            checked[nx][ny][now.chance+1] = true;
+                        if (now.usedChance == 0 && !checked[nx][ny][now.usedChance+1]) {
+                            queue.add(new Point(nx, ny, now.usedChance + 1));
+                            checked[nx][ny][1] = true;
                         }
-
                     }
                     else{
-                        if(!checked[nx][ny][now.chance]) {
-                            if(nx == ex && ny == ey){
-                                System.out.println(time);
-                                return;
-                            }
-                            queue.add(new Point(nx, ny, now.chance));
-                            checked[nx][ny][now.chance] = true;
+                        if(!checked[nx][ny][now.usedChance]) {
+                            queue.add(new Point(nx, ny, now.usedChance));
+                            checked[nx][ny][now.usedChance] = true;
                         }
                     }
                 }
             }
+            time++;
         }
         System.out.println(-1);
     }
 
-    static class Point{
-        int x, y, chance;
+    private static int getIntToken(StringTokenizer st) {
+        return Integer.parseInt(st.nextToken());
+    }
 
-        public Point(int x, int y, int chance) {
+    private static class Point{
+        int x, y, usedChance;
+
+        public Point(int x, int y, int usedChance) {
             this.x = x;
             this.y = y;
-            this.chance = chance;
+            this.usedChance = usedChance;
         }
     }
 }
