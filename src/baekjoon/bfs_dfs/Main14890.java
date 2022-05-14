@@ -5,80 +5,85 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main14890 {
-    static int N, L;
-    static int[][] map;
+    private static int N, L;
+    private static int[][] map;
+    private static int result = 0;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = getIntegerToken(st);
-        L = getIntegerToken(st);
-        map = new int[N][N];
-        int result = 0;
+        N = getIntToken(st);
+        L = getIntToken(st);
 
+        map = new int[N][N];
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                map[i][j] = getIntegerToken(st);
-            }
+            for (int j = 0; j < N; j++)
+                map[i][j] = getIntToken(st);
         }
 
         for (int i = 0; i < N; i++) {
-            if(checkRow(i)) result++;
-            if(checkColumn(i)) result++;
+            rowCheck(i);
+            columnCheck(i);
         }
+
         System.out.println(result);
     }
 
-    private static boolean checkRow(int row) {
+    private static void rowCheck(int row) {
         boolean[] checked = new boolean[N];
-        for (int i = 0; i < N - 1; i++) {
-            int diff = map[row][i] - map[row][i + 1];
-            if(diff == 0) continue;
 
-            if(Math.abs(diff) > 1) return false;
-            else if(diff == 1){
-                for (int j = 1; j <= L; j++) {
-                    if (i + j >= N || checked[i + j]) return false;
-                    if(map[row][i] - map[row][i+j] != 1) return false;
-                    checked[i + j] = true;
+        for (int col = 0; col < N - 1; col++) {
+            int diff = map[row][col] - map[row][col + 1];
+            if(diff == 0 ) continue;
+            if (Math.abs(diff) >= 2) return;
+            if (diff == -1) {
+                for (int l = 0; l < L; l++) {
+                    if (col - l < 0 || checked[col - l]) return;
+                    if (map[row][col] != map[row][col - l]) return;
+                    checked[col - l] = true;
                 }
-            } else if (diff == -1) {
-                for (int j = 0; j < L; j++) {
-                    if(i-j < 0 || checked[i-j]) return false;
-                    if (map[row][i] != map[row][i - j] ) return false;
-                    checked[i - j] = true;
+            }
+            if (diff == 1) {
+                for (int l = 1; l <= L; l++) {
+                    if (col + l >= N || checked[col + l]) return;
+                    if (map[row][col] - map[row][col + l] != 1) return;
+                    checked[col + l] = true;
                 }
             }
         }
-        return true;
+
+        result++;
     }
 
-    private static boolean checkColumn(int column) {
+    private static void columnCheck(int col) {
         boolean[] checked = new boolean[N];
-        for (int i = 0; i < N - 1; i++) {
-            int diff = map[i][column] - map[i+1][column];
-            if(diff == 0) continue;
 
-            if(Math.abs(diff) > 1) return false;
-            else if(diff == 1){
-                for (int j = 1; j <= L; j++) {
-                    if (i + j >= N || checked[i + j]) return false;
-                    if(map[i][column] - map[i+j][column] != 1) return false;
-                    checked[i + j] = true;
+        for (int row = 0; row < N - 1; row++) {
+            int diff = map[row][col] - map[row + 1][col];
+            if(diff == 0 ) continue;
+
+            if (Math.abs(diff) >= 2) return;
+            if (diff == -1) {
+                for (int l = 0; l < L; l++) {
+                    if (row - l < 0 || checked[row - l]) return;
+                    if (map[row][col] != map[row - l][col]) return;
+                    checked[row - l] = true;
                 }
-            } else if (diff == -1) {
-                for (int j = 0; j < L; j++) {
-                    if(i-j < 0 || checked[i-j]) return false;
-                    if (map[i][column] != map[i-j][column] ) return false;
-                    checked[i - j] = true;
+            }
+            if (diff == 1) {
+                for (int l = 1; l <= L; l++) {
+                    if (row + l >= N || checked[row + l]) return;
+                    if (map[row][col] - map[row + l][col] != 1) return;
+                    checked[row + l] = true;
                 }
             }
         }
-        return true;
+
+        result++;
     }
 
-    private static int getIntegerToken(StringTokenizer st) {
+    private static int getIntToken(StringTokenizer st) {
         return Integer.parseInt(st.nextToken());
     }
 }

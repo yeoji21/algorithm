@@ -1,129 +1,87 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
 public class Main {
-    private static int N, M;
-    private static char[][] map;
-    private static List<Point> robotsAndDust;
-    private static int[][] distance;
-    private static int[] dx = {1, 0, -1, 0};
-    private static int[] dy = {0, 1, 0, -1};
-    private static int checkedDustCount, minDistance;
-    private static boolean[] visited;
+    private static int N, L;
+    private static int[][] map;
+    private static int result = 0;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        StringBuilder result = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = getIntToken(st);
+        L = getIntToken(st);
 
-        while (true) {
+        map = new int[N][N];
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            M = getIntToken(st);
-            N = getIntToken(st);
-            if(N == 0 && M == 0) break;
+            for (int j = 0; j < N; j++)
+                map[i][j] = getIntToken(st);
+        }
 
-            map = new char[N][M];
-            robotsAndDust = new ArrayList<>(20);
-
-            for (int i = 0; i < N; i++) {
-                char[] tokens = br.readLine().toCharArray();
-                for (int j = 0; j < M; j++) {
-                    map[i][j] = tokens[j];
-                    if (map[i][j] == 'o') robotsAndDust.add(0, new Point(i, j));
-                    if (map[i][j] == '*') robotsAndDust.add(new Point(i, j));
-                }
-            }
-
-            int robotAndDustSize = robotsAndDust.size();
-            checkedDustCount = 0;
-            distance = new int[robotAndDustSize][robotAndDustSize];
-            for (int i = 0; i < robotAndDustSize; i++) {
-                setDistanceBetweenDust(i);
-            }
-
-            if (checkedDustCount == robotAndDustSize - 1) {
-                minDistance = Integer.MAX_VALUE;
-                visited = new boolean[robotAndDustSize];
-                visited[0] = true;
-                getMinDistance(0, 0, 0);
-                result.append(minDistance + "\n");
-            }else{
-                result.append(-1 + "\n");
-            }
+        for (int i = 0; i < N; i++) {
+            rowCheck(i);
+            columnCheck(i);
         }
 
         System.out.println(result);
     }
 
-    private static void getMinDistance(int start, int dist, int count) {
-        if (count == robotsAndDust.size() - 1) {
-            minDistance = Math.min(minDistance, dist);
-        }
-        else{
-            for (int to = 1; to < robotsAndDust.size(); to++) {
-                if (!visited[to]) {
-                    visited[to] = true;
-                    getMinDistance(to, dist + distance[start][to], count + 1);
-                    visited[to] = false;
+    private static void rowCheck(int row) {
+        boolean[] checked = new boolean[N];
+
+        for (int col = 0; col < N - 1; col++) {
+            int diff = map[row][col] - map[row][col + 1];
+            if(diff == 0 ) continue;
+            if (Math.abs(diff) >= 2) return;
+            if (diff == -1) {
+                for (int l = 0; l < L; l++) {
+                    if (col - l < 0 || checked[col - l]) return;
+                    if (map[row][col] != map[row][col - l]) return;
+                    checked[col - l] = true;
+                }
+            }
+            if (diff == 1) {
+                for (int l = 1; l <= L; l++) {
+                    if (col + l >= N || checked[col + l]) return;
+                    if (map[row][col] - map[row][col + l] != 1) return;
+                    checked[col + l] = true;
                 }
             }
         }
+
+        result++;
     }
 
-    private static void setDistanceBetweenDust(int sequence) {
-        Queue<Point> queue = new LinkedList<>();
-        boolean[][] checked = new boolean[N][M];
+    private static void columnCheck(int col) {
+        boolean[] checked = new boolean[N];
 
-        Point targetDust = robotsAndDust.get(sequence);
-        queue.add(targetDust);
-        checked[targetDust.x][targetDust.y] = true;
-        int time = 0;
+        for (int row = 0; row < N - 1; row++) {
+            int diff = map[row][col] - map[row + 1][col];
+            if(diff == 0 ) continue;
 
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-
-            while (size-- > 0) {
-                Point now = queue.poll();
-
-                if(map[now.x][now.y] == '*') {
-                    if (sequence == 0) checkedDustCount++;
-
-                    for (int i = 1; i < robotsAndDust.size(); i++) {
-                        Point point = robotsAndDust.get(i);
-                        if (point.x == now.x && point.y == now.y) {
-                            distance[sequence][i] = time;
-                            distance[i][sequence] = time;
-                        }
-                    }
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    int nx = now.x + dx[i];
-                    int ny = now.y + dy[i];
-
-                    if(nx >= N || nx <0 || ny >= M || ny < 0) continue;
-                    if(checked[nx][ny] || map[nx][ny] == 'x') continue;
-
-                    queue.add(new Point(nx, ny));
-                    checked[nx][ny] = true;
+            if (Math.abs(diff) >= 2) return;
+            if (diff == -1) {
+                for (int l = 0; l < L; l++) {
+                    if (row - l < 0 || checked[row - l]) return;
+                    if (map[row][col] != map[row - l][col]) return;
+                    checked[row - l] = true;
                 }
             }
-            time++;
+            if (diff == 1) {
+                for (int l = 1; l <= L; l++) {
+                    if (row + l >= N || checked[row + l]) return;
+                    if (map[row][col] - map[row + l][col] != 1) return;
+                    checked[row + l] = true;
+                }
+            }
         }
-    }
 
+        result++;
+    }
 
     private static int getIntToken(StringTokenizer st) {
         return Integer.parseInt(st.nextToken());
-    }
-
-    private static class Point{
-        int x, y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 }
