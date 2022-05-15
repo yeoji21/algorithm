@@ -4,98 +4,99 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Main11559 {
-    static int R = 12, C = 6;
-    static char map[][];
-    static int[] dr = {-1, 0, 1, 0}, dc = {0, 1, 0, -1};
-    static ArrayList<Point> list;
-    static boolean[][] checked;
-    static Queue<Point> q;
+    private static final int width = 12;
+    private static final int height = 6;
+    private static char[][] map = new char[width][height];
+    private static int[] dx = {1, 0, -1, 0};
+    private static int[] dy = {0, 1, 0, -1};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        map = new char[R][C];
-
-        for (int i = 0; i < R; i++) {
+        for (int i = 0; i < width; i++) {
             map[i] = br.readLine().toCharArray();
         }
 
-        System.out.println(process());
+        System.out.println(puyoPuyo());
     }
 
-    private static int process() {
-        int cnt = 0;
-        while(true) {
+    private static int puyoPuyo() {
+        int count = 0;
+        while(true){
             boolean flag = false;
-            for (int i = 0; i < R; i++) {
-                for (int j = 0; j < C; j++) {
-                    if(map[i][j] == '.') continue;
-                    if(burst(i, j, map[i][j])) flag = true;
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if(map[i][j] != '.'){
+                        if(boomCheck(map[i][j], i, j))
+                            flag = true;
+                    }
                 }
             }
-            if(!flag) return cnt;
-            drop();
-            cnt++;
+            if(!flag) return count;
+            count++;
+            dropPuyo();
         }
     }
 
-    private static boolean burst(int r, int c, char color) {
-        list = new ArrayList<>();
-        checked = new boolean[R][C];
-        q = new LinkedList<>();
+    private static boolean boomCheck(char color, int x, int y) {
+        Queue<Point> queue = new LinkedList<>();
+        boolean[][] checked = new boolean[width][height];
+        List<Point> puyos = new ArrayList<>();
+        queue.add(new Point(x, y));
+        puyos.add(new Point(x, y));
+        checked[x][y] = true;
 
-        list.add(new Point(r, c));
-        checked[r][c] = true;
-        q.add(new Point(r, c));
 
-        while(!q.isEmpty()) {
-            Point now = q.poll();
-            for (int d = 0; d < 4; d++) {
-                int rr = now.r + dr[d];
-                int cc = now.c + dc[d];
-                if(rr < 0 || cc < 0 || rr >= R || cc >= C) continue;
-                if(checked[rr][cc]) continue;
-                if(map[rr][cc] == color) {
-                    list.add(new Point(rr, cc));
-                    q.add(new Point(rr, cc));
-                    checked[rr][cc] = true;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                Point now = queue.poll();
+                for (int i = 0; i < 4; i++) {
+                    int nx = now.x + dx[i];
+                    int ny = now.y + dy[i];
+
+                    if(nx >= width || nx < 0 || ny >= height || ny < 0) continue;
+                    if(map[nx][ny] != color || checked[nx][ny]) continue;
+
+                    queue.add(new Point(nx, ny));
+                    puyos.add(new Point(nx, ny));
+                    checked[nx][ny] = true;
                 }
             }
         }
 
-        if(list.size() >= 4) {
-            for (Point p : list) map[p.r][p.c] = '.';
+        if(puyos.size() >= 4){
+            puyos.stream().forEach(puyo -> map[puyo.x][puyo.y] = '.');
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    private static void drop() {
-        for (int c = 0; c < C; c++) {
+    private static void dropPuyo() {
+        for (int j = 0; j < height; j++) {
             int empty = -1;
-
-            for (int r = R - 1; r >= 0; r--) {
-                if(map[r][c] != '.' && empty == -1) continue;
-                else if(map[r][c] == '.' && empty == -1) empty = r;
-                else if(map[r][c] != '.' && empty != -1) {
-                    map[empty][c] = map[r][c];
-                    map[r][c] = '.';
+            for (int i = width - 1; i >= 0; i--) {
+                if(map[i][j] != '.' && empty == -1) continue;
+                else if(map[i][j] == '.' && empty == -1) empty = i;
+                else if(map[i][j] != '.' && empty != -1){
+                    map[empty][j] = map[i][j];
+                    map[i][j] = '.';
                     empty--;
                 }
             }
         }
+
     }
 
-    static class Point{
-        int r, c;
+    private static class Point{
+        int x, y;
 
-        public Point(int r, int c) {
-            this.r = r;
-            this.c = c;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
     }
 }
-

@@ -1,87 +1,100 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class Main {
-    private static int N, L;
-    private static int[][] map;
-    private static int result = 0;
+    private static final int width = 12;
+    private static final int height = 6;
+    private static char[][] map = new char[width][height];
+    private static int[] dx = {1, 0, -1, 0};
+    private static int[] dy = {0, 1, 0, -1};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = getIntToken(st);
-        L = getIntToken(st);
-
-        map = new int[N][N];
-        for (int i = 0; i < N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++)
-                map[i][j] = getIntToken(st);
+        for (int i = 0; i < width; i++) {
+            map[i] = br.readLine().toCharArray();
         }
 
-        for (int i = 0; i < N; i++) {
-            rowCheck(i);
-            columnCheck(i);
-        }
-
-        System.out.println(result);
+        System.out.println(puyoPuyo());
     }
 
-    private static void rowCheck(int row) {
-        boolean[] checked = new boolean[N];
-
-        for (int col = 0; col < N - 1; col++) {
-            int diff = map[row][col] - map[row][col + 1];
-            if(diff == 0 ) continue;
-            if (Math.abs(diff) >= 2) return;
-            if (diff == -1) {
-                for (int l = 0; l < L; l++) {
-                    if (col - l < 0 || checked[col - l]) return;
-                    if (map[row][col] != map[row][col - l]) return;
-                    checked[col - l] = true;
+    private static int puyoPuyo() {
+        int count = 0;
+        while(true){
+            boolean flag = false;
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if(map[i][j] != '.'){
+                        if(boomCheck(map[i][j], i, j))
+                            flag = true;
+                    }
                 }
             }
-            if (diff == 1) {
-                for (int l = 1; l <= L; l++) {
-                    if (col + l >= N || checked[col + l]) return;
-                    if (map[row][col] - map[row][col + l] != 1) return;
-                    checked[col + l] = true;
+            if(!flag) return count;
+            count++;
+            dropPuyo();
+        }
+    }
+
+    private static boolean boomCheck(char color, int x, int y) {
+        Queue<Point> queue = new LinkedList<>();
+        boolean[][] checked = new boolean[width][height];
+        List<Point> puyos = new ArrayList<>();
+        queue.add(new Point(x, y));
+        puyos.add(new Point(x, y));
+        checked[x][y] = true;
+
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                Point now = queue.poll();
+                for (int i = 0; i < 4; i++) {
+                    int nx = now.x + dx[i];
+                    int ny = now.y + dy[i];
+
+                    if(nx >= width || nx < 0 || ny >= height || ny < 0) continue;
+                    if(map[nx][ny] != color || checked[nx][ny]) continue;
+
+                    queue.add(new Point(nx, ny));
+                    puyos.add(new Point(nx, ny));
+                    checked[nx][ny] = true;
                 }
             }
         }
 
-        result++;
+        if(puyos.size() >= 4){
+            puyos.stream().forEach(puyo -> map[puyo.x][puyo.y] = '.');
+            return true;
+        }
+        return false;
     }
 
-    private static void columnCheck(int col) {
-        boolean[] checked = new boolean[N];
-
-        for (int row = 0; row < N - 1; row++) {
-            int diff = map[row][col] - map[row + 1][col];
-            if(diff == 0 ) continue;
-
-            if (Math.abs(diff) >= 2) return;
-            if (diff == -1) {
-                for (int l = 0; l < L; l++) {
-                    if (row - l < 0 || checked[row - l]) return;
-                    if (map[row][col] != map[row - l][col]) return;
-                    checked[row - l] = true;
-                }
-            }
-            if (diff == 1) {
-                for (int l = 1; l <= L; l++) {
-                    if (row + l >= N || checked[row + l]) return;
-                    if (map[row][col] - map[row + l][col] != 1) return;
-                    checked[row + l] = true;
+    private static void dropPuyo() {
+        for (int j = 0; j < height; j++) {
+            int empty = -1;
+            for (int i = width - 1; i >= 0; i--) {
+                if(map[i][j] != '.' && empty == -1) continue;
+                else if(map[i][j] == '.' && empty == -1) empty = i;
+                else if(map[i][j] != '.' && empty != -1){
+                    map[empty][j] = map[i][j];
+                    map[i][j] = '.';
+                    empty--;
                 }
             }
         }
 
-        result++;
     }
 
-    private static int getIntToken(StringTokenizer st) {
-        return Integer.parseInt(st.nextToken());
+    private static class Point{
+        int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }
