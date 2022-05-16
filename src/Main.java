@@ -1,100 +1,50 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.Stack;
 
 public class Main {
-    private static final int width = 12;
-    private static final int height = 6;
-    private static char[][] map = new char[width][height];
-    private static int[] dx = {1, 0, -1, 0};
-    private static int[] dy = {0, 1, 0, -1};
+    private static int max = Integer.MIN_VALUE;
+    private static int N;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        for (int i = 0; i < width; i++) {
-            map[i] = br.readLine().toCharArray();
-        }
+        N = getIntValue(br);
 
-        System.out.println(puyoPuyo());
-    }
+        Stack<Hist> stack = new Stack<>();
 
-    private static int puyoPuyo() {
-        int count = 0;
-        while(true){
-            boolean flag = false;
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    if(map[i][j] != '.'){
-                        if(boomCheck(map[i][j], i, j))
-                            flag = true;
-                    }
-                }
+        for (int i = 0; i < N; i++) {
+            int num = getIntValue(br);
+
+            while (!stack.isEmpty() && stack.peek().height > num) {
+                int height = stack.pop().height;
+                int width = i;
+                if(!stack.isEmpty()) width -= stack.peek().idx + 1;
+                max = Math.max(max, height * width);
             }
-            if(!flag) return count;
-            count++;
-            dropPuyo();
+            stack.push(new Hist(i, num));
         }
+
+        while (!stack.isEmpty()) {
+            int height = stack.pop().height;
+            int width = N;
+            if(!stack.isEmpty()) width -= stack.peek().idx + 1;
+            max = Math.max(max, height * width);
+        }
+
+        System.out.println(max);
     }
 
-    private static boolean boomCheck(char color, int x, int y) {
-        Queue<Point> queue = new LinkedList<>();
-        boolean[][] checked = new boolean[width][height];
-        List<Point> puyos = new ArrayList<>();
-        queue.add(new Point(x, y));
-        puyos.add(new Point(x, y));
-        checked[x][y] = true;
-
-
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            while (size-- > 0) {
-                Point now = queue.poll();
-                for (int i = 0; i < 4; i++) {
-                    int nx = now.x + dx[i];
-                    int ny = now.y + dy[i];
-
-                    if(nx >= width || nx < 0 || ny >= height || ny < 0) continue;
-                    if(map[nx][ny] != color || checked[nx][ny]) continue;
-
-                    queue.add(new Point(nx, ny));
-                    puyos.add(new Point(nx, ny));
-                    checked[nx][ny] = true;
-                }
-            }
-        }
-
-        if(puyos.size() >= 4){
-            puyos.stream().forEach(puyo -> map[puyo.x][puyo.y] = '.');
-            return true;
-        }
-        return false;
+    private static int getIntValue(BufferedReader br) throws IOException {
+        return Integer.parseInt(br.readLine());
     }
 
-    private static void dropPuyo() {
-        for (int j = 0; j < height; j++) {
-            int empty = -1;
-            for (int i = width - 1; i >= 0; i--) {
-                if(map[i][j] != '.' && empty == -1) continue;
-                else if(map[i][j] == '.' && empty == -1) empty = i;
-                else if(map[i][j] != '.' && empty != -1){
-                    map[empty][j] = map[i][j];
-                    map[i][j] = '.';
-                    empty--;
-                }
-            }
-        }
+    private static class Hist{
+        private int idx, height;
 
-    }
-
-    private static class Point{
-        int x, y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Hist(int idx, int height) {
+            this.idx = idx;
+            this.height = height;
         }
     }
 }

@@ -5,30 +5,40 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Main2812 {
+    private static int N, K;
+    private static String num;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        int K = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        num = br.readLine();
+
+        makeItBig();
+    }
+
+    private static void makeItBig() {
+        Stack<Integer> stack = new Stack<>();
         int count = 0;
 
-        Integer[] target = Arrays.stream(br.readLine().split("")).map(Integer::parseInt).toArray(Integer[]::new);
-        Stack<Integer> stack = new Stack<>();
-
-        for (int i = 0; i < target.length; i++) {
-            while (count < K && !stack.isEmpty() && stack.peek() < target[i]) {
+        for (int i = 0; i < num.length(); i++) {
+            int value = num.charAt(i) - '0';
+            while(count < K && !stack.isEmpty() && stack.peek() < value){
                 stack.pop();
                 count++;
             }
-            stack.push(target[i]);
+            stack.push(value);
         }
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < N-K; i++) {
-            sb.append(stack.get(i));
-        }
-        System.out.println(sb.toString());
+        String result = IntStream.range(0, N - K)
+                .mapToObj(i -> String.valueOf(stack.get(i)))
+                .collect(Collectors.joining());
+        System.out.println(result);
     }
+
 }
