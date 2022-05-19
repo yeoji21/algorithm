@@ -23,19 +23,21 @@ public class QuickSort {
     }
 
     private int partition(int[] arr, int start, int end) {
-        int pivot = start;
-        int left = start + 1;
+        int pivot = arr[start];
+        int left = start;
         int right = end;
 
-        while (left <= right) {
-            while(left <= end && arr[left] < arr[pivot]) left++;
-            while(right > start && arr[right] >= arr[pivot]) right--;
-
-            if(left > right) swap(arr, pivot, right);
-            else swap(arr, left, right);
+        while (left < right) {
+            while(pivot < arr[right]) right--;
+            while (left < right && pivot >= arr[left]) left++;
+            swap(arr, left, right);
         }
-        return right;
+
+        arr[start] = arr[left];
+        arr[left] = pivot;
+        return left;
     }
+
     private void swap(int[] num, int start, int end) {
         int temp = num[start];
         num[start] = num[end];
