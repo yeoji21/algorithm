@@ -20,6 +20,7 @@ public class Solution4 {
 
         BFS(map, checked, k);
 
+        System.out.println(minimumCamping);
         return 0;
     }
 
@@ -34,6 +35,7 @@ public class Solution4 {
             int size = queue.size();
             while (size-- > 0) {
                 Point now = queue.poll();
+
                 if(now.x == map.length -1  && now.y == map[0].length -1){
                     StringBuilder sb = new StringBuilder();
                     while (now.previous != null) {
@@ -41,7 +43,23 @@ public class Solution4 {
                         now = now.previous;
                     }
                     String root = sb.reverse().toString();
-                    System.out.println(root);
+
+                    int count = 0;
+                    for (int i = 0; i < root.length(); i++) {
+                        if(root.charAt(i) == '.') {
+                            int next = 0;
+                            if(i + k >= root.length()) break;
+                            for (int j = 1; j < k + 1; j++) {
+                                if(i+j < root.length() && root.charAt(i + j) == '.') {
+                                    next = j;
+                                }
+                            }
+                            i += next;
+                            count++;
+                        }
+                    }
+
+                    minimumCamping = Math.min(minimumCamping, count);
                 }
 
                 for (int d = 0; d < 4; d++) {
