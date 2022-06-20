@@ -2,9 +2,9 @@ package inflean.dynamic;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
-public class Main6 {
+public class 최대점수_구하기 {
     private static int N, T;
     private static Problem[] problems;
     private static int[] times;
@@ -22,15 +22,12 @@ public class Main6 {
             problems[i] = new Problem(getIntToken(st), getIntToken(st));
         }
 
-        solve();
-    }
-
-    private static void solve() {
         for (int i = 0; i < problems.length; i++) {
-            for(int j = times.length-1; j >= problems[i].time; j --) {
+            for (int j = times.length - 1; j >= problems[i].time; j--) {
                 times[j] = Math.max(times[j], times[j - problems[i].time] + problems[i].score);
             }
         }
+
         System.out.println(times[T]);
     }
 
