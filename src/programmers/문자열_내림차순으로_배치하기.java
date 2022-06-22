@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 public class 문자열_내림차순으로_배치하기 {
 
-
     public String solution(String s) {
         Stream<Character> characterStream = CharBuffer.wrap(s.toCharArray()).chars().mapToObj(c -> (char) c);
         return characterStream.sorted(Comparator.comparing((Character c) -> c).reversed())
