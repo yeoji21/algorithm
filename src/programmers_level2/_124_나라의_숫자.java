@@ -1,6 +1,6 @@
 package programmers_level2;
 
-public class __124_나라의_숫자 {
+public class _124_나라의_숫자 {
     public String solution(int n) {
         String[] num = {"4", "1", "2"};
         StringBuilder sb = new StringBuilder();

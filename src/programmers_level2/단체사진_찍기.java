@@ -15,7 +15,6 @@ public class 단체사진_찍기 {
         if (L == 8) {
             if(check(selected, data))
                 count++;
-            return;
         }else{
             for (int i = 0; i < 8; i++) {
                 if (!visited[i]) {
@@ -36,9 +35,6 @@ public class 단체사진_찍기 {
         String select = sb.toString();
 
         for (String condition : data) {
-//            int xIdx = findIdx(selected, condition.charAt(0));
-//            int yIdx = findIdx(selected, condition.charAt(2));
-
             int xIdx = select.indexOf(condition.charAt(0));
             int yIdx = select.indexOf(condition.charAt(2));
 
@@ -55,14 +51,7 @@ public class 단체사진_찍기 {
                 if(!(Math.abs(xIdx - yIdx) < gap+1)) return false;
             }
         }
-
         return true;
     }
 
-    private static int findIdx(char[] selected, char target) {
-        for (int i = 0; i < selected.length; i++) {
-            if(selected[i] == target) return i;
-        }
-        throw new IllegalArgumentException();
-    }
 }
