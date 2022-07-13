@@ -1,10 +1,15 @@
 import java.util.*;
 
 public class UserSolution {
-    private static Map<String, List<Student>> map;
+    private static Map<String, List<Student>> conditionMap;
+    private static Map<String, List<String>> conditionKeyMap;
+    private static Map<Integer, Student> studentMap;
 
     public void init() {
-        map = new HashMap<>();
+        conditionMap = new HashMap<>();
+        conditionKeyMap = new HashMap<>();
+        studentMap = new HashMap<>();
+
         String[] grades = new String[]{"1", "2", "3"};
         boolean[] checked = new boolean[5];
         permutation(grades, checked, "", 0);
@@ -14,7 +19,7 @@ public class UserSolution {
         if (!selected.equals("")) {
             String[] genders = new String[]{"M", "F", "MF"};
             for (int i = 0; i < genders.length; i++) {
-                map.put(selected + genders[i], new ArrayList<>());
+                conditionMap.put(selected + genders[i], new ArrayList<>());
             }
         }
         if(L == conditions.length) return;
@@ -28,40 +33,55 @@ public class UserSolution {
     }
 
     public int add(int mId, int mGrade, char mGender[], int mScore) {
-        Student student = new Student(mId, mGrade, String.valueOf(mGender).startsWith("m") ? "M" : "F", mScore);
+        Student student = new Student(mId, mGrade, convertGender(mGender), mScore);
+        studentMap.put(student.id, student);
 
-        for (String key : map.keySet()) {
-            if (key.contains(student.gender) && key.contains(String.valueOf(student.grade))) {
-                List<Student> students = map.get(key);
-                students.add(student);
-                Collections.sort(students, Comparator.comparing((Student s) -> s.score).thenComparing((Student s) -> s.id));
+        if (conditionKeyMap.containsKey(student.getKey())) {
+            for (String key : conditionKeyMap.get(student.getKey())) {
+                insertStudent(key, student);
             }
         }
+        else {
+            List<String> keys = new ArrayList<>();
+            for (String key : conditionMap.keySet()) {
+                if (key.contains(student.gender) && key.contains(String.valueOf(student.grade))) {
+                    keys.add(key);
+                    insertStudent(key, student);
+                }
+            }
+            conditionKeyMap.put(student.getKey(), keys);
+        }
 
-        List<Student> students = map.get(student.grade + student.gender);
+        List<Student> students = conditionMap.get(student.getKey());
         return students.get(students.size() - 1).id;
     }
 
-    public int remove(int mId) {
-        Student remove = null;
-        String gender = null;
-        for (String key : map.keySet()) {
-            List<Student> students = map.get(key);
-            for (int i = 0; i < students.size(); i++) {
-                if (students.get(i).id == mId) {
-                    remove = students.remove(i);
-                    if(remove.gender.length() == 1) gender = remove.gender;
-                    break;
-                }
+    private void insertStudent(String key, Student student) {
+        List<Student> students = conditionMap.get(key);
+
+        int index = binarySearch(students, student.score);
+        if(index == -1) students.add(student);
+        else {
+            for (int i = index; i < students.size(); i++) {
+                if (students.get(index).score == student.score) {
+                    if (student.id > students.get(index).id)
+                        index++;
+                } else break;
             }
+            students.add(index, student);
+        }
+    }
+
+    public int remove(int mId) {
+        Student student = studentMap.remove(mId);
+        if(student == null) return 0;
+
+        for (String key : conditionKeyMap.get(student.getKey())) {
+            conditionMap.get(key).remove(student);
         }
 
-        if(remove != null){
-            List<Student> students = map.get(remove.grade + gender);
-            if(students.size() == 0) return 0;
-            return students.get(0).id;
-        }
-        return 0;
+        List<Student> students = conditionMap.get(student.getKey());
+        return students.size() == 0 ? 0 : students.get(0).id;
     }
 
     public int query(int mGradeCnt, int mGrade[], int mGenderCnt, char mGender[][], int mScore) {
@@ -72,12 +92,13 @@ public class UserSolution {
         }
 
         for (int i = 0; i < mGenderCnt; i++) {
-            String gender = String.valueOf(mGender[i]).startsWith("m") ? "M" : "F";
+            String gender = convertGender(mGender[i]);
             key.append(gender);
         }
 
-        List<Student> students = map.get(key.toString());
-        return binarySearch(students, mScore);
+        List<Student> students = conditionMap.get(key.toString());
+        int index = binarySearch(students, mScore);
+        return index == -1 ? 0 : students.get(index).id;
     }
 
     public int binarySearch(List<Student> students, int score) {
@@ -88,7 +109,7 @@ public class UserSolution {
             int mid = (start + end) / 2;
 
             if(students.get(start).score >= score) {
-                return students.get(start).id;
+                return start;
             }
             else if (students.get(mid).score < score) {
                 start = mid + 1;
@@ -98,8 +119,11 @@ public class UserSolution {
             }
         }
 
-        if(end < 0 || start >= students.size()) return 0;
-        else return students.get(start).id;
+        return (end < 0 || start >= students.size()) ? -1 : start;
+    }
+
+    private String convertGender(char[] mGender) {
+        return String.valueOf(mGender).startsWith("m") ? "M" : "F";
     }
 
     private class Student {
@@ -113,6 +137,10 @@ public class UserSolution {
             this.grade = grade;
             this.gender = gender;
             this.score = score;
+        }
+
+        public String getKey() {
+            return grade + gender;
         }
 
         @Override
