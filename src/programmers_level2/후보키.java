@@ -1,73 +1,66 @@
 package programmers_level2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class 후보키 {
-    public static void main(String[] args) {
-        int solution = solution(new String[][]{{"100", "ryan", "music", "2"}
-                , {"200", "apeach", "math", "2"}
-                , {"300", "tube", "computer", "3"}
-                , {"400", "con", "computer", "4"}
-                , {"500", "muzi", "music", "3"}
-                , {"600", "apeach", "music", "2"}});
+    List<String> candi = new ArrayList<>();
 
-//        System.out.println(solution);
-    }
-
-    static Map<String, Integer> result = new HashMap<>();
-
-    public static int solution(String[][] relation) {
+    public int solution(String[][] relation) {
         int columns = relation[0].length;
         if(columns == 1) return 1;
 
-        boolean[] checked = new boolean[columns];
-
-        for (int i = 1; i < columns; i++) {
-            combination("", relation, checked, 0, 0, i);
+        for (int i = 1; i < columns + 1; i++) {
+            boolean[] visited = new boolean[columns];
+            dfs(visited, 0, 0, i, relation);
         }
-
-        return result.keySet().size();
+        return candi.size();
     }
 
-    private static void combination(String key, String[][] relation ,boolean[] checked, int start, int depth, int r) {
-        if (depth == r) {
-
-            for (String k : result.keySet()) {
-                int count = 0;
-                for (int i = 0; i < key.length(); i++) {
-                    String sub = String.valueOf(key.charAt(i));
-                    if(k.contains(sub)) count++;
+    public void dfs(boolean[] visited, int start, int depth, int end, String[][] relation) {
+        if (depth == end) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < visited.length; i++) {
+                if (visited[i]) {
+                    sb.append(i);
                 }
-                if(count == k.length()) return;
             }
+            String key = sb.toString();
 
-            Set<String> candidateKey = new HashSet<>();
+            Map<String, Integer> map = new HashMap<>();
+
             for (int i = 0; i < relation.length; i++) {
                 StringBuilder value = new StringBuilder();
-                for (int j = 0; j < checked.length; j++) {
-                    if (checked[j]) {
+                for (int j = 0; j < visited.length; j++) {
+                    if (visited[j]) {
                         value.append(relation[i][j]);
                     }
                 }
-                candidateKey.add(value.toString());
+                if(map.containsKey(value.toString())) return;
+                else map.put(value.toString(), 0);
             }
 
-            if(candidateKey.size() == relation.length){
-                result.put(key, 1);
+            for (String existKey : candi) {
+                int count = 0;
+                for (int i = 0; i < existKey.length(); i++) {
+                    String condition = String.valueOf(existKey.charAt(i));
+                    if(key.contains(condition)) count++;
+                }
+                if(count == existKey.length()) return;
             }
-
+            candi.add(key);
             return;
         }
 
-        for (int i = start; i < checked.length; i++) {
-            if (!checked[i]) {
-                checked[i] = true;
-                combination(key + i, relation, checked, i + 1, depth + 1, r);
-                checked[i] = false;
-            }
+        for (int i = start; i < visited.length; i++) {
+            if (visited[i]) continue;
+
+            visited[i] = true;
+            dfs(visited, i, depth + 1, end, relation);
+            visited[i] = false;
         }
+
     }
 }
