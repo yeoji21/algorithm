@@ -8,7 +8,7 @@ public class 배달_다익스트라 {
 
     public int solution(int N, int[][] road, int K) {
         int result = 0;
-        edgeList = new ArrayList<>[N + 1];
+        edgeList = new ArrayList[N + 1];
         distance = new int[N + 1];
         Arrays.fill(distance, Integer.MAX_VALUE);
         for (int i = 0; i < N + 1; i++) {
