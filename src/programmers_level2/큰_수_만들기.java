@@ -3,13 +3,6 @@ package programmers_level2;
 import java.util.Stack;
 
 public class 큰_수_만들기 {
-    public static void main(String[] args) {
-        String solution = solution("1924", 3);
-//        String solution = solution("1231234", 3);
-//        String solution = solution("4177252841", 4);
-//        String solution = solution("4177252841", 7);
-        System.out.println(solution);
-    }
 
     public static String solution(String number, int k) {
         int pick = number.length() - k;
