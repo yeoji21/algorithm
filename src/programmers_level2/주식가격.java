@@ -3,18 +3,15 @@ package programmers_level2;
 import java.util.Stack;
 
 public class 주식가격 {
-    public static void main(String[] args) {
-        solution(new int[]{1, 2, 3, 2, 3});
-    }
-
-    public static int[] solution(int[] prices) {
-        Stack<Integer> stack = new Stack<>();
+    // 스택에 값이 아닌 인덱스를 넣을 생각을 못함
+    public int[] solution(int[] prices) {
         int[] result = new int[prices.length];
+        Stack<Integer> stack = new Stack<>();
 
         for (int i = 0; i < prices.length; i++) {
-            if (!stack.isEmpty() && prices[stack.peek()] > prices[i]) {
-                int pop = stack.pop();
-                result[pop] = pop - stack.peek();
+            while (!stack.isEmpty() && prices[i] < prices[stack.peek()]) {
+                result[stack.peek()] = i - stack.peek();
+                stack.pop();
             }
             stack.push(i);
         }
