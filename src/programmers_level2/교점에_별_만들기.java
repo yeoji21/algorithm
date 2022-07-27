@@ -7,12 +7,14 @@ import java.util.List;
 public class 교점에_별_만들기 {
     public static void main(String[] args) {
         solution(new int[][]{{2, -1, 4}, {-2, -1, 4}, {0, -1, 1}, {5, -8, -12}, {5, 8, 12}});
+//        solution(new int[][]{{0, 1, -1}, {1, 0, -1}, {1, 0, 1}});
     }
 
     public static String[] solution(int[][] line) {
         List<Point> pointList = new ArrayList<>();
 
-        int max = 0;
+        long maxX = 0;
+        long maxY = 0;
         for (int i = 0; i < line.length - 1; i++) {
             double A = line[i][0];
             double B = line[i][1];
@@ -25,53 +27,51 @@ public class 교점에_별_만들기 {
                 double x = (B * F - E * D) / (A * D - B * C);
                 double y = (E * C - A * F) / (A * D - B * C);
 
-                if (x == (int) x && y == (int) y) {
-                    pointList.add(new Point((int) x, (int) y));
-                    max = Math.max(max, Math.max((int)x, (int)y));
+                if (x == (long) x && y == (long) y) {
+                    pointList.add(new Point((long) x, (long) y));
+                    maxX = Math.max(maxX, (long)x);
+                    maxY = Math.max(maxY, (long)y);
                 }
             }
         }
-        int length = max * 2 + 1;
+        long lengthX = maxX * 2 + 1;
+        long lengthY = maxY * 2 + 1;
 
-        String[][] result = new String[length][length];
-        for (int i = 0; i < result.length; i++) {
-            Arrays.fill(result[i], ".");
+        String[][] map = new String[(int)lengthX][(int)lengthY];
+        for (int i = 0; i < map.length; i++) {
+            Arrays.fill(map[i], ".");
         }
 
-        pointList.forEach(p -> System.out.println(p.x + " : " + p.y));
-
-        System.out.println("============================================");
-
+        long max = 0;
         for (int i = 0; i < pointList.size(); i++) {
-//            int x = max + pointList.get(i).x;
-//            int y = max + pointList.get(i).y;
-            int x = pointList.get(i).x;
+            long x = pointList.get(i).y;
+            if(x < 0) x *= -2;
+            else x = maxX - x;
+            max = Math.max(max, x);
 
-            if(x < 0) x *= -1;
-            else x += max;
+            long y = pointList.get(i).x;
+            y += maxX;
 
-            int y = pointList.get(i).y;
-            if(y < 0) y *= -1;
-            else y += max;
-
-            System.out.println(x + " : " + y);
-            result[x][y] = "*";
+            map[(int)x][(int)y] = "*";
         }
 
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < length; j++) {
-                System.out.print(result[i][j]);
+        String[] result = new String[(int)max + 1];
+
+        for (int i = 0; i < result.length; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < lengthY; j++) {
+                sb.append(map[i][j]);
             }
-            System.out.println();
+            result[i] = sb.toString();
         }
 
-        return new String[]{};
+        return result;
     }
 
     static class Point{
-        int x, y;
+        long x, y;
 
-        public Point(int x, int y) {
+        public Point(long x, long y) {
             this.x = x;
             this.y = y;
         }
