@@ -8,7 +8,6 @@ public class 전력망을_둘로_나누기 {
         solution(4, new int[][]{{1, 2}, {2, 3}, {3, 4}});
     }
 
-
     public static int solution(int n, int[][] wires) {
         int result = Integer.MAX_VALUE;
 
