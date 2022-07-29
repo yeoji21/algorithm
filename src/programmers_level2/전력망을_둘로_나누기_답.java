@@ -1,14 +1,14 @@
 package programmers_level2;
 
 public class 전력망을_둘로_나누기_답 {
-    private static int[] parents;
+    private static int[] union;
     public int solution(int n, int[][] wires) {
         int result = 100;
 
-        parents = new int[n + 1];
+        union = new int[n + 1];
         for (int i = 0; i < n; i++) {
             for (int j = 1; j < n + 1; j++) {
-                parents[j] = j;
+                union[j] = j;
             }
 
             for (int j = 0; j < wires.length; j++) {
@@ -21,7 +21,7 @@ public class 전력망을_둘로_나누기_답 {
 
             int one = 0;
             for (int j = 0; j < n + 1; j++) {
-                if(find(parents[j]) == 1) one++;
+                if(find(union[j]) == 1) one++;
             }
 
             result = Math.min(result, Math.abs(n - 2 * one));
@@ -39,11 +39,11 @@ public class 전력망을_둘로_나누기_답 {
             ry = temp;
         }
 
-        if(rx != ry) parents[ry] = rx;
+        if(rx != ry) union[ry] = rx;
     }
 
     private int find(int x) {
-        if(parents[x] == x) return x;
-        return parents[x] = find(parents[x]);
+        if(union[x] == x) return x;
+        return union[x] = find(union[x]);
     }
 }
