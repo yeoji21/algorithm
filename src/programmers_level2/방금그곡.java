@@ -23,10 +23,8 @@ public class 방금그곡 {
 
             String music = parsing(infos[3]);
             StringBuilder totalMusic = new StringBuilder();
-            while (totalMusic.length() < playTime) {
-                for (int i = 0; i < music.length(); i++) {
-                    totalMusic.append(music.charAt(i));
-                }
+            for (int i = 0; i < playTime; i++) {
+                totalMusic.append(music.charAt(i % music.length()));
             }
 
             if(totalMusic.toString().contains(heared))
@@ -34,7 +32,6 @@ public class 방금그곡 {
         }
 
         if(correctMusics.size() == 0) return "(None)";
-
 
         return correctMusics.stream()
                 .sorted(Comparator.comparing((Music music) -> music.playTime).reversed()
@@ -55,31 +52,11 @@ public class 방금그곡 {
     }
 
     private static String parsing(String target) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < target.length(); i++) {
-            if (i + 1 < target.length() && target.charAt(i + 1) == '#') {
-                char ch = target.charAt(i);
-                if(ch == 'C'){
-                    sb.append('1');
-                }else if(ch == 'D'){
-                    sb.append('2');
-                } else if (ch == 'F') {
-                    sb.append('3');
-                } else if (ch == 'G') {
-                    sb.append('4');
-                } else if (ch == 'A') {
-                    sb.append('5');
-                } else {
-                    throw new IllegalArgumentException();
-                }
-                i++;
-            }else{
-                sb.append(target.charAt(i));
-            }
-        }
-
-        return sb.toString();
+        target = target.replaceAll("C#", "H");
+        target = target.replaceAll("D#", "I");
+        target = target.replaceAll("F#", "J");
+        target = target.replaceAll("G#", "K");
+        return target.replaceAll("A#", "L");
     }
 
     static class Music {
