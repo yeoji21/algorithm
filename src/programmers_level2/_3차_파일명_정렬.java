@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-// TODO: 2022/08/04 다른 사람들 풀이 보기
 public class _3차_파일명_정렬 {
-    public static String[] solution(String[] files) {
+    public String[] solution(String[] files) {
         List<File> processedFile = new ArrayList<>(files.length * 2);
 
         for (int i = 0; i < files.length; i++) {
@@ -29,7 +28,7 @@ public class _3차_파일명_정렬 {
                 .toArray(String[]::new);
     }
 
-    static class File{
+    class File{
         String originalName;
         String head;
         int number;

@@ -2,6 +2,22 @@ package programmers_level2;
 
 // TODO: 2022/08/05 다른 사람 풀이 보기
 public class n진수_게임 {
+    public String solution2(int n, int t, int m, int p) {
+        StringBuilder sb = new StringBuilder();
+        StringBuilder result = new StringBuilder();
+        int num = 0;
+
+        while (sb.length() < m * t) {
+            sb.append(Integer.toString(num++, n));
+        }
+
+        for (int i = p -1 ; i < m * t; i += m) {
+            result.append(sb.charAt(i));
+        }
+
+        return result.toString().toUpperCase();
+    }
+
     public String solution(int n, int t, int m, int p) {
         StringBuilder sb = new StringBuilder();
 
