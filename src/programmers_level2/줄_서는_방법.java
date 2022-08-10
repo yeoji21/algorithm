@@ -1,18 +1,11 @@
 package programmers_level2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class 줄_서는_방법 {
-    public static void main(String[] args) {
-        int[] solution = solution2(4, 7);
-        Arrays.stream(solution)
-                .forEach(System.out::print);
-        System.out.println();
-    }
-
-    public static int[] solution2(int n, long k) {
+    // https://leeth0610.medium.com/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-%EC%88%9C%EC%97%B4-%EC%A4%84-%EC%84%9C%EB%8A%94-%EB%B0%A9%EB%B2%95-java-2f558274088
+    public int[] solution2(int n, long k) {
         int[] result = new int[n];
         List<Integer> list = new ArrayList<>(n * 2);
 
@@ -42,7 +35,7 @@ public class 줄_서는_방법 {
 
     private static List<int[]> permutations = new ArrayList<>();
 
-    public static int[] solution(int n, long k) {
+    public int[] solution(int n, long k) {
         int[] people = new int[n];
         for (int i = 0; i < people.length; i++) {
             people[i] = i + 1;
@@ -53,7 +46,7 @@ public class 줄_서는_방법 {
         return permutations.get((int)(k - 1));
     }
 
-    private static void permutation(int[] people, int[] pick, boolean[] checked, int n, int depth) {
+    private void permutation(int[] people, int[] pick, boolean[] checked, int n, int depth) {
         if (depth == n) {
             int[] value = new int[n];
             for (int i = 0; i < pick.length; i++) {
