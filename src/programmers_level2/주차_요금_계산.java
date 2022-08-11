@@ -1,9 +1,9 @@
 package programmers_level2;
 
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class 주차_요금_계산 {
     public static void main(String[] args) {
@@ -15,84 +15,47 @@ public class 주차_요금_계산 {
                 .forEach(System.out::println);
     }
 
-    //https://velog.io/@ujone/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-%EC%A3%BC%EC%B0%A8-%EC%9A%94%EA%B8%88-%EA%B3%84%EC%82%B0-JAVA
-
     public static int[] solution(int[] fees, String[] records) {
-        Map<String, Car> recordMap = new HashMap<>();
-        Map<String, Integer> times = new HashMap<>();
-        List<Integer> result = new ArrayList<>();
+        Map<String, Integer> inParking = new HashMap<>();
+        Map<String, Integer> totalTime = new TreeMap<>();
 
         for (String record : records) {
             String[] split = record.split(" ");
-            String status = split[2];
-            Car item = new Car(split[0], split[1]);
 
-            if (status.equals("IN")) {
-                recordMap.put(item.number, item);
-            } else if (status.equals("OUT")) {
-                Car car = recordMap.get(item.number);
-                long time = Math.abs(Duration.between(item.time, car.time).toMinutes());
-                times.put(car.number, times.getOrDefault(car.number, 0) + (int) time);
-                recordMap.remove(car.number);
+            if(split[2].equals("IN")){
+                inParking.put(split[1], getMinutes(split[0]));
+                if(!totalTime.containsKey(split[1]))
+                    totalTime.put(split[1], 0);
+            } else {
+                totalTime.put(split[1], totalTime.get(split[1]) + getMinutes(split[0]) - inParking.get(split[1]));
+                inParking.remove(split[1]);
             }
         }
 
-        for (String key : recordMap.keySet()) {
-            Car car = recordMap.get(key);
-            long time = Math.abs(Duration.between(LocalTime.of(23, 59), car.time).toMinutes());
-            times.put(key, times.getOrDefault(key, 0) + (int) time);
-            recordMap.remove(key);
+        for (String key : inParking.keySet()) {
+            Integer inTime = inParking.get(key);
+            totalTime.put(key, totalTime.getOrDefault(key, 0) + (23 * 60 + 59 - inTime));
         }
 
-        List<String> keyList = times.keySet()
-                .stream()
-                .sorted(Comparator.comparing(k -> k))
-                .collect(Collectors.toList());
+        int[] result = new int[totalTime.size()];
 
-        int basicTime = fees[0];
-        int basicFee = fees[1];
-        int addTime = fees[2];
-        int addFee = fees[3];
-
-        for (int i = 0; i < keyList.size(); i++) {
-            Integer totalTime = times.get(keyList.get(i));
-
-            if(totalTime <= basicTime){
-                result.add(basicFee);
+        int i = 0;
+        for (String key : totalTime.keySet()) {
+            Integer time = totalTime.get(key);
+            if(time <= fees[0]){
+                result[i++] = fees[1];
                 continue;
             }
-            int totalFee = basicFee;
-            totalTime -= basicTime;
-            totalFee += Math.ceil(totalTime / (addTime * 1.0)) * addFee;
-            result.add(totalFee);
+
+            result[i++] = (int)(Math.ceil((time - fees[0]) / (fees[2] * 1.0))) * fees[3] + fees[1];
         }
 
-        return result.stream()
-                .mapToInt(x -> x)
-                .toArray();
+        return result;
     }
 
-    static class Car{
-        LocalTime time;
-        String number;
-
-        public Car(String time, String number) {
-            String[] split = time.split(":");
-            this.time = LocalTime.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            this.number = number;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Car car = (Car) o;
-            return Objects.equals(time, car.time) && Objects.equals(number, car.number);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(time, number);
-        }
+    private static int getMinutes(String time) {
+        String[] split = time.split(":");
+        return Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]);
     }
+
 }
