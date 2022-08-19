@@ -2,18 +2,18 @@ package programmers_level2;
 
 public class 단체사진_찍기 {
     static char[] people = new char[]{'A', 'C', 'F', 'J', 'M', 'N', 'R', 'T'};
-    static int count = 0;
+    // count를 static으로 쓰니까 틀림
+    private int count = 0;
     static char[] selected = new char[8];
 
     public int solution(int n, String[] data) {
-        boolean[] visited = new boolean[8];
-        DFS(0, visited, data);
+        DFS(0, new boolean[8], data);
         return count;
     }
 
-    private static void DFS(int L, boolean[] visited, String[] data) {
+    private void DFS(int L, boolean[] visited, String[] data) {
         if (L == 8) {
-            if(check(selected, data))
+            if(check(selected.clone(), data))
                 count++;
         }else{
             for (int i = 0; i < 8; i++) {
@@ -27,7 +27,7 @@ public class 단체사진_찍기 {
         }
     }
 
-    private static boolean check(char[] selected, String[] data) {
+    private boolean check(char[] selected, String[] data) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < selected.length; i++) {
             sb.append(selected[i]);
@@ -45,10 +45,10 @@ public class 단체사진_찍기 {
                 if(Math.abs(xIdx - yIdx) != gap+1) return false;
             }
             else if(op == '>'){
-                if(!(Math.abs(xIdx - yIdx) > gap+1)) return false;
+                if(Math.abs(xIdx - yIdx) <= gap+1) return false;
             }
             else if(op == '<'){
-                if(!(Math.abs(xIdx - yIdx) < gap+1)) return false;
+                if(Math.abs(xIdx - yIdx) >= gap+1) return false;
             }
         }
         return true;
