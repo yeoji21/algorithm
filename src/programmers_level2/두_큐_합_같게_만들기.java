@@ -4,19 +4,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class 두_큐_합_같게_만들기 {
-    public static void main(String[] args) {
-//        int solution = solution2(new int[]{3, 2, 7, 2}, new int[]{4, 6, 5, 1});
-        int solution = solution2(new int[]{1, 2, 1, 2}, new int[]{1, 10, 1, 2});
-//        int solution = solution2(new int[]{1, 1}, new int[]{1, 5});
-
-        System.out.println(solution);
-    }
-
     public static int solution2(int[] queue1, int[] queue2) {
         Queue<Integer> queueA = new LinkedList<>();
         Queue<Integer> queueB = new LinkedList<>();
-        int sumA = 0;
-        int sumB = 0;
+        long sumA = 0;
+        long sumB = 0;
         int result = 0;
 
         for (int i = 0; i < queue1.length; i++) {
@@ -52,7 +44,7 @@ public class 두_큐_합_같게_만들기 {
 
     public static int solution(int[] queue1, int[] queue2) {
         int[] total = new int[queue1.length * 2];
-        int sum = 0;
+        long sum = 0;
 
         for (int i = 0; i < queue1.length; i++) {
             total[i] = queue1[i];
@@ -63,12 +55,12 @@ public class 두_큐_합_같게_만들기 {
             sum += queue2[i];
         }
         if(sum % 2 == 1) return -1;
-        int target = sum / 2;
+        long target = sum / 2;
         int startIdx = 0;
         int endIdx = queue1.length - 1;
         int answer = 0;
 
-        int firstQueueSum = 0;
+        long firstQueueSum = 0;
         for (int i = startIdx; i < endIdx + 1; i++) {
             firstQueueSum += total[i];
         }
