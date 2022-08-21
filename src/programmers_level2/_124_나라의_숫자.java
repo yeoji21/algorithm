@@ -1,7 +1,12 @@
 package programmers_level2;
 
 public class _124_나라의_숫자 {
-    public String solution(int n) {
+    public static void main(String[] args) {
+        String solution = solution(12);
+        System.out.println(solution);
+    }
+
+    public static String solution(int n) {
         String[] num = {"4", "1", "2"};
         StringBuilder sb = new StringBuilder();
 

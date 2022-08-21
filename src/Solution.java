@@ -3,13 +3,19 @@ public class Solution {
 
     }
 
-    public long solution(int w, int h) {
-        long result = 0;
+    private int answer = 0;
+    public int solution(int[] numbers, int target) {
+        DFS(numbers, target, 0, numbers[0]);
+        return answer;
+    }
 
-        for (int i = 0; i < w; i++) {
-            result += i * (long) h / w;
+    private void DFS(int[] numbers, int target, int L, int now) {
+        if (L == numbers.length - 1) {
+            if(now == target) answer++;
+            return;
         }
 
-        return result * 2;
+        DFS(numbers, target, L + 1, now + numbers[L]);
+        DFS(numbers, target, L + 1, now - numbers[L]);
     }
 }

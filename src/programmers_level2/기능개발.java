@@ -3,9 +3,30 @@ package programmers_level2;
 import java.util.*;
 
 public class 기능개발 {
-    public static void main(String[] args) {
-        int[] solution = solution(new int[]{95, 90, 99, 99, 80, 99}, new int[]{1, 1, 1, 1, 1, 1});
-        Arrays.stream(solution).forEach(System.out::println);
+    public int[] solution2(int[] progresses, int[] speeds) {
+        List<Integer> result = new ArrayList<>();
+
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < progresses.length; i++) {
+            queue.add(i);
+        }
+
+        while (!queue.isEmpty()) {
+            for (int i = 0; i < progresses.length; i++) {
+                progresses[i] += speeds[i];
+            }
+
+            int count = 0;
+            while (!queue.isEmpty() && progresses[queue.peek()] >= 100) {
+                queue.poll();
+                count++;
+            }
+            if(count > 0 ) result.add(count);
+        }
+
+        return result.stream()
+                .mapToInt(x -> x)
+                .toArray();
     }
 
     public static int[] solution(int[] progresses, int[] speeds) {
