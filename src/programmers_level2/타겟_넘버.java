@@ -13,7 +13,7 @@ public class 타겟_넘버 {
         }
         else{
             dfs(numbers, depth + 1, target, sum + numbers[depth]);
-            dfs(numbers, depth + 1, target, sum + (numbers[depth] * -1));
+            dfs(numbers, depth + 1, target, sum - numbers[depth]);
         }
     }
 }
