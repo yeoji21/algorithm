@@ -1,59 +1,52 @@
+import java.util.*;
+
 public class Solution {
-    public int[] solution(int rows, int columns, int[][] queries) {
-        int[][] matrix = new int[rows][columns];
-        int[] answer = new int[queries.length];
+    private Map<String, Integer> map = new HashMap<>();
+    private int maxCount = 0;
+    public String[] solution(String[] orders, int[] course) {
+        List<String> answer = new ArrayList<>();
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                matrix[i][j] = i * columns + j + 1;
+        for (int courseCount : course) {
+            maxCount = 0;
+            for (String order : orders) {
+                char[] chars = order.toCharArray();
+                Arrays.sort(chars);
+                String value = new String(chars);
+                combi(value, courseCount, 0, new boolean[order.length()]);
             }
-        }
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                System.out.print(matrix[i][j] + " ");
+            if(map.isEmpty()) continue;
+            if(maxCount < 2) continue;
+            for (String key : map.keySet()) {
+                if(map.get(key) == maxCount) {
+                    answer.add(key);
+                }
             }
-            System.out.println();
+            map.clear();
         }
 
-        for (int i = 0; i < queries.length; i++) {
-            answer[i] = rotate(matrix, queries[i]);
-        }
-
-        return answer;
+        return answer.stream()
+                .sorted()
+                .toArray(String[]::new);
     }
 
-    private int rotate(int[][] matrix, int[] query) {
+    private void combi(String order, int L, int start, boolean[] checked) {
+        if (L == 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < checked.length; i++) {
+                if(checked[i]) sb.append(order.charAt(i));
+            }
 
-        for (int i = 0; i < query.length; i++) {
-            query[i] = query[i] - 1;
+            map.put(sb.toString(), map.getOrDefault(sb.toString(), 0) + 1);
+            maxCount = Math.max(maxCount, map.get(sb.toString()));
+            return;
         }
 
-        int temp = matrix[query[0]][query[1]];
-        int min = temp;
-
-        for (int i = query[0]; i < query[2]; i++) {
-            matrix[i][query[1]] = matrix[i + 1][query[1]];
-            min = Math.min(min, matrix[i][query[1]]);
+        for (int i = start; i < order.length(); i++) {
+            if(checked[i]) continue;
+            checked[i] = true;
+            combi(order, L - 1, i + 1, checked);
+            checked[i] = false;
         }
-
-        for (int i = query[1]; i < query[3]; i++) {
-            matrix[query[2]][i] = matrix[query[2]][i + 1];
-            min = Math.min(min, matrix[query[2]][i]);
-        }
-
-        for (int i = query[2]; i > query[0]; i--) {
-            matrix[i][query[3]] = matrix[i - 1][query[3]];
-            min = Math.min(min, matrix[i][query[3]]);
-        }
-
-        for (int i = query[3]; i > query[1] + 1; i--) {
-            matrix[query[0]][i] = matrix[query[0]][i - 1];
-            min = Math.min(min, matrix[query[0]][i]);
-        }
-
-        matrix[query[0]][query[1] + 1] = temp;
-
-        return min;
     }
 }
