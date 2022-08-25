@@ -1,52 +1,52 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Solution {
-    private Map<String, Integer> map = new HashMap<>();
-    private int maxCount = 0;
-    public String[] solution(String[] orders, int[] course) {
-        List<String> answer = new ArrayList<>();
+    public static void main(String[] args) {
+        int solution = solution("FRANCE", "french");
+//        int solution = solution("handshake", "shake hands");
+//        int solution = solution("aa1+aa2", "AAAA12");
+//        int solution = solution("E=M*C^2", "e=m*c^2");
 
-        for (int courseCount : course) {
-            maxCount = 0;
-            for (String order : orders) {
-                char[] chars = order.toCharArray();
-                Arrays.sort(chars);
-                String value = new String(chars);
-                combi(value, courseCount, 0, new boolean[order.length()]);
-            }
-
-            if(map.isEmpty()) continue;
-            if(maxCount < 2) continue;
-            for (String key : map.keySet()) {
-                if(map.get(key) == maxCount) {
-                    answer.add(key);
-                }
-            }
-            map.clear();
-        }
-
-        return answer.stream()
-                .sorted()
-                .toArray(String[]::new);
+        System.out.println(solution);
     }
 
-    private void combi(String order, int L, int start, boolean[] checked) {
-        if (L == 0) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < checked.length; i++) {
-                if(checked[i]) sb.append(order.charAt(i));
+    private static final Pattern PATTERN = Pattern.compile("[^A-Z]");
+    public static int solution(String str1, String str2) {
+        str1 = str1.toUpperCase();
+        str2 = str2.toUpperCase();
+
+        Map<String, Integer> map1 = toMap(str1);
+        int map1Size = map1.values().stream().mapToInt(x -> x).sum();
+
+        Map<String, Integer> map2 = toMap(str2);
+        int map2Size = map2.values().stream().mapToInt(x -> x).sum();
+
+        int commonElements = 0;
+        for (String key : map1.keySet()) {
+            while (map2.containsKey(key) && map1.get(key) > 0 && map2.get(key) > 0){
+                commonElements++;
+                map1.put(key, map1.get(key) - 1);
+                map2.put(key, map2.get(key) - 1);
             }
-
-            map.put(sb.toString(), map.getOrDefault(sb.toString(), 0) + 1);
-            maxCount = Math.max(maxCount, map.get(sb.toString()));
-            return;
         }
 
-        for (int i = start; i < order.length(); i++) {
-            if(checked[i]) continue;
-            checked[i] = true;
-            combi(order, L - 1, i + 1, checked);
-            checked[i] = false;
+        if(map1Size - commonElements == 0 && map2Size - commonElements == 0) return 65536;
+
+        double result = (double) commonElements / (double) (map1Size - commonElements + map2Size);
+        return (int)(result * 65536);
+    }
+
+    private static Map<String, Integer> toMap(String target) {
+        Map<String, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < target.length() - 1; i++) {
+            String substring = target.substring(i, i + 2);
+            if(PATTERN.matcher(substring).find()) continue;
+            map.put(substring, map.getOrDefault(substring, 0) + 1);
         }
+
+        return map;
     }
 }
