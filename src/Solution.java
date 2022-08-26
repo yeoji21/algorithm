@@ -1,52 +1,71 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Solution {
-    public static void main(String[] args) {
-        int solution = solution("FRANCE", "french");
-//        int solution = solution("handshake", "shake hands");
-//        int solution = solution("aa1+aa2", "AAAA12");
-//        int solution = solution("E=M*C^2", "e=m*c^2");
+    public int[] solution(String[][] places) {
+        int[] answer = new int[5];
+        for (int i = 0; i < places.length; i++) {
+            answer[i] = checkRoom(places[i]) ? 1 : 0;
+        }
 
-        System.out.println(solution);
+        return answer;
     }
 
-    private static final Pattern PATTERN = Pattern.compile("[^A-Z]");
-    public static int solution(String str1, String str2) {
-        str1 = str1.toUpperCase();
-        str2 = str2.toUpperCase();
+    private boolean checkRoom(String[] place) {
+        char[][] room = new char[5][5];
+        for (int i = 0; i < place.length; i++) {
+            String row = place[i];
+            room[i] = row.toCharArray();
+        }
 
-        Map<String, Integer> map1 = toMap(str1);
-        int map1Size = map1.values().stream().mapToInt(x -> x).sum();
-
-        Map<String, Integer> map2 = toMap(str2);
-        int map2Size = map2.values().stream().mapToInt(x -> x).sum();
-
-        int commonElements = 0;
-        for (String key : map1.keySet()) {
-            while (map2.containsKey(key) && map1.get(key) > 0 && map2.get(key) > 0){
-                commonElements++;
-                map1.put(key, map1.get(key) - 1);
-                map2.put(key, map2.get(key) - 1);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(room[i][j] == 'P')
+                    if(!calcDistance(room, i, j))
+                        return false;
             }
         }
 
-        if(map1Size - commonElements == 0 && map2Size - commonElements == 0) return 65536;
-
-        double result = (double) commonElements / (double) (map1Size - commonElements + map2Size);
-        return (int)(result * 65536);
+        return true;
     }
 
-    private static Map<String, Integer> toMap(String target) {
-        Map<String, Integer> map = new HashMap<>();
+    private final int[] dx = {1, 0, -1, 0};
+    private final int[] dy = {0, 1, 0, -1};
+    private boolean calcDistance(char[][] room, int x, int y) {
+        Queue<Point> queue = new LinkedList<>();
+        boolean[][] checked = new boolean[5][5];
+        queue.add(new Point(x, y));
+        checked[x][y] = true;
 
-        for (int i = 0; i < target.length() - 1; i++) {
-            String substring = target.substring(i, i + 2);
-            if(PATTERN.matcher(substring).find()) continue;
-            map.put(substring, map.getOrDefault(substring, 0) + 1);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                Point now = queue.poll();
+                for (int d = 0; d < 4; d++) {
+                    int nx = now.x + dx[d];
+                    int ny = now.y + dy[d];
+
+                    int distance = Math.abs(x - nx) + Math.abs(y - ny);
+                    if(distance > 2) continue;
+                    if(nx >= 5 || nx < 0 || ny >= 5 || ny < 0) continue;
+                    if(checked[nx][ny] || room[nx][ny] == 'X') continue;
+                    if(room[nx][ny] == 'P') return false;
+
+                    checked[nx][ny] = true;
+                    queue.add(new Point(nx, ny));
+                }
+            }
         }
 
-        return map;
+        return true;
+    }
+
+    static class Point{
+        int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

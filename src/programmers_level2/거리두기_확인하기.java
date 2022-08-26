@@ -4,39 +4,38 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class 거리두기_확인하기 {
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
+    private final static int[] dx = {0, 1, 0, -1};
+    private final static int[] dy = {1, 0, -1, 0};
 
     public static int[] solution(String[][] places) {
         int[] result = new int[5];
         for (int p = 0; p < places.length; p++) {
-            char[][] map = initializeMap(places[p]);
-            result[p] = inspectRoom(map) ? 1 : 0;
+            result[p] = inspectRoom(initializeMap(places[p])) ? 1 : 0;
         }
 
         return result;
     }
 
     private static char[][] initializeMap(String[] places) {
-        char[][] map = new char[5][5];
-        for (int i = 0; i < map.length; i++) {
-            map[i] = places[i].toCharArray();
+        char[][] room = new char[5][5];
+        for (int i = 0; i < room.length; i++) {
+            room[i] = places[i].toCharArray();
         }
-        return map;
+        return room;
     }
 
-    private static boolean inspectRoom(char[][] map) {
+    private static boolean inspectRoom(char[][] room) {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                if(map[i][j] == 'P') {
-                    if(!distanceCheck(map, i, j)) return false;
+                if(room[i][j] == 'P') {
+                    if(!distanceCheck(room, i, j)) return false;
                 }
             }
         }
         return true;
     }
 
-    private static boolean distanceCheck(char[][] map, int x, int y) {
+    private static boolean distanceCheck(char[][] room, int x, int y) {
         Queue<Point> queue = new LinkedList<>();
         boolean[][] checked = new boolean[5][5];
         queue.add(new Point(x, y));
@@ -56,9 +55,10 @@ public class 거리두기_확인하기 {
                     if(checked[nx][ny] || distance > 2) continue;
 
                     checked[nx][ny] = true;
-                    if(map[nx][ny] == 'X') continue;
-                    else if(map[nx][ny] == 'P') return false;
-                    else queue.add(new Point(nx, ny));
+                    if(room[nx][ny] == 'X') continue;
+                    if(room[nx][ny] == 'P') return false;
+
+                    queue.add(new Point(nx, ny));
                 }
             }
         }
