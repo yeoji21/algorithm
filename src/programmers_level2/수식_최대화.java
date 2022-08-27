@@ -1,77 +1,60 @@
 package programmers_level2;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class 수식_최대화 {
-    static char[][] priorities = new char[][]{
+    private char[][] priorities = new char[][]{
+            {'*', '+', '-'},
             {'+', '-', '*'},
             {'+', '*', '-'},
-            {'*', '-', '+'},
-            {'*', '+', '-'},
+            {'-', '*', '+'},
             {'-', '+', '*'},
-            {'-', '*', '+'}
+            {'*', '-', '+'}
     };
 
     public long solution(String expression) {
-        List<Long> numbers = Arrays.stream(expression.split("\\D")).map(Long::parseLong).collect(Collectors.toList());
-        Map<Character, List<Integer>> map = new HashMap<>();
+        List<Long> numbers = new LinkedList<>();
+        List<Character> operators = new LinkedList<>();
 
-        int count = 0;
-        for (int i = 0; i < expression.length(); i++) {
-            char ch = expression.charAt(i);
-            if(!Character.isDigit(ch)) {
-                List<Integer> list = map.get(ch);
-                if(list == null) list = new ArrayList<>();
-                list.add(count++);
-                map.put(ch, list);
-            }
+        for (String s : expression.split("\\D"))
+            numbers.add(Long.parseLong(s));
+
+        for (String s : expression.split("\\d+")) {
+            if(s.isBlank()) continue;
+            operators.add(s.charAt(0));
         }
 
-        long maxPrize = 0;
+        long maxValue = 0;
         for (int i = 0; i < priorities.length; i++) {
-            long prize = getMaxPrize(new ArrayList<>(numbers), copyMap(map), priorities[i]);
-            maxPrize = Math.max(maxPrize, prize);
+            long value = calculateExpression(priorities[i], new ArrayList<>(numbers), new ArrayList<>(operators));
+            maxValue = Math.max(Math.abs(value), maxValue);
         }
 
-        return maxPrize;
+        return maxValue;
     }
 
-    private static long getMaxPrize(List<Long> numbers, Map<Character, List<Integer>> operations, char[] priority) {
-        for (int i = 0; i < priority.length; i++) {
-            List<Integer> idx = operations.get(priority[i]);
-            if(idx == null) continue;
-            for (int j = 0; j < idx.size(); j++) {
-                Integer index = idx.get(j);
-                if(numbers.size() == 1) return numbers.get(0) < 0 ? numbers.get(0) * -1 : numbers.get(0);
+    private static long calculateExpression(char[] priority, List<Long> numbers, List<Character> operators) {
+        long sum = 0;
 
-                long result = calcalate(numbers.get(index), priority[i], numbers.get(index+1));
-                numbers.remove(index+1);
-                numbers.set(index, result);
-
-                for (Map.Entry<Character, List<Integer>> entry : operations.entrySet()) {
-                    List<Integer> list = operations.get(entry.getKey());
-                    for (int n = 0; n < list.size(); n++) {
-                        if(list.get(n) > index)
-                            list.set(n, list.get(n) - 1);
-                    }
-                }
+        for (char op : priority) {
+            while (operators.contains(op)) {
+                int index = operators.indexOf(op);
+                long value = calc(op, numbers.get(index), numbers.get(index + 1));
+                sum = value;
+                numbers.set(index, value);
+                numbers.remove(index + 1);
+                operators.remove(index);
             }
         }
-        return numbers.get(0) < 0 ? numbers.get(0) * -1 : numbers.get(0);
+
+        return sum;
     }
 
-    private Map<Character, List<Integer>> copyMap(Map<Character, List<Integer>> map) {
-        Map<Character, List<Integer>> copy = new HashMap<>();
-        for (Map.Entry<Character, List<Integer>> entry : map.entrySet()) {
-            copy.put(entry.getKey(), new ArrayList<>(entry.getValue()));
-        }
-        return copy;
-    }
-
-    private static long calcalate(long x, char op, long y) {
-        if (op == '*') return x * y;
-        else if (op == '+') return x + y;
-        else return x - y;
+    private static long calc(char op, long x, long y) {
+        if(op == '+') return x + y;
+        else if (op == '-') return x - y;
+        else return x * y;
     }
 }
