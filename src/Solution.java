@@ -1,58 +1,49 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Solution {
-    private char[][] priorities = new char[][]{
-            {'*', '+', '-'},
-            {'+', '-', '*'},
-            {'+', '*', '-'},
-            {'-', '*', '+'},
-            {'-', '+', '*'},
-            {'*', '-', '+'}
-    };
+    private int[] dx = {1, 0, -1, 0};
+    private int[] dy = {0, -1, 0, 1};
+    private int X, Y;
+    private boolean[][][] matrix;
+    public int[] solution(String[] grid) {
+        X = grid.length;
+        Y = grid[0].length();
+        matrix = new boolean[X][Y][4];
+        List<Integer> answer = new ArrayList<>();
 
-    public long solution(String expression) {
-        List<Long> numbers = new LinkedList<>();
-        List<Character> operators = new LinkedList<>();
-
-        for (String s : expression.split("\\D"))
-            numbers.add(Long.parseLong(s));
-
-        for (String s : expression.split("\\d+")) {
-            if(s.isBlank()) continue;
-            operators.add(s.charAt(0));
-        }
-
-        long maxValue = 0;
-        for (int i = 0; i < priorities.length; i++) {
-            long value = calculateExpression(priorities[i], new ArrayList<>(numbers), new ArrayList<>(operators));
-            maxValue = Math.max(Math.abs(value), maxValue);
-        }
-
-        return maxValue;
-    }
-
-    private static long calculateExpression(char[] priority, List<Long> numbers, List<Character> operators) {
-        long sum = 0;
-
-        for (char op : priority) {
-            while (operators.contains(op)) {
-                int index = operators.indexOf(op);
-                long value = calc(op, numbers.get(index), numbers.get(index + 1));
-                sum = value;
-                numbers.set(index, value);
-                numbers.remove(index + 1);
-                operators.remove(index);
+        for (int i = 0; i < X; i++) {
+            for (int j = 0; j < Y; j++) {
+                for (int d = 0; d < 4; d++) {
+                    if (!matrix[i][j][d]) {
+                        answer.add(shootLight(grid, i, j, d));
+                    }
+                }
             }
         }
 
-        return sum;
+        return answer.stream()
+                .mapToInt(x -> x)
+                .sorted()
+                .toArray();
     }
 
-    private static long calc(char op, long x, long y) {
-        if(op == '+') return x + y;
-        else if (op == '-') return x - y;
-        else return x * y;
+    private int shootLight(String[] grid, int x, int y, int d) {
+        int count = 0;
+        while (!matrix[x][y][d]) {
+            matrix[x][y][d] = true;
+            count++;
+            char direction = grid[x].charAt(y);
+            if(direction == 'L')
+                d = (d + 3) % 4;
+            else if (direction == 'R')
+                d = (d + 1) % 4;
+
+            x = (x + dx[d] + X) % X;
+            y = (y + dy[d] + Y) % Y;
+        }
+
+        return count;
     }
+
 }
