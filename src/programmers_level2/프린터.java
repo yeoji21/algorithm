@@ -1,39 +1,39 @@
 package programmers_level2;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 public class 프린터 {
     public int solution(int[] priorities, int location) {
+        List<Integer> priority = new ArrayList<>();
         Queue<Literature> queue = new LinkedList<>();
         for (int i = 0; i < priorities.length; i++) {
+            priority.add(priorities[i]);
             queue.add(new Literature(i, priorities[i]));
         }
-
-        PriorityQueue<Literature> priorityQueue = new PriorityQueue<>(Comparator.comparing((Literature l) -> -l.priority));
-        for (int i = 0; i < priorities.length; i++) {
-            priorityQueue.add(new Literature(i, priorities[i]));
-        }
+        priority.sort(Collections.reverseOrder());
 
         int count = 0;
-        while (!priorityQueue.isEmpty()) {
-            Literature literature = queue.poll();
-            if (literature.priority >= priorityQueue.peek().priority) {
-                count++;
-                priorityQueue.poll();
-                if(literature.location == location) return count;
+        while (!queue.isEmpty()){
+            Integer p = priority.get(0);
+            Literature poll = queue.poll();
+            if(poll.priority < p){
+                queue.add(poll);
+                continue;
             }
-            else{
-                queue.add(literature);
-            }
+            count++;
+            if(poll.location == location)
+                return count;
+            priority.remove(0);
         }
 
-        return count;
+        return -1;
     }
 
-    public int solution2(int[] priorities, int location) {
+    public static void main(String[] args) {
+        solution2(new int[]{1, 1, 9, 1, 1, 1}, 0);
+    }
+
+    public static int solution2(int[] priorities, int location) {
         PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
         for (int i = 0; i < priorities.length; i++) {
             queue.add(priorities[i]);
