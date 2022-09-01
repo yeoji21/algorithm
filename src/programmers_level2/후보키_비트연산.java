@@ -5,11 +5,21 @@ import java.util.HashSet;
 import java.util.List;
 
 public class 후보키_비트연산 {
+    public static void main(String[] args) {
+        solution(new String[][]{
+                {"100", "ryan", "music", "2"},
+                {"200", "apeach", "math", "2"},
+                {"300", "tube", "computer", "3"},
+                {"400", "con", "computer", "4"},
+                {"500", "muzi", "music", "3"},
+                {"600", "apeach", "music", "2"}});
+    }
     public static int solution(String[][] relation) {
         int rowSize = relation.length;
         int colSize = relation[0].length;
 
         List<Integer> result = new ArrayList<>();
+        System.out.println(1 << colSize);
 
         for (int i = 1; i < (1 << colSize); i++) {
             if (!isMinimal(i, result)) continue;
