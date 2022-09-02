@@ -19,12 +19,10 @@ public class 후보키_비트연산 {
         int colSize = relation[0].length;
 
         List<Integer> result = new ArrayList<>();
-        System.out.println(1 << colSize);
 
         for (int i = 1; i < (1 << colSize); i++) {
             if (!isMinimal(i, result)) continue;
             if (!isUnique(i, relation, rowSize, colSize)) continue;
-
             result.add(i);
         }
 
