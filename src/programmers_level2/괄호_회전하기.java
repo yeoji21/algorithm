@@ -1,45 +1,88 @@
 package programmers_level2;
 
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class 괄호_회전하기 {
     public int solution(String s) {
-        int result = 0;
+        Queue<Character> queue = new LinkedList<>();
+        for (char ch : s.toCharArray()) {
+            queue.add(ch);
+        }
+        int anwser = 0;
+        int count = 0;
+        while (count < s.length()) {
+            List<Character> list = new ArrayList<>(queue.size());
+            list.addAll(queue);
+            if(check(list)) anwser++;
 
-        for (int i = 0; i < s.length(); i++) {
-            if(validate(s)) {
-                System.out.println(s);
-                result++;
-            }
-            StringBuilder sb = new StringBuilder();
-            sb.append(s.substring(1, s.length()));
-            sb.append(s.charAt(0));
-            s = sb.toString();
+            queue.add(queue.poll());
+            count++;
         }
 
-        return result;
+        return anwser;
     }
 
-    private boolean validate(String s) {
+    private boolean check(List<Character> list) {
         Stack<Character> stack = new Stack<>();
+        int idx = 0;
+        Character poll = list.get(idx++);
+        if(isCloseCharacter(poll)) return false;
+        stack.add(poll);
 
-        for (char ch : s.toCharArray()) {
-            if (ch == '[' || ch == '(' || ch == '{') {
-                stack.push(ch);
-            }
-            else{
-                if(stack.size() == 0) return false;
-
-                Character top = stack.peek();
-                if(ch == ']' && top == '[') stack.pop();
-                else if(ch == ')' && top == '(') stack.pop();
-                else if(ch == '}' && top == '{') stack.pop();
+        while (idx < list.size()) {
+            Character ch = list.get(idx++);
+            if (isOpenCharacter(ch))
+                stack.add(ch);
+            else if (isCloseCharacter(ch) && !stack.isEmpty()) {
+                if (ch == ')' && stack.peek() == '(') stack.pop();
+                else if (ch == '}' && stack.peek() == '{') stack.pop();
+                else if (ch == ']' && stack.peek() == '[') stack.pop();
                 else return false;
             }
+            else return false;
         }
 
         return stack.size() == 0;
     }
 
+    private boolean isOpenCharacter(Character ch) {
+        return ch == '(' || ch == '{' || ch == '[';
+    }
 
+    private boolean isCloseCharacter(Character poll) {
+        return poll == ')' || poll == '}' || poll == ']';
+    }
+
+
+    public static int solution2(String s) {
+        Queue<Character> queue = new LinkedList<>();
+        for (char ch : s.toCharArray()) {
+            queue.add(ch);
+        }
+        int anwser = 0;
+        int count = 0;
+        while (count < s.length()) {
+            String collect = queue.stream().map(String::valueOf)
+                    .collect(Collectors.joining());
+            if(check(collect)) anwser++;
+
+            queue.add(queue.poll());
+            count++;
+        }
+
+        return anwser;
+    }
+
+    private static boolean check(String target) {
+        int before;
+        do {
+            before = target.length();
+            target = target.replace("[]", "");
+            target = target.replace("{}", "");
+            target = target.replace("()", "");
+        } while (before != target.length());
+
+        return target.length() == 0;
+    }
 }
