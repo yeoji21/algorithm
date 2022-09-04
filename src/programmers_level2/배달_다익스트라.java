@@ -49,9 +49,7 @@ public class 배달_다익스트라 {
                 }
             }
         }
-
     }
-
 
     class Edge {
         int vertex;
