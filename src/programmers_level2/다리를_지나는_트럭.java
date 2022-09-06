@@ -4,6 +4,42 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class 다리를_지나는_트럭 {
+    public int solution2(int bridge_length, int weight, int[] truck_weights) {
+        Queue<Integer> waitingTrucks = new LinkedList<>();
+        Queue<Truck> movingTructks = new LinkedList<>();
+        for (int truck : truck_weights) {
+            waitingTrucks.add(truck);
+        }
+        int answer = 0;
+        int weightOnBridge = 0;
+
+        do {
+            answer++;
+            while (!movingTructks.isEmpty() && answer - movingTructks.peek().arrivedTime >= bridge_length) {
+                Truck truck = movingTructks.poll();
+                weightOnBridge -= truck.weight;
+            }
+
+            if (!waitingTrucks.isEmpty() && weightOnBridge + waitingTrucks.peek() <= weight) {
+                Integer poll = waitingTrucks.poll();
+                movingTructks.add(new Truck(poll, answer));
+                weightOnBridge += poll;
+            }
+
+        } while (!waitingTrucks.isEmpty() || !movingTructks.isEmpty());
+
+        return answer;
+    }
+
+    static class Truck{
+        int weight;
+        int arrivedTime;
+
+        public Truck(int weight, int arrivedTime) {
+            this.weight = weight;
+            this.arrivedTime = arrivedTime;
+        }
+    }
     public int solution(int bridge_length, int weight, int[] truck_weights) {
         Queue<Integer> truckOnBridge = new LinkedList<>();
         int bridgeWeight = 0;
