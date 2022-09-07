@@ -5,81 +5,64 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class 주차_요금_계산2 {
-    public static void main(String[] args) {
-        int[] solution = solution(new int[]{180, 5000, 10, 600},
-                new String[]{"05:34 5961 IN", "06:00 0000 IN", "06:34 0000 OUT", "07:59 5961 OUT", "07:59 0148 IN",
-                        "18:59 0000 IN", "19:09 0148 OUT", "22:59 5961 IN", "23:00 5961 OUT"});
+    // TODO: 2022/09/07 해쉬맵 쓰고 정렬하는 것보다 트리맵 쓰는게 훨씬 빠름
+    public int[] solution(int[] fees, String[] records) {
+        int basicTime = fees[0];
+        int basePrice = fees[1];
+        int addTime = fees[2];
+        int addPrice = fees[3];
 
-        Arrays.stream(solution)
-                .forEach(System.out::println);
-    }
-
-    public static int[] solution(int[] fees, String[] records) {
-        Map<String, Car> recordMap = new HashMap<>();
-        Map<String, Integer> times = new TreeMap<>();
+        Map<String, LocalTime> inParking = new HashMap<>();
+//        Map<String, Integer> totalParkingTime = new HashMap<>();
+        Map<String, Integer> totalParkingTime = new TreeMap<>();
 
         for (String record : records) {
-            String[] split = record.split(" ");
-            String status = split[2];
-            Car item = new Car(split[0], split[1]);
+            String[] commands = record.split(" ");
+            LocalTime localTime = getLocalTime(commands);
+            String carNumber = commands[1];
 
-            if (status.equals("IN")) {
-                recordMap.put(item.number, item);
+            if (commands[2].equals("IN")) {
+                inParking.put(carNumber, localTime);
             } else {
-                Car car = recordMap.get(item.number);
-                long time = Math.abs(Duration.between(item.time, car.time).toMinutes());
-                times.put(car.number, times.getOrDefault(car.number, 0) + (int) time);
-                recordMap.remove(car.number);
+                int parkingTime = getParkingTime(inParking, localTime, carNumber);
+                totalParkingTime.put(carNumber, totalParkingTime.getOrDefault(carNumber, 0) + parkingTime);
+                inParking.remove(carNumber);
             }
         }
 
-        for (String key : recordMap.keySet()) {
-            Car car = recordMap.get(key);
-            long time = Math.abs(Duration.between(LocalTime.of(23, 59), car.time).toMinutes());
-            times.put(key, times.getOrDefault(key, 0) + (int) time);
+        for (String carNumber : inParking.keySet()) {
+            int parkingTime = getParkingTime(inParking, LocalTime.of(23, 59), carNumber);
+            totalParkingTime.put(carNumber, totalParkingTime.getOrDefault(carNumber, 0) + parkingTime);
         }
 
-        int[] result = new int[times.size()];
+//        List<String> sortedCarNumbers = totalParkingTime.keySet()
+//                .stream()
+//                .sorted()
+//                .collect(Collectors.toList());
 
-        int basicTime = fees[0];
-        int basicFee = fees[1];
-        int addTime = fees[2];
-        int addFee = fees[3];
+        int[] answer = new int[totalParkingTime.size()];
+        int idx = 0;
 
-        int i = 0;
-        for (String key : times.keySet()) {
-            Integer totalTime = times.get(key);
-            result[i] = basicFee;
-            if (totalTime > basicTime) {
-                result[i] += Math.ceil((totalTime - basicTime)/ (addTime * 1.0)) * addFee;
+        for (String carNumber : totalParkingTime.keySet()) {
+            int totalPrice = basePrice;
+            Integer parkingTime = totalParkingTime.get(carNumber);
+            parkingTime -= basicTime;
+            while (parkingTime > 0) {
+                parkingTime -= addTime;
+                totalPrice += addPrice;
             }
-            i++;
+            answer[idx++] = totalPrice;
         }
 
-        return result;
+        return answer;
     }
 
-    static class Car{
-        LocalTime time;
-        String number;
+    private int getParkingTime(Map<String, LocalTime> inParking, LocalTime localTime, String carNumber) {
+        return (int) Duration.between(inParking.get(carNumber), localTime).toMinutes();
+    }
 
-        public Car(String time, String number) {
-            String[] split = time.split(":");
-            this.time = LocalTime.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            this.number = number;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Car car = (Car) o;
-            return Objects.equals(time, car.time) && Objects.equals(number, car.number);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(time, number);
-        }
+    private LocalTime getLocalTime(String[] commands) {
+        String[] times = commands[0].split(":");
+        return LocalTime.of(Integer.parseInt(times[0]), Integer.parseInt(times[1]));
     }
 }
