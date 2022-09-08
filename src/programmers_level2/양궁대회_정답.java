@@ -3,12 +3,6 @@ package programmers_level2;
 import java.util.*;
 
 public class 양궁대회_정답 {
-    public static void main(String[] args) {
-        int[] solution = solution(5, new int[]{2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0});
-//        int[] solution = solution(9, new int[]{0, 0, 1, 2, 0, 1, 1, 1, 1, 1, 1});
-        Arrays.stream(solution)
-                .forEach(s -> System.out.print(s + " "));
-    }
     private static List<int[]> list = new ArrayList<>();
     private static int maxGap = -1;
     private static int[] ryan;

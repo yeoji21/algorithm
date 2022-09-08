@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class 주차_요금_계산2 {
-    // TODO: 2022/09/07 해쉬맵 쓰고 정렬하는 것보다 트리맵 쓰는게 훨씬 빠름
+    // 2022/09/07 해쉬맵 쓰고 정렬하는 것보다 트리맵 쓰는게 훨씬 빠름
     public int[] solution(int[] fees, String[] records) {
         int basicTime = fees[0];
         int basePrice = fees[1];

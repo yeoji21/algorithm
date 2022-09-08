@@ -1,70 +1,78 @@
 package programmers_level2;
 
-import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class 양궁대회 {
-    public static void main(String[] args) {
-//        int[] solution = solution(5, new int[]{2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0});
-        int[] solution = solution(9, new int[]{0, 0, 1, 2, 0, 1, 1, 1, 1, 1, 1});
-        Arrays.stream(solution)
-                .forEach(System.out::println);
+    private Map<Integer, int[]> result;
+    public int[] solution(int n, int[] info) {
+        result = new TreeMap<>(Comparator.reverseOrder());
+
+        DFS(n, info, new int[info.length], 10);
+        if(result.size() == 0)
+            return new int[]{-1};
+
+        Map.Entry<Integer, int[]> entry = result.entrySet().iterator().next();
+        return result.get(entry.getKey());
     }
 
-    // 낮은 점수가 많이 포함된 결과 체크 로직 추가해야 함
-    public static int[] solution(int n, int[] info) {
-        int maxScore = Integer.MIN_VALUE;
-        int[] result = new int[info.length];
 
-        for (int i = 10; i >= 0; i--) {
-            int remainArrows = n;
-            int[] lion = new int[info.length];
-            for (int j = i; j >= 0 && remainArrows > 0; j--) {
-                int shot = info[10 - j] + 1;
-                if(remainArrows - shot < 0) continue;
-                remainArrows -= shot;
-                lion[10 - j] = shot;
-                if(remainArrows == 0) break;
-            }
-            int gap = calcScore(lion, info);
-
-            Arrays.stream(lion).forEach(s -> System.out.print(s + " "));
-            System.out.println();
-
-            if(gap >= maxScore) {
-                boolean flag = true;
-//                Arrays.stream(result).forEach(s -> System.out.print(s + " "));
-//                System.out.println();
-//
-//                Arrays.stream(lion).forEach(s -> System.out.println(s + " "));
-//                System.out.println();
-
-                if(gap == maxScore) {
-                    for (int k = lion.length - 1; k >= 1; k--) {
-                        if (lion[k] < result[k]) {
-                            flag = false;
-                            break;
-                        }
-                    }
+    private void DFS(int remain, int[] apeach, int[] lion, int round) {
+        if (remain == 0) {
+            int gap = calculateGap(apeach, lion);
+            if(gap > 0) {
+                if(result.containsKey(gap)) {
+                    int[] answer = getAnswer(lion, result.get(gap));
+                    result.put(gap, answer.clone());
                 }
-                if (!flag) continue;
-                maxScore = gap;
-                result = Arrays.copyOf(lion, lion.length);
+                else
+                    result.put(gap, lion.clone());
             }
-        }
 
-        return maxScore == -1 ? new int[]{-1} : result;
+            return;
+        }
+        if(round == 0 && remain > 0){
+            lion[10] = remain;
+            DFS(0, apeach, lion, 0);
+            lion[10] = 0;
+            return;
+        }
+        if(round - 1 < 0) return;
+
+        DFS(remain, apeach, lion, round - 1);
+        int idx = 10 - round;
+        int arrows = apeach[idx] + 1;
+        if(remain - arrows >= 0) {
+            lion[idx] = arrows;
+            DFS(remain - arrows, apeach, lion, round - 1);
+            lion[idx] = 0;
+        }
     }
 
-    private static int calcScore(int[] lion, int[] apeach) {
-        int result = 0;
-        for (int i = 0; i < lion.length; i++) {
-            int roundPoint = 10 - i;
-            if(lion[i] == 0 && apeach[i] == 0) continue;
-            if(lion[i] > apeach[i])
-                result += roundPoint;
-            else
-                result -= roundPoint;
+    private int[] getAnswer(int[] lion, int[] before) {
+        for (int i = lion.length - 1; i >= 0; i--) {
+            if(lion[i] == before[i]) continue;
+
+            if(lion[i] > before[i]) return lion;
+            else return before;
         }
-        return result;
+
+        return null;
+    }
+
+    private int calculateGap(int[] apeach, int[] lion) {
+        int apeachScore = 0;
+        int lionScore = 0;
+
+        for (int i = 0; i < apeach.length; i++) {
+            int score = 10 - i;
+            if(apeach[i] == 0 && lion[i] == 0) continue;
+            if(apeach[i] >= lion[i])
+                apeachScore += score;
+            else lionScore += score;
+        }
+
+        return lionScore - apeachScore;
     }
 }
