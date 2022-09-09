@@ -1,59 +1,51 @@
 package programmers_level2;
 
-import java.util.*;
+import java.util.Arrays;
 
 public class 양궁대회_정답 {
-    private static List<int[]> list = new ArrayList<>();
-    private static int maxGap = -1;
-    private static int[] ryan;
-    private static int[] apeach;
-
-    public static int[] solution(int n, int[] info) {
-        ryan = new int[info.length];
-        apeach = info;
-
-        dfs(n, 0, 0);
-        if(maxGap == -1) return new int[]{-1};
-
-        Collections.sort(list, (o1, o2) -> {
-            for (int i = 10; i >= 0; i--) {
-                if (o1[i] != o2[i]) return o2[i] - o1[i];
-            }
-            return 0;
-        });
-
-        return list.get(0);
+    public static void main(String[] args) {
+        solution(5, new int[]{2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0});
     }
+    public static int[] solution(int n, int[] info) {
+        int[] answer = new int[11];
+        int[] tmp = new int[11];
+        int maxDiff = 0;
 
-    private static void dfs(int n, int depth, int start) {
-        if (depth == n) {
-            int apeachSum = 0;
-            int ryanSum = 0;
+        for (int subset = 1; subset < (1 << 10); subset++) {
+            int ryan = 0, apeach = 0, count = 0;
+            for (int i = 0; i < 10; i++) {
+                System.out.println(1 << i);
 
-            for (int i = 0; i < 11; i++) {
-                if(apeach[i] == 0 && ryan[i] == 0) continue;
-                if(apeach[i] >= ryan[i]) apeachSum += 10 - i;
-                else ryanSum += 10 - i;
-            }
-
-            if (ryanSum > apeachSum) {
-                int gap = ryanSum - apeachSum;
-                if (maxGap < gap) {
-                    maxGap = gap;
-                    list.clear();
-                    list.add(ryan.clone());
-                } else if (maxGap == gap) {
-                    list.add(ryan.clone());
+                if((subset & (1 << i)) != 0){
+                    ryan += 10 - i;
+                    tmp[i] = info[i] + 1;
+                    count += tmp[i];
+                }
+                else{
+                    tmp[i] = 0;
+                    if(info[i] > 0) apeach += 10 - i;
                 }
             }
+            if(count > n) continue;
+            tmp[10] = n - count;
 
-            return;
+            if (ryan - apeach == maxDiff) {
+                for (int i = 10; i >= 0; i--) {
+                    if(tmp[i] > answer[i]){
+                        maxDiff = ryan - apeach;
+                        answer = Arrays.copyOf(tmp, tmp.length);
+                        break;
+                    } else if(tmp[i] < answer[i])
+                        break;
+                }
+            }
+            else if (ryan - apeach > maxDiff) {
+                maxDiff = ryan - apeach;
+                answer = Arrays.copyOf(tmp, tmp.length);
+            }
         }
 
-        for (int i = start; i < 11; i++) {
-            ryan[i]++;
-            dfs(n, depth + 1, i);
-            ryan[i]--;
-        }
+        if(maxDiff == 0) return new int[]{-1};
+        return answer;
     }
 }
