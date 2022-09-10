@@ -14,7 +14,6 @@ public class 양궁대회_정답 {
         for (int subset = 1; subset < (1 << 10); subset++) {
             int ryan = 0, apeach = 0, count = 0;
             for (int i = 0; i < 10; i++) {
-                System.out.println(1 << i);
 
                 if((subset & (1 << i)) != 0){
                     ryan += 10 - i;

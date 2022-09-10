@@ -1,42 +1,35 @@
 package programmers_level2;
 
 public class 피로도 {
-    public static void main(String[] args) {
-        int solution = solution(80, new int[][]{{80, 20}, {50, 40}, {30, 10}});
-        System.out.println(solution);
+    private int answer = 0;
+    private int K;
+    public int solution(int k, int[][] dungeons) {
+        int size = dungeons.length;
+        K = k;
+        permutation(dungeons, new boolean[size], new int[size], 0);
+
+        return answer;
     }
 
-    static int result = 0;
-    static int fatigue;
-    public static int solution(int k, int[][] dungeons) {
-        fatigue = k;
-        boolean[] checked = new boolean[dungeons.length];
-        permutation(dungeons, new int[dungeons.length], checked, dungeons.length, 0);
-
-        return result;
-    }
-
-    private static void permutation(int[][] dungeons, int[] picked, boolean[] checked, int L, int length) {
-        if (length == L) {
-            int nowFatigue = fatigue;
+    private void permutation(int[][] dungeons, boolean[] checked, int[] selected, int now) {
+        if (now == dungeons.length) {
+            int fatigue = K;
             int count = 0;
-
-            for (int i = 0; i < picked.length; i++) {
-                int[] dungeon = dungeons[picked[i]];
-                if(dungeon[0] > nowFatigue) break;
-                nowFatigue -= dungeon[1];
+            for (int i = 0; i < selected.length; i++) {
+                int required = dungeons[selected[i]][0];
+                int reduce = dungeons[selected[i]][1];
+                if(fatigue < required) break;
+                fatigue -= reduce;
                 count++;
             }
-
-            result = Math.max(result, count);
+            answer = Math.max(answer, count);
             return;
         }
         for (int i = 0; i < dungeons.length; i++) {
             if(checked[i]) continue;
-
             checked[i] = true;
-            picked[length] = i;
-            permutation(dungeons, picked, checked, L, length + 1);
+            selected[now] = i;
+            permutation(dungeons, checked, selected, now + 1);
             checked[i] = false;
         }
     }

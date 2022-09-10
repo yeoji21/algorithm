@@ -3,21 +3,14 @@ package programmers_level2;
 import java.util.Arrays;
 
 public class n2_배열_자르기 {
-    public static void main(String[] args) {
-//        int[] solution = solution3(4, 7, 14);
-        int[] solution = solution3(3, 2, 5);
-        Arrays.stream(solution).forEach(System.out::println);
-    }
 
     public static int[] solution3(int n, long left, long right) {
-        int[] result = new int[(int) (right + 1 - left)];
-
+        int[] answer = new int[(int)(right - left) + 1];
         int idx = 0;
-        for (long i = left; i < right + 1; i++, idx++) {
-            result[idx] = Math.max((int) (i / n) + 1, (int) (i % n) + 1);
+        for (long i = left; i < right + 1; i++) {
+            answer[idx++] = (int) Math.max((i / n), (i % n)) + 1;
         }
-
-        return result;
+        return answer;
     }
 
     public static int[] solution2(int n, long left, long right) {
