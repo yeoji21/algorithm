@@ -1,71 +1,58 @@
 package programmers_level2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class 교점에_별_만들기 {
-    public static void main(String[] args) {
-        solution(new int[][]{{2, -1, 4}, {-2, -1, 4}, {0, -1, 1}, {5, -8, -12}, {5, 8, 12}});
-//        solution(new int[][]{{0, 1, -1}, {1, 0, -1}, {1, 0, 1}});
-    }
+    public String[] solution(int[][] line) {
+        List<Point> points = new ArrayList<>();
+        long minX = Long.MAX_VALUE;
+        long maxX = Long.MIN_VALUE;
+        long minY = Long.MAX_VALUE;
+        long maxY = Long.MIN_VALUE;
 
-    public static String[] solution(int[][] line) {
-        List<Point> pointList = new ArrayList<>();
-
-        long maxX = 0;
-        long maxY = 0;
         for (int i = 0; i < line.length - 1; i++) {
-            double A = line[i][0];
-            double B = line[i][1];
-            double E = line[i][2];
+            long a = line[i][0];
+            long b = line[i][1];
+            long e = line[i][2];
             for (int j = i + 1; j < line.length; j++) {
-                double C = line[j][0];
-                double D = line[j][1];
-                double F = line[j][2];
+                long c = line[j][0];
+                long d = line[j][1];
+                long f = line[j][2];
 
-                double x = (B * F - E * D) / (A * D - B * C);
-                double y = (E * C - A * F) / (A * D - B * C);
+                double x = (b * f - e * d) / (double) (a * d - b * c);
+                double y = (e * c - a * f) / (double) (a * d - b * c);
 
                 if (x == (long) x && y == (long) y) {
-                    pointList.add(new Point((long) x, (long) y));
-                    maxX = Math.max(maxX, (long)x);
-                    maxY = Math.max(maxY, (long)y);
+                    Point point = new Point((long) x, (long) y);
+                    points.add(point);
+                    minX = Math.min(minX, point.x);
+                    maxX = Math.max(maxX, point.x);
+                    minY = Math.min(minY, point.y);
+                    maxY = Math.max(maxY, point.y);
                 }
             }
         }
-        long lengthX = maxX * 2 + 1;
-        long lengthY = maxY * 2 + 1;
 
-        String[][] map = new String[(int)lengthX][(int)lengthY];
-        for (int i = 0; i < map.length; i++) {
-            Arrays.fill(map[i], ".");
+        boolean[][] temp = new boolean[(int) (maxY - minY + 1)][(int) (maxX - minX + 1)];
+
+        for (Point point : points) {
+            int x = (int) (point.x - minX);
+            int y = (int) (maxY - point.y);
+            temp[Math.abs(y)][Math.abs(x)] = true;
         }
 
-        long max = 0;
-        for (int i = 0; i < pointList.size(); i++) {
-            long x = pointList.get(i).y;
-            if(x < 0) x *= -2;
-            else x = maxX - x;
-            max = Math.max(max, x);
-
-            long y = pointList.get(i).x;
-            y += maxX;
-
-            map[(int)x][(int)y] = "*";
-        }
-
-        String[] result = new String[(int)max + 1];
-
-        for (int i = 0; i < result.length; i++) {
+        String[] answer = new String[temp.length];
+        for (int i = 0; i < temp.length; i++) {
+            boolean[] row = temp[i];
             StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < lengthY; j++) {
-                sb.append(map[i][j]);
+            for (boolean isStar : row) {
+                if(isStar) sb.append("*");
+                else sb.append(".");
             }
-            result[i] = sb.toString();
+            answer[i] = sb.toString();
         }
-
-        return result;
+        return answer;
     }
 
     static class Point{
@@ -77,3 +64,4 @@ public class 교점에_별_만들기 {
         }
     }
 }
+
