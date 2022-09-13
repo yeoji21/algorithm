@@ -1,14 +1,7 @@
 package programmers_level2;
 
-import java.util.Arrays;
-
 public class _2개_이하로_다른_비트 {
-    public static void main(String[] args) {
-        long[] solution = solution2(new long[]{2, 7});
-        Arrays.stream(solution).forEach(System.out::println);
-    }
-
-    public static long[] solution(long[] numbers) {
+    public long[] solution(long[] numbers) {
         long[] result = new long[numbers.length];
 
         for (int i = 0; i < numbers.length; i++) {
@@ -28,33 +21,31 @@ public class _2개_이하로_다른_비트 {
         return result;
     }
 
-    public static long[] solution2(long[] numbers) {
-        long[] result = new long[numbers.length];
+    public long[] solution2(long[] numbers) {
+        long[] answer = new long[numbers.length];
+        int idx = 0;
 
-        for (int i = 0; i < numbers.length; i++) {
-            long number = numbers[i];
-            if(number % 2 == 0) {
-                result[i] = number + 1;
+        for (long number : numbers) {
+            if(number % 2 == 0){
+                answer[idx++] = number + 1;
                 continue;
             }
 
-            StringBuilder sb = new StringBuilder();
             String binary = Long.toBinaryString(number);
-
-            if (!binary.contains("0")) {
-                sb.append("10");
-                sb.append(binary.substring(1));
-            }
-            else{
+            if(!binary.contains("0")){
+                binary = binary.replaceFirst("1", "10");
+            }else{
                 int lastZero = binary.lastIndexOf("0");
                 int firstOne = binary.indexOf("1", lastZero);
 
-                sb.append(binary.substring(0, lastZero)).append("1").append("0");
+                StringBuilder sb = new StringBuilder(binary.substring(0, lastZero));
+                sb.append("10");
                 sb.append(binary.substring(firstOne + 1));
+                binary = sb.toString();
             }
-            result[i] = Long.parseLong(sb.toString(), 2);
+            answer[idx++] = Long.parseLong(binary, 2);
         }
 
-        return result;
+        return answer;
     }
 }
