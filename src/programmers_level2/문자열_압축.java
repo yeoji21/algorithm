@@ -3,12 +3,7 @@ package programmers_level2;
 import java.util.Stack;
 
 public class 문자열_압축 {
-
-    public static void main(String[] args) {
-        solution("xababcdcdababcdcd");
-    }
-
-    public static int solution(String s) {
+    public int solution(String s) {
         if(s.length() == 1) return 1;
 
         int minLength = Integer.MAX_VALUE;
@@ -21,7 +16,7 @@ public class 문자열_압축 {
         return minLength;
     }
 
-    private static int encrypt(String[] split) {
+    private int encrypt(String[] split) {
         Stack<String> stack = new Stack<>();
         int result = 0;
 
@@ -47,7 +42,7 @@ public class 문자열_압축 {
         return result;
     }
 
-    public static int solution2(String s) {
+    public int solution2(String s) {
         int result = s.length();
 
         for (int i = 1; i <= s.length() / 2; i++) {

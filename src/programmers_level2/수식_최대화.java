@@ -35,7 +35,7 @@ public class 수식_최대화 {
         return maxValue;
     }
 
-    private static long calculateExpression(char[] priority, List<Long> numbers, List<Character> operators) {
+    private long calculateExpression(char[] priority, List<Long> numbers, List<Character> operators) {
         long sum = 0;
 
         for (char op : priority) {
@@ -52,7 +52,7 @@ public class 수식_최대화 {
         return sum;
     }
 
-    private static long calc(char op, long x, long y) {
+    private long calc(char op, long x, long y) {
         if(op == '+') return x + y;
         else if (op == '-') return x - y;
         else return x * y;
