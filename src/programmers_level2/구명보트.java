@@ -3,17 +3,19 @@ package programmers_level2;
 import java.util.Arrays;
 
 public class 구명보트 {
-    // 최대 2명이 탈 수 있다는 문제 조건을 제대로 읽지 않음
-    public static int solution(int[] people, int limit) {
-        int result = 0;
+    public int solution(int[] people, int limit) {
         Arrays.sort(people);
+        int answer = 0;
+        int left = 0;
+        int right = people.length - 1;
 
-        int min = 0;
-        for (int max = people.length - 1; min <= max; max--) {
-            if(people[min] + people[max] <= limit) min++;
-            result++;
+        while (left <= right) {
+            int weight = people[right--];
+            if(weight + people[left] <= limit)
+                left++;
+            answer++;
         }
 
-        return result;
+        return answer;
     }
 }

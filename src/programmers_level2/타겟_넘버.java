@@ -1,19 +1,19 @@
 package programmers_level2;
 
 public class 타겟_넘버 {
-    static int count = 0;
+    private int answer = 0;
     public int solution(int[] numbers, int target) {
-        dfs(numbers, 0, target, 0);
-        return count;
+        dfs(numbers, target, 0, 0);
+        return answer;
     }
 
-    private void dfs(int[] numbers, int depth, int target, int sum) {
-        if (depth == numbers.length) {
-            if(sum == target) count++;
+    private void dfs(int[] numbers, int target, int value, int now) {
+        if(now == numbers.length){
+            if(value == target) answer++;
+            return;
         }
-        else{
-            dfs(numbers, depth + 1, target, sum + numbers[depth]);
-            dfs(numbers, depth + 1, target, sum - numbers[depth]);
-        }
+
+        dfs(numbers, target, value + numbers[now], now + 1);
+        dfs(numbers, target, value - numbers[now], now + 1);
     }
 }
