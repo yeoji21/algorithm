@@ -29,8 +29,15 @@ public class 프린터 {
         return -1;
     }
 
-    public static void main(String[] args) {
-        solution2(new int[]{1, 1, 9, 1, 1, 1}, 0);
+    class Literature{
+
+        int location;
+        int priority;
+
+        public Literature(int location, int priority) {
+            this.location = location;
+            this.priority = priority;
+        }
     }
 
     public static int solution2(int[] priorities, int location) {
@@ -50,16 +57,5 @@ public class 프린터 {
             }
         }
         return 0;
-    }
-
-
-    class Literature{
-        int location;
-        int priority;
-
-        public Literature(int location, int priority) {
-            this.location = location;
-            this.priority = priority;
-        }
     }
 }
