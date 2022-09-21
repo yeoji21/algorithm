@@ -5,39 +5,34 @@ import java.util.Comparator;
 import java.util.List;
 
 public class _3차_파일명_정렬 {
-    public String[] solution(String[] files) {
-        List<File> processedFile = new ArrayList<>(files.length * 2);
+    public static String[] solution(String[] files) {
+        List<File> fileList = new ArrayList<>();
 
         for (int i = 0; i < files.length; i++) {
             String file = files[i];
-            String original = file;
-            String head = file.split("\\d+")[0];
+            String head = file.split("\\d")[0];
             file = file.replace(head, "");
-            String number = file.split("\\D+")[0];
-            File newFile = new File(original, head, number, i);
-            processedFile.add(newFile);
+            int number = Integer.parseInt(file.split("\\D")[0]);
+            fileList.add(new File(head, number, i));
         }
 
-        return processedFile.stream()
-                .sorted(
-                        Comparator.comparing((File file) -> file.head)
-                                .thenComparing((File file) -> file.number)
-                                .thenComparing((File file) -> file.idx)
-                )
-                .map(file -> file.originalName)
+        fileList.sort(Comparator.comparing((File f) -> f.head)
+                .thenComparing((File f) -> f.number)
+                .thenComparing((File f) -> f.idx));
+
+        return fileList.stream()
+                .map(f -> files[f.idx])
                 .toArray(String[]::new);
     }
 
-    class File{
-        String originalName;
-        String head;
-        int number;
-        int idx;
+    static class File{
+        private String head;
+        private int number;
+        private int idx;
 
-        public File(String originalName, String head, String number, int idx) {
-            this.originalName = originalName;
+        public File(String head, int number, int idx) {
             this.head = head.toLowerCase();
-            this.number = Integer.parseInt(number);
+            this.number = number;
             this.idx = idx;
         }
     }
