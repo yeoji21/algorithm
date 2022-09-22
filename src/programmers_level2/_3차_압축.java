@@ -3,12 +3,11 @@ package programmers_level2;
 import java.util.*;
 
 public class _3차_압축 {
-
-    static int idx = 1;
-    public static int[] solution(String msg) {
-        Map<String, Integer> dictionary = initailizeDictionary();
+    public int[] solution(String msg) {
+        int idx = 1;
+        Map<String, Integer> dictionary = new HashMap<>();
         List<Integer> result = new ArrayList<>();
-
+        for (char c = 'A'; c <= 'Z'; c++) dictionary.put(String.valueOf(c), idx++);
         Queue<Character> queue = new LinkedList<>();
         for (int i = 0; i < msg.length(); i++) {
             queue.add(msg.charAt(i));
@@ -18,14 +17,9 @@ public class _3차_압축 {
             Character now = queue.poll();
             StringBuilder sb = new StringBuilder();
             sb.append(now);
-            while(dictionary.containsKey(sb.toString())){
-                if(dictionary.containsKey(sb.toString() + queue.peek())){
-                    sb.append(queue.peek());
-                    queue.poll();
-                }
-                else{
-                    break;
-                }
+            while(dictionary.containsKey(sb.toString()) && dictionary.containsKey(sb.toString() + queue.peek())){
+                sb.append(queue.peek());
+                queue.poll();
             }
             result.add(dictionary.get(sb.toString()));
             if (!queue.isEmpty()) {
@@ -37,13 +31,4 @@ public class _3차_압축 {
         return result.stream().mapToInt(x -> x).toArray();
     }
 
-    private static Map<String, Integer> initailizeDictionary() {
-        Map<String, Integer> dictionary = new HashMap<>();
-
-        idx = 1;
-        for (char c = 'A'; c <= 'Z'; c++) {
-            dictionary.put(String.valueOf(c), idx++);
-        }
-        return dictionary;
-    }
 }
