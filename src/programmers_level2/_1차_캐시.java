@@ -1,48 +1,32 @@
 package programmers_level2;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class _1차_캐시 {
-    public static void main(String[] args) {
-        solution(3, new String[]{"Jeju", "Pangyo", "Seoul", "Jeju", "Pangyo", "Seoul", "Jeju", "Pangyo", "Seoul"});
-    }
+    public int solution(int cacheSize, String[] cities) {
+        LinkedList<String> queue = new LinkedList<>();
+        int answer = 0;
 
-    public static int solution(int cacheSize, String[] cities) {
-        Set<String> cache = new LinkedHashSet<>(cacheSize * 2);
-        List<String> list = new ArrayList<>();
-        String first = "";
-
-        int result = 0;
-
-        if (cacheSize == 0) {
-            return cities.length * 5;
-        }
+        if(cacheSize == 0) return cities.length * 5;
 
         for (String city : cities) {
-            city = city.toLowerCase();
-
-            // hit
-            if (!cache.isEmpty() && cache.contains(city)) {
-                cache.remove(city);
-                cache.add(city);
-                result++;
-                continue;
+            String c = city.toUpperCase();
+            if(queue.contains(c)) {
+                answer += 1;
+                queue.remove(c);
+                queue.add(c);
             }
-
-            //miss
-            if (cache.size() == cacheSize) {
-                // 맨 앞 원소 제거하는게 오래 걸려서 그냥 LinkedList 쓰는게 나음
-                String remove = cache.toArray(String[]::new)[0];
-                cache.remove(remove);
+            else{
+                if(queue.size() < cacheSize)
+                    queue.add(c);
+                else{
+                    queue.poll();
+                    queue.add(c);
+                }
+                answer += 5;
             }
-
-            cache.add(city);
-            result += 5;
         }
 
-        return result;
+        return answer;
     }
 }
