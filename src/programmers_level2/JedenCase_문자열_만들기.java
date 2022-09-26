@@ -5,16 +5,11 @@ public class JedenCase_문자열_만들기 {
         StringBuilder sb = new StringBuilder();
         s = s.toLowerCase();
         sb.append(String.valueOf(s.charAt(0)).toUpperCase());
-
         for (int i = 1; i < s.length(); i++) {
             char target = s.charAt(i);
-            if(target == ' '){
-                sb.append(target);
-            }else if (i - 1 > 0 && s.charAt(i - 1) == ' '){
-                sb.append(String.valueOf(target).toUpperCase());
-            }else{
-                sb.append(target);
-            }
+            if (i - 1 > 0 && s.charAt(i - 1) == ' ')
+                target = String.valueOf(target).toUpperCase().charAt(0);
+            sb.append(target);
         }
 
         return sb.toString();
