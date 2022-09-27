@@ -7,11 +7,10 @@ public class 최솟값_만들기 {
         Arrays.sort(A);
         Arrays.sort(B);
 
-        int result = 0;
+        int answer = 0;
         for (int i = 0; i < A.length; i++) {
-            result += A[i] * B[B.length - i - 1];
+            answer += A[i] * B[B.length - 1 - i];
         }
-
-        return result;
+        return answer;
     }
 }

@@ -1,17 +1,17 @@
 package programmers_level2;
 
 public class 피보나치_수 {
-    private static int[] dp;
+    private int[] dp;
     public int solution(int n) {
         dp = new int[n + 1];
-        return fibo(n);
+        dp[0] = 0;
+        dp[1] = 1;
+        dp[2] = 1;
+        return recursion(n);
     }
 
-    private int fibo(int n) {
-        if(n == 0) return 0;
-        if(n == 1) return 1;
+    private int recursion(int n) {
         if(dp[n] != 0) return dp[n];
-
-        return dp[n] = (fibo(n - 1) + fibo(n - 2)) % 1234567;
+        return dp[n] = (recursion(n - 2) + recursion(n - 1)) % 1234567;
     }
 }

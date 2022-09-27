@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class 하노이의_탑 {
-
     private static List<int[]> sequence;
     public int[][] solution(int n) {
         sequence = new ArrayList<>();
@@ -12,11 +11,8 @@ public class 하노이의_탑 {
 
         int[][] result = new int[sequence.size()][2];
         for (int i = 0; i < sequence.size(); i++) {
-            int[] cmd = sequence.get(i);
-            result[i][0] = cmd[0];
-            result[i][1] = cmd[1];
+            result[i] = sequence.get(i);
         }
-
         return result;
     }
 
