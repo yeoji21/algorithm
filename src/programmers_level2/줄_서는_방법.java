@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class 줄_서는_방법 {
-    public static void main(String[] args) {
-        solution(3, 5);
-    }
-
-    public static int[] solution(int n, long k) {
+    public int[] solution(int n, long k) {
         int[] answer = new int[n];
         List<Integer> nums = new ArrayList<>();
 
