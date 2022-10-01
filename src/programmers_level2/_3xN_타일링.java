@@ -8,10 +8,8 @@ public class _3xN_타일링 {
         dp[2] = 3;
         for(int i = 3; i < n + 1; i++){
             if (i % 2 == 0) {
-                //짝수
                 dp[i] = dp[i - 1] % mod + dp[i - 2] % mod;
             } else {
-                // 홀수
                 dp[i] = dp[i - 1] * 2 % mod + dp[i - 2] % mod;
             }
             dp[i] = dp[i] % mod;

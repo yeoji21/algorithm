@@ -4,59 +4,55 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class 카카오_프렌즈_컬러링북 {
-    static int M, N;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
+    private int totalArea = 0;
+    private int maxAreaSize = 0;
+    private boolean[][] checked;
+    private int[] dx = {1, 0, -1, 0};
+    private int[] dy = {0, 1, 0, -1};
+    private int M, N;
 
     public int[] solution(int m, int n, int[][] picture) {
-        boolean[][] check = new boolean[m][n];
         M = m;
         N = n;
-
-        int totalCount = 0;
-        int max = Integer.MIN_VALUE;
-
+        checked = new boolean[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if(picture[i][j] != 0 && !check[i][j]){
-                    check[i][j] = true;
-                    int count = BFS(i, j, picture, check);
-                    max = Math.max(max, count);
-                    totalCount++;
-                }
+                if (picture[i][j] == 0 || checked[i][j]) continue;
+                DFS(i, j, picture);
             }
         }
 
-        return new int[]{totalCount, max};
+        return new int[]{totalArea, maxAreaSize};
     }
 
-    private int BFS(int x, int y, int[][] picture, boolean[][] visited) {
+    private void DFS(int x, int y, int[][] picture) {
+        totalArea++;
         Queue<Point> queue = new LinkedList<>();
         queue.add(new Point(x, y));
-        int count = 1;
+        checked[x][y] = true;
+        int target = picture[x][y];
+        int area = 1;
 
         while (!queue.isEmpty()) {
             int size = queue.size();
             while (size-- > 0) {
-                Point now = queue.poll();
-
+                Point point = queue.poll();
                 for (int d = 0; d < 4; d++) {
-                    int nx = now.x + dx[d];
-                    int ny = now.y + dy[d];
-                    if (nx >= M || nx < 0 || ny >= N || ny < 0) continue;
-                    if(visited[nx][ny] || picture[nx][ny] != picture[x][y]) continue;
+                    int nx = point.x + dx[d];
+                    int ny = point.y + dy[d];
+                    if(nx < 0 || nx >= M || ny < 0 || ny >= N) continue;
+                    if(picture[nx][ny] != target || checked[nx][ny]) continue;
 
-                    visited[nx][ny] = true;
+                    checked[nx][ny] = true;
                     queue.add(new Point(nx, ny));
-                    count++;
+                    area++;
                 }
             }
         }
-
-        return count;
+        maxAreaSize = Math.max(maxAreaSize, area);
     }
 
-    class Point{
+    static class Point{
         int x, y;
 
         public Point(int x, int y) {
