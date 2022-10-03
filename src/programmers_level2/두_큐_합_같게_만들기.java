@@ -84,7 +84,42 @@ public class 두_큐_합_같게_만들기 {
             }
             answer++;
         }
-
         return -1;
+    }
+
+    public int solution3(int[] queue1, int[] queue2) {
+        int[] total = new int[queue1.length + queue2.length];
+        long sumA = 0;
+        long sumB = 0;
+        for (int i = 0; i < queue1.length; i++) {
+            total[i] = queue1[i];
+            sumA += queue1[i];
+        }
+        for (int i = 0; i < queue2.length; i++) {
+            total[queue1.length + i] = queue2[i];
+            sumB += queue2[i];
+        }
+        int indexA = 0;
+        int indexB = queue1.length;
+        int answer = 0;
+        while (true){
+            if (sumA > sumB) {
+                int pop = total[indexA];
+                sumA -= pop;
+                sumB += pop;
+                indexA = indexA + 1;
+                if(indexA >= total.length) indexA = 0;
+            } else if (sumA < sumB) {
+                int pop = total[indexB];
+                sumB -= pop;
+                sumA += pop;
+                indexB = indexB + 1;
+                if(indexB >= total.length) indexB = 0;
+            }else{
+                return answer;
+            }
+            answer++;
+            if(answer >= total.length * 2) return -1;
+        }
     }
 }
