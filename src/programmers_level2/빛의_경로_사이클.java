@@ -47,4 +47,30 @@ public class 빛의_경로_사이클 {
 
         return count;
     }
+
+//    private int findCircular(int x, int y, int d) {
+//        int count = 0;
+//
+//        while (!matrix[x][y][d]) {
+//            matrix[x][y][d] = true;
+//            if (map[x][y] == 'R') {
+//                d = d + 1;
+//                if(d == 4) d = 0;
+//            }else if(map[x][y] == 'L'){
+//                d = d - 1;
+//                if(d == -1) d = 3;
+//            }
+//            x = x + dx[d];
+//            y = y + dy[d];
+//
+//            if(x < 0) x = M - 1;
+//            if(y < 0) y = N - 1;
+//            if(x >= M) x = 0;
+//            if(y >= N) y = 0;
+//
+//            count++;
+//        }
+//
+//        return count;
+//    }
 }

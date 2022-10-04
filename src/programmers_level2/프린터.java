@@ -4,40 +4,22 @@ import java.util.*;
 
 public class 프린터 {
     public int solution(int[] priorities, int location) {
-        List<Integer> priority = new ArrayList<>();
-        Queue<Literature> queue = new LinkedList<>();
-        for (int i = 0; i < priorities.length; i++) {
-            priority.add(priorities[i]);
-            queue.add(new Literature(i, priorities[i]));
-        }
-        priority.sort(Collections.reverseOrder());
-
-        int count = 0;
-        while (!queue.isEmpty()){
-            Integer p = priority.get(0);
-            Literature poll = queue.poll();
-            if(poll.priority < p){
-                queue.add(poll);
-                continue;
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        for (int priority : priorities) queue.add(priority);
+        int idx = 0;
+        int answer = 1;
+        while (!queue.isEmpty()) {
+            Integer max = queue.poll();
+            while (priorities[idx] < max) {
+                idx++;
+                if(idx >= priorities.length) idx = 0;
             }
-            count++;
-            if(poll.location == location)
-                return count;
-            priority.remove(0);
+            if(idx == location) return answer;
+            answer++;
+            priorities[idx] = -1;
         }
 
         return -1;
-    }
-
-    class Literature{
-
-        int location;
-        int priority;
-
-        public Literature(int location, int priority) {
-            this.location = location;
-            this.priority = priority;
-        }
     }
 
     public static int solution2(int[] priorities, int location) {
