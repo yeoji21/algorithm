@@ -7,7 +7,8 @@ public class 조이스틱 {
         int move = name.length() - 1;
 
         for (int i = 0; i < name.length(); i++) {
-            count += getUpDownCount(name.charAt(i));
+            char ch = name.charAt(i);
+            count += Math.min(Math.abs('A' - ch), Math.abs('Z' - ch) + 1);
 
             if (i < name.length() - 1 && name.charAt(i + 1) == 'A') {
                 int lengthA = i + 1;
@@ -24,7 +25,20 @@ public class 조이스틱 {
         return count + move;
     }
 
-    private int getUpDownCount(char ch) {
-        return Math.min(Math.abs('A' - ch), Math.abs('Z' - ch) + 1);
+    public int solution2(String name) {
+        int count = 0;
+        int move = name.length() - 1;
+
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            count += Math.min(Math.abs(ch - 'A'), Math.abs(ch - 'Z') + 1);
+            if(i + 1 < name.length()&& name.charAt(i + 1) == 'A'){
+                int indexA = i + 1;
+                while(indexA < name.length() && name.charAt(indexA) == 'A') indexA++;
+                move = Math.min(move, i * 2 + name.length() - indexA);
+                move = Math.min(move, i + (name.length() - indexA) * 2);
+            }
+        }
+        return count + move;
     }
 }

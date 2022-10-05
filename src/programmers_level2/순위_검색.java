@@ -53,4 +53,33 @@ public class 순위_검색 {
             setKeys(infos, key + infos[L], L + 1);
         }
     }
+
+    private int binaryInsert(String key, int score) {
+        List<Integer> scores = map.get(key);
+        int start = 0;
+        int end = scores.size() - 1;
+
+        while (start <= end) {
+            int mid = (start + end) / 2;
+            if (scores.get(mid) >= score)
+                end = mid - 1;
+            else
+                start = mid + 1;
+        }
+
+        return start;
+    }
+
+    private void setKeys_v2(String[] infos, String key, int L) {
+        if (L == 4) {
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
+            }
+            int score = Integer.parseInt(infos[4]);
+            map.get(key).add(binaryInsert(key, score), score);
+        }else{
+            setKeys(infos, key + "-", L + 1);
+            setKeys(infos, key + infos[L], L + 1);
+        }
+    }
 }
