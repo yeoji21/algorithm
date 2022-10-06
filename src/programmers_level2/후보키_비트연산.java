@@ -15,18 +15,15 @@ public class 후보키_비트연산 {
                 {"600", "apeach", "music", "2"}});
     }
     public static int solution(String[][] relation) {
-        int rowSize = relation.length;
-        int colSize = relation[0].length;
+        int rows = relation.length;
+        int columns = relation[0].length;
 
-        List<Integer> result = new ArrayList<>();
-
-        for (int i = 1; i < (1 << colSize); i++) {
-            if (!isMinimal(i, result)) continue;
-            if (!isUnique(i, relation, rowSize, colSize)) continue;
-            result.add(i);
+        List<Integer> candidateKeys = new ArrayList<>();
+        for (int i = 1; i < (1 << columns); i++) {
+            if(isMinimal(i, candidateKeys) && isUnique(i, relation, rows, columns))
+                candidateKeys.add(i);
         }
-
-        return result.size();
+        return candidateKeys.size();
     }
 
     static boolean isMinimal(int arr, List<Integer> result) {

@@ -1,7 +1,9 @@
 package programmers_level2;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class 위장 {
     public int solution(String[][] clothes) {
@@ -15,12 +17,14 @@ public class 위장 {
             result *= value + 1;
         }
         return result - 1;
+    }
 
-//        return Arrays.stream(clothes)
-//                .collect(Collectors.groupingBy(c -> c[1], Collectors.mapping(c -> c[0], Collectors.counting())))
-//                .values()
-//                .stream()
-//                .reduce(1L, (x, y) -> x * (y + 1))
-//                .intValue() - 1;
+    public int solution2(String[][] clothes) {
+        return Arrays.stream(clothes)
+        .collect(Collectors.groupingBy(c -> c[1], Collectors.mapping(c -> c[0], Collectors.counting())))
+        .values()
+        .stream()
+        .reduce(1L, (x, y) -> x * (y + 1))
+        .intValue() - 1;
     }
 }
