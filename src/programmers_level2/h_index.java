@@ -4,21 +4,32 @@ import java.util.Arrays;
 
 public class h_index {
     public int solution(int[] citations) {
+        int answer = 0;
         Arrays.sort(citations);
-
-        int hIndex = Integer.MIN_VALUE;
-
-        int max = Arrays.stream(citations)
-                .max()
-                .getAsInt();
-
-        for (int citationCount = 0; citationCount <= max; citationCount++) {
-            int idx = binarySearch(citations, citationCount);
-            if(citations.length - idx >= citationCount)
-                hIndex = Integer.max(hIndex, citationCount);
+        for (int i = 0; i < citations[citations.length / 2] + 1; i++) {
+            int idx = binarySearch(citations, i);
+            if (i <= citations.length - idx) {
+                answer = i;
+            }
         }
 
-        return hIndex;
+        return answer;
+    }
+
+    private int binarySearch(int[] citations, int target) {
+        int left = 0;
+        int right = citations.length;
+
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if(citations[mid] == target) return mid;
+            else if(citations[mid] > target)
+                right = mid - 1;
+            else
+                left = mid + 1;
+        }
+
+        return left;
     }
 
     public int solution2(int[] citations) {
@@ -29,20 +40,5 @@ public class h_index {
             answer = Math.max(answer, smaller);
         }
         return answer;
-    }
-
-    int binarySearch(int[] array, int target) {
-        int start = 0;
-        int end = array.length;
-
-        while (start <= end) {
-            int mid = (start + end) / 2;
-
-            if(array[mid] == target) return mid;
-            if(array[mid] < target) start = mid + 1;
-            else if(array[mid] > target) end = mid - 1;
-        }
-
-        return start;
     }
 }

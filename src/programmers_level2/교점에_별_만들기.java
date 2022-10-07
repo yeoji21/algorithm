@@ -5,63 +5,55 @@ import java.util.List;
 
 public class 교점에_별_만들기 {
     public String[] solution(int[][] line) {
-        List<Point> points = new ArrayList<>();
-        long minX = Long.MAX_VALUE;
-        long maxX = Long.MIN_VALUE;
-        long minY = Long.MAX_VALUE;
-        long maxY = Long.MIN_VALUE;
+        List<long[]> stars = new ArrayList<>();
+        long minWidth = Long.MAX_VALUE;
+        long maxWidth = Long.MIN_VALUE;
+        long minHeight = Long.MAX_VALUE;
+        long maxHeight = Long.MIN_VALUE;
 
         for (int i = 0; i < line.length - 1; i++) {
-            long a = line[i][0];
-            long b = line[i][1];
-            long e = line[i][2];
             for (int j = i + 1; j < line.length; j++) {
-                long c = line[j][0];
-                long d = line[j][1];
-                long f = line[j][2];
+                int A = line[i][0];
+                int B = line[i][1];
+                int E = line[i][2];
 
-                double x = (b * f - e * d) / (double) (a * d - b * c);
-                double y = (e * c - a * f) / (double) (a * d - b * c);
+                int C = line[j][0];
+                int D = line[j][1];
+                int F = line[j][2];
 
-                if (x == (long) x && y == (long) y) {
-                    Point point = new Point((long) x, (long) y);
-                    points.add(point);
-                    minX = Math.min(minX, point.x);
-                    maxX = Math.max(maxX, point.x);
-                    minY = Math.min(minY, point.y);
-                    maxY = Math.max(maxY, point.y);
-                }
+                if (A * D - B * C == 0) continue;
+                double x = (double) (B * F - E * D) / (A * D - B * C);
+                double y = (double) (E * C - A * F) / (A * D - B * C);
+                if((long)x != x ||  (long)y != y) continue;
+
+                long width = (long) x;
+                long height = (long) y;
+                stars.add(new long[]{width, height});
+                minWidth = Math.min(minWidth, width);
+                maxWidth = Math.max(maxWidth, width);
+                minHeight = Math.min(minHeight, height);
+                maxHeight = Math.max(maxHeight, height);
             }
         }
 
-        boolean[][] temp = new boolean[(int) (maxY - minY + 1)][(int) (maxX - minX + 1)];
-
-        for (Point point : points) {
-            int x = (int) (point.x - minX);
-            int y = (int) (maxY - point.y);
-            temp[Math.abs(y)][Math.abs(x)] = true;
+        boolean[][] temp = new boolean[(int) (maxHeight - minHeight) + 1][(int) (maxWidth - minWidth) + 1];
+        for (long[] star : stars) {
+            int width = (int)Math.abs(maxHeight - star[1]);
+            int height = (int) Math.abs(star[0] - minWidth);
+            temp[width][height] = true;
         }
 
         String[] answer = new String[temp.length];
-        for (int i = 0; i < temp.length; i++) {
-            boolean[] row = temp[i];
+        for (int i = 0; i < answer.length; i++) {
             StringBuilder sb = new StringBuilder();
-            for (boolean isStar : row) {
-                if(isStar) sb.append("*");
+            for (boolean star : temp[i]) {
+                if(star) sb.append("*");
                 else sb.append(".");
             }
             answer[i] = sb.toString();
         }
+
         return answer;
-    }
-
-    static class Point{
-        long x, y;
-
-        public Point(long x, long y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 }
 
