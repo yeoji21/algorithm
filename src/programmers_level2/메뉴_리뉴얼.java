@@ -3,28 +3,25 @@ package programmers_level2;
 import java.util.*;
 
 public class 메뉴_리뉴얼 {
-    private Map<String, Integer> map = new HashMap<>();
     private int maxCount = 0;
     public String[] solution(String[] orders, int[] course) {
+        for (int i = 0; i < orders.length; i++) {
+            char[] menus = orders[i].toCharArray();
+            Arrays.sort(menus);
+            orders[i] = String.valueOf(menus);
+        }
         List<String> answer = new ArrayList<>();
 
-        for (int courseCount : course) {
+        for (int i = 0; i < course.length; i++) {
+            Map<String, Integer> map = new HashMap<>();
             maxCount = 0;
             for (String order : orders) {
-                char[] chars = order.toCharArray();
-                Arrays.sort(chars);
-                String value = new String(chars);
-                combi(value, courseCount, 0, new boolean[order.length()]);
+                combination(map, order, new boolean[order.length()], course[i], 0);
             }
-
-            if(map.isEmpty()) continue;
             if(maxCount < 2) continue;
             for (String key : map.keySet()) {
-                if(map.get(key) == maxCount) {
-                    answer.add(key);
-                }
+                if(map.get(key) == maxCount) answer.add(key);
             }
-            map.clear();
         }
 
         return answer.stream()
@@ -32,22 +29,23 @@ public class 메뉴_리뉴얼 {
                 .toArray(String[]::new);
     }
 
-    private void combi(String order, int L, int start, boolean[] checked) {
+    private void combination(Map<String, Integer> map, String order, boolean[] checked, int L, int start) {
         if (L == 0) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < checked.length; i++) {
-                if(checked[i]) sb.append(order.charAt(i));
+                if(!checked[i]) continue;
+                sb.append(order.charAt(i));
             }
-
-            map.put(sb.toString(), map.getOrDefault(sb.toString(), 0) + 1);
-            maxCount = Math.max(maxCount, map.get(sb.toString()));
+            String menus = sb.toString();
+            int count = map.getOrDefault(menus, 0) + 1;
+            maxCount = Math.max(maxCount, count);
+            map.put(menus, count);
             return;
         }
-
-        for (int i = start; i < order.length(); i++) {
+        for (int i = start; i < checked.length; i++) {
             if(checked[i]) continue;
             checked[i] = true;
-            combi(order, L - 1, i + 1, checked);
+            combination(map, order, checked, L - 1, i + 1);
             checked[i] = false;
         }
     }

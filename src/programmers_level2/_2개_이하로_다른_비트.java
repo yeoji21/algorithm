@@ -23,27 +23,25 @@ public class _2개_이하로_다른_비트 {
 
     public long[] solution2(long[] numbers) {
         long[] answer = new long[numbers.length];
-        int idx = 0;
 
-        for (long number : numbers) {
-            if(number % 2 == 0){
-                answer[idx++] = number + 1;
-                continue;
+        for (int i = 0; i < numbers.length; i++) {
+            long number = numbers[i];
+            if(number % 2 == 0) answer[i] = number + 1;
+            else{
+                String binary = Long.toBinaryString(number);
+                if(!binary.contains("0")) {
+                    binary = binary.replaceFirst("1", "10");
+                    answer[i] = Long.parseLong(binary, 2);
+                }
+                else{
+                    int lastZero = binary.lastIndexOf("0");
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(binary.substring(0, lastZero));
+                    sb.append("10");
+                    sb.append(binary.substring(lastZero + 2));
+                    answer[i] = Long.parseLong(sb.toString(), 2);
+                }
             }
-
-            String binary = Long.toBinaryString(number);
-            if(!binary.contains("0")){
-                binary = binary.replaceFirst("1", "10");
-            }else{
-                int lastZero = binary.lastIndexOf("0");
-                int firstOne = binary.indexOf("1", lastZero);
-
-                StringBuilder sb = new StringBuilder(binary.substring(0, lastZero));
-                sb.append("10");
-                sb.append(binary.substring(firstOne + 1));
-                binary = sb.toString();
-            }
-            answer[idx++] = Long.parseLong(binary, 2);
         }
 
         return answer;
