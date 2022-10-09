@@ -1,25 +1,28 @@
 package programmers_level2;
 
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class 큰_수_만들기 {
-    public static String solution(String number, int k) {
-        Stack<Character> stack = new Stack<>();
-        StringBuilder sb = new StringBuilder();
-        int size = number.length() - k;
+    public String solution(String number, int k) {
+        Stack<Integer> stack = new Stack<>();
 
         for (char ch : number.toCharArray()) {
-            while (!stack.isEmpty() && stack.peek() < ch && k - 1 >= 0) {
-                stack.pop();
+            int num = ch - '0';
+            while (!stack.isEmpty() && num > stack.peek() && k > 0) {
                 k--;
+                stack.pop();
             }
-            stack.push(ch);
+            stack.push(num);
         }
 
-        for (int i = 0; i < size; i++) {
-            sb.append(stack.get(i));
+        while (k > 0) {
+            stack.pop();
+            k--;
         }
 
-        return sb.toString();
+        return stack.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining());
     }
 }

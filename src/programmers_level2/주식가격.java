@@ -4,13 +4,14 @@ import java.util.Stack;
 
 public class 주식가격 {
     public int[] solution(int[] prices) {
-        int[] answer = new int[prices.length];
         Stack<Integer> stack = new Stack<>();
+        int[] answer = new int[prices.length];
 
         for (int i = 0; i < prices.length; i++) {
-            while (!stack.isEmpty() && prices[i] < prices[stack.peek()]) {
-                answer[stack.peek()] = i - stack.peek();
-                stack.pop();
+            int price = prices[i];
+            while (!stack.isEmpty() && price < prices[stack.peek()]) {
+                int idx = stack.pop();
+                answer[idx] = i - idx;
             }
             stack.push(i);
         }

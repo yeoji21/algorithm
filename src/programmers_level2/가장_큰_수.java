@@ -7,7 +7,7 @@ public class 가장_큰_수 {
     public String solution(int[] numbers) {
         String answer = Arrays.stream(numbers)
                 .mapToObj(String::valueOf)
-                .sorted((s1, s2) -> (s2 + s1).compareTo(s1 + s2))
+                .sorted((o1, o2) -> (o2 + o1).compareTo(o1 + o2))
                 .collect(Collectors.joining());
         if(answer.charAt(0) == '0') return "0";
         return answer;
