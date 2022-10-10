@@ -4,12 +4,12 @@ import java.math.BigInteger;
 
 public class N개의_최소공배수 {
     public int solution(int[] arr) {
-        int asnwer = arr[0];
+        int prev = arr[0];
         for (int i = 1; i < arr.length; i++) {
-            BigInteger gcd = BigInteger.valueOf(asnwer).gcd(BigInteger.valueOf(arr[i]));
-            asnwer = asnwer * arr[i] / gcd.intValue();
+            int gcd = BigInteger.valueOf(prev).gcd(BigInteger.valueOf(arr[i])).intValue();
+            prev = prev * arr[i] / gcd;
         }
-        return asnwer;
+        return prev;
     }
 
     public int solution2(int[] arr) {
