@@ -7,13 +7,11 @@ public class 줄_서는_방법 {
     public int[] solution(int n, long k) {
         int[] answer = new int[n];
         List<Integer> nums = new ArrayList<>();
-
         long factorial = 1;
         for (int i = 1; i < n + 1; i++) {
-            nums.add(i);
             factorial *= i;
+            nums.add(i);
         }
-
         int idx = 0;
         long remain = k - 1;
 
@@ -24,7 +22,6 @@ public class 줄_서는_방법 {
             nums.remove(value);
             remain %= factorial;
         }
-
         return answer;
     }
 }
