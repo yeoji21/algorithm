@@ -1,62 +1,68 @@
 package baekjoon.bfs_dfs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main2667 {
-    static int[][] map;
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
-    static int n;
-    static int count;
-//    static int[][] visited;
+    private static boolean[][] checked;
+    private static int[][] matrix;
+    private static int answer = 0;
+    private static List<Integer> counts = new ArrayList<>();
+    private static int[] dx = {1, 0, -1, 0};
+    private static int[] dy = {0, 1, 0, -1};
 
 
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        n = sc.nextInt();
-        map = new int[n][n];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+        matrix = new int[N][N];
+        checked = new boolean[N][N];
 
-        for (int i = 0; i < n; i++) {
-            char[] chars = sc.next().toCharArray();
-            for (int j = 0; j < n; j++) {
-                map[i][j] = chars[j] - '0';
+        for (int i = 0; i < N; i++) {
+            char[] line = br.readLine().toCharArray();
+            for (int j = 0; j < line.length; j++) {
+                matrix[i][j] = line[j] - '0';
             }
         }
-        new Main2667().solution();
-    }
 
-    public void solution() {
-        int result = 0;
-        List<Integer> countList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (map[i][j] == 1){
-                    count = 0;
-                    dfs(i, j);
-                    if(count == 0) continue;
-                    countList.add(count);
-                    result++;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (matrix[i][j] == 1 && !checked[i][j]) {
+                    BFS(i, j);
                 }
             }
         }
-
-        System.out.println(result);
-        countList.stream().mapToInt(x -> x).sorted().forEach(System.out::println);
+        StringBuilder sb = new StringBuilder();
+        sb.append(answer).append("\n");
+        Collections.sort(counts);
+        for (int i = 0; i < counts.size(); i++) {
+            sb.append(counts.get(i)).append("\n");
+        }
+        System.out.println(sb.toString());
     }
-    private void dfs(int i, int j) {
-        map[i][j] = 0;
-        count++;
 
-        for (int k = 0; k < 4; k++) {
-            int nx = i + dx[k];
-            int ny = j + dy[k];
+    private static void BFS(int x, int y) {
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{x, y});
+        checked[x][y] = true;
+        answer++;
 
-            if(nx < 0 || nx>= n || ny < 0 || ny >= n) continue;
+        int count = 1;
+        while (!queue.isEmpty()) {
+            int[] poll = queue.poll();
+            for (int d = 0; d < 4; d++) {
+                int nx = poll[0] + dx[d];
+                int ny = poll[1] + dy[d];
 
-            if(map[nx][ny] == 1) {
-                dfs(nx, ny);
+                if(nx > matrix.length -1 || nx < 0 || ny > matrix.length-1 || ny < 0) continue;
+                if(matrix[nx][ny] == 0 || checked[nx][ny]) continue;
+
+                count++;
+                checked[nx][ny] = true;
+                queue.add(new int[]{nx, ny});
             }
         }
+        counts.add(count);
     }
 }
