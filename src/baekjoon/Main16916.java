@@ -4,40 +4,41 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Main16916 {
-    public static void main(String[] args) throws Exception {
+    private void solv() throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String S = br.readLine();
-        String P = br.readLine();
+        String target = br.readLine();
+        String pattern = br.readLine();
 
-        int[] table = makeTable(P);
+        int[] table = makeTable(pattern);
         int idx = 0;
-        for (int i = 0; i < S.length(); i++) {
-            while (idx > 0 && S.charAt(i) != P.charAt(idx)) {
+        for (int i = 0; i < target.length(); i++) {
+            while(idx > 0 && target.charAt(i) != pattern.charAt(idx))
                 idx = table[idx - 1];
-            }
-            if (S.charAt(i) == P.charAt(idx)) {
-                if(idx == P.length() - 1){
-                    System.out.println("1");
+            if(target.charAt(i) == pattern.charAt(idx)){
+                if(idx == pattern.length() - 1){
+                    System.out.println(1);
                     return;
                 }
                 idx++;
             }
         }
-        System.out.println("0");
+        System.out.println(0);
     }
 
-    private static int[] makeTable(String target) {
-        int[] table = new int[target.length()];
+    private int[] makeTable(String pattern) {
+        int[] table = new int[pattern.length()];
         int idx = 0;
-
-        for (int i = 1; i < target.length(); i++) {
-            while (idx > 0 && target.charAt(i) != target.charAt(idx)) {
+        for (int i = 1; i < pattern.length(); i++) {
+            while(idx > 0 && pattern.charAt(i) != pattern.charAt(idx))
                 idx = table[idx - 1];
-            }
-            if (target.charAt(i) == target.charAt(idx)) {
+            if(pattern.charAt(i) == pattern.charAt(idx))
                 table[i] = ++idx;
-            }
         }
+
         return table;
+    }
+
+    public static void main(String[] args) throws Exception {
+        new Main16916().solv();
     }
 }
