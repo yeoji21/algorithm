@@ -2,128 +2,169 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-
-//https://buddev.tistory.com/31
+import java.util.*;
 
 public class Main {
-    private Horse[] horses;
-    private LinkedList<Integer>[][] orders;
+    private int[] dx = {0, 0, -1, 1};
+    private int[] dy = {1, -1, 0, 0};
     private int[][] map;
-    private int[] dx = {0, -1, 1, 0, 0};
-    private int[] dy = {0, 0, 0, -1, 1};
-    private int N, K;
+    private boolean[][] checked;
+    private int N, M;
 
     private void solv() throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer tokenizer = new StringTokenizer(br.readLine());
         N = getIntToken(tokenizer);
-        K = getIntToken(tokenizer);
-        horses = new Horse[K + 1];
-        map = new int[N][N];
-        orders = new LinkedList<>[N][N];
-
+        M = getIntToken(tokenizer);
+        map = new int[N][M];
+        checked = new boolean[N][M];
         for (int i = 0; i < N; i++) {
             tokenizer = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                map[i][j] = getIntToken(tokenizer);
-                orders[i][j] = new LinkedList<>();
+            for (int j = 0; j < M; j++) {
+                map[i][j] = getIntToken(tokenizer);   
+            }
+        }
+        List<CCTV> cctv = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if(map[i][j] == 0 || map[i][j] == 6) continue;
+                cctv.add(new CCTV(i, j));
+            }
+        }
+        Collections.sort(cctv);
+
+        for (int i = 0; i < cctv.size(); i++) {
+            CCTV(cctv.get(i).x, cctv.get(i).y);
+        }
+
+        int answer = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if(map[i][j] == 0 && !checked[i][j]) answer++;
             }
         }
 
-        for (int i = 1; i < K + 1; i++) {
-            tokenizer = new StringTokenizer(br.readLine());
-            int x = getIntToken(tokenizer);
-            int y = getIntToken(tokenizer);
-            int d = getIntToken(tokenizer);
-            horses[i] = new Horse(x, y, d);
-            orders[x][y].add(i);
-        }
-
-
-        int answer;
-        for (answer = 1; answer <= 1000; answer++) {
-            for (int i = 1; i < K + 1; i++) {
-                Horse horse = horses[i];
-                int nx = horse.x + dx[horse.d];
-                int ny = horse.y + dy[horse.d];
-
-                boolean end = false;
-                if(nx >= N || nx < 0 || ny >= N || ny < 0)
-                    end = blue(horse, nx, ny);
-
-                int color = map[nx][ny];
-                int order = getOrder(i, horse);
-                if(color == 0) {
-                    end = white(horse, order, nx, ny);
-                }
-                else if(color == 1)
-                    end = red(horse, order, nx, ny);
-                else if(color == 2)
-                    end = blue(horse, nx, ny);
-
-                if(end) {
-                    System.out.println(answer);
-                    return;
-                }
-            }
-        }
-
-        System.out.println(-1);
+        bw.write(answer + "\n");
+        bw.flush();
+        bw.close();
+        br.close();
     }
 
-    private boolean blue(Horse horse, int x, int y) {
+    class CCTV implements Comparable<CCTV>{
+        int x, y;
 
-
-
-        return false;
-    }
-
-    private boolean red(Horse horse, int order, int nx, int ny) {
-        while (orders[horse.x][horse.y].size() >= order) {
-            int removed = orders[horse.x][horse.y].removeLast();
-            horses[removed].x = nx;
-            horses[removed].y = ny;
-            orders[nx][ny].add(removed);
-        }
-        return orders[nx][ny].size() >= 4;
-    }
-
-    private boolean white(Horse horse, int order, int nx, int ny) {
-        while (orders[horse.x][horse.y].size() >= order) {
-            int removed = orders[horse.x][horse.y].remove(order);
-            horses[removed].x = nx;
-            horses[removed].y = ny;
-            orders[nx][ny].add(removed);
-        }
-        return orders[nx][ny].size() >= 4;
-    }
-
-    private int getOrder(int num, Horse horse) {
-        List<Integer> order = orders[horse.x][horse.y];
-        for (int i = 0; i < order.size(); i++) {
-            if(order.get(i) == num) return i;
-        }
-        throw new IllegalArgumentException();
-    }
-
-    static class Horse{
-        int x, y, d;
-
-        public Horse(int x, int y, int d) {
+        public CCTV(int x, int y) {
             this.x = x;
             this.y = y;
-            this.d = d;
         }
+
+        @Override
+        public int compareTo(CCTV o) {
+            return map[o.x][o.y] - map[this.x][this.y];
+        }
+    }
+
+    private void CCTV(int x, int y) {
+        int[] counts = new int[4];
+        for (int d = 0; d < 4; d++) {
+            int nx = x;
+            int ny = y;
+            int count = 0;
+            while(true) {
+                nx += dx[d];
+                ny += dy[d];
+                if(rangeCheck(nx, ny) || map[nx][ny] == 6) break;
+                if(checked[nx][ny]) continue;
+                count++;
+            }
+            counts[d] = count;
+        }
+
+        int command = map[x][y];
+        if (command == 1) {
+            commandOne(x, y, counts);
+        } else if (command == 2) {
+            commandTwo(x, y, counts);
+        } else if (command == 3) {
+            commandThree(x, y, counts);
+        } else if (command == 4) {
+            commandFour(x, y, counts);
+        } else {
+            for (int i = 0; i < 4; i++) {
+                seeing(x, y, i);
+            }
+        }
+    }
+
+    private void commandFour(int x, int y, int[] counts) {
+        int d = -1;
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < 4; i++) {
+            if(counts[i] < min){
+                min = counts[i];
+                d = i;
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if(i == d) continue;
+            seeing(x, y, i);
+        }
+    }
+
+    private void commandThree(int x, int y, int[] counts) {
+        int row = 0, column = 2;
+        if (counts[0] < counts[1])
+            row = 1;
+        if (counts[2] < counts[3])
+            column = 3;
+
+        seeing(x, y, row);
+        seeing(x, y, column);
+    }
+
+    private void commandTwo(int x, int y, int[] counts) {
+        if (counts[0] + counts[1] >= counts[2] + counts[3]) {
+            seeing(x, y, 0);
+            seeing(x, y, 1);
+        }else{
+            seeing(x, y, 2);
+            seeing(x, y, 3);
+        }
+    }
+
+    private void commandOne(int x, int y, int[] counts) {
+        int d = -1;
+        int max = 0;
+        for (int i = 0; i < 4; i++) {
+            if(counts[i] > max){
+                max = counts[i];
+                d = i;
+            }
+        }
+        seeing(x, y, d);
+    }
+
+    private void seeing(int x, int y, int d) {
+        int nx = x;
+        int ny = y;
+        while(true){
+            nx += dx[d];
+            ny += dy[d];
+            if(rangeCheck(nx, ny) || map[nx][ny] == 6) break;
+            checked[nx][ny] = true;
+        }
+    }
+
+    private boolean rangeCheck(int nx, int ny) {
+        return nx >= N || nx < 0 || ny >= M || ny < 0;
     }
 
     public static void main(String[] args) throws Exception {
         new Main().solv();
     }
-
+    
     private static int getIntToken(StringTokenizer tokenizer) {
         return Integer.parseInt(tokenizer.nextToken());
     }
