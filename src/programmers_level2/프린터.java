@@ -4,19 +4,25 @@ import java.util.*;
 
 public class 프린터 {
     public int solution(int[] priorities, int location) {
-        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
-        for (int priority : priorities) queue.add(priority);
-        int idx = 0;
-        int answer = 1;
-        while (!queue.isEmpty()) {
-            Integer max = queue.poll();
-            while (priorities[idx] < max) {
-                idx++;
-                if(idx >= priorities.length) idx = 0;
+        Queue<Integer> q = new LinkedList<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.reverseOrder());
+
+        for (int i = 0; i < priorities.length; i++) {
+            pq.add(priorities[i]);
+            q.add(i);
+        }
+
+        int answer = 0;
+        while (!q.isEmpty()) {
+            int poll = q.poll();
+            if (!pq.isEmpty() && priorities[poll] == pq.peek()) {
+                answer++;
+                pq.poll();
+                if(poll == location) return answer;
             }
-            if(idx == location) return answer;
-            answer++;
-            priorities[idx] = -1;
+            else{
+                q.add(poll);
+            }
         }
 
         return -1;
