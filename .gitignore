@@ -1,2 +1,6 @@
 # Project exclude paths
-/out/
+/out/!/src/S1.java
+
+!/src/S2.java
+
+!/src/S3.java
