@@ -1,7 +1,9 @@
+package baekjoon;
+
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main27212 {
     private void solv() throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer tokenizer = new StringTokenizer(br.readLine());
@@ -38,7 +40,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        new Main().solv();
+        new Main27212().solv();
     }
 
     private static int getIntToken(StringTokenizer tokenizer) {
