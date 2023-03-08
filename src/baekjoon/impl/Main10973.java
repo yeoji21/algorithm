@@ -1,14 +1,51 @@
+package baekjoon.impl;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main10973 {
     private StringBuilder answer = new StringBuilder();
     private void input(FastReader reader) throws Exception{
+        int n = reader.nextInt();
+        int[] arr = new int[n];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = reader.nextInt();
+        }
+        if(hasPrevPermutation(arr)){
+            for (int i = 0; i < arr.length; i++) {
+                answer.append(arr[i]).append(" ");
+            }
+            answer.append("\n");
+            System.out.println(answer.toString());
+        }else{
+            System.out.println(-1);
+        }
+    }
 
+    private boolean hasPrevPermutation(int[] arr) {
+        int i = arr.length - 1;
+        while(i > 0 && arr[i] >= arr[i - 1]) i--;
+        if(i == 0) return false;
+
+        int j = arr.length - 1;
+        while(arr[j] >= arr[i - 1]) j--;
+        swap(arr, i - 1, j);
+
+        j = arr.length - 1;
+        while (i < j) {
+            swap(arr, i++, j--);
+        }
+        return true;
+    }
+
+    void swap(int[] arr, int i, int j){
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
 
     public static void main(String[] args) throws Exception {
-        new Main().input(new FastReader());
+        new Main10973().input(new FastReader());
     }
 
     static class FastReader {
