@@ -1,32 +1,35 @@
-package baekjoon.impl;
+package baekjoon.greedy;
 
 import java.io.*;
 import java.util.*;
 
-public class Main14916 {
+public class Main1758 {
     private StringBuilder answer = new StringBuilder();
+
+    /*
+    n명의 손님의 순서를 재배치해서 강호가 받을 수 있는 팁의 최댓값을 구하시오
+     */
     private void input(FastReader reader) throws Exception{
         int n = reader.nextIntLine();
-        solution(n);
+        Integer[] arr = new Integer[n];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = reader.nextIntLine();
+        }
+        solution(arr);
     }
 
-    private void solution(int n) {
-        int[] arr = new int[n + 1];
-        Arrays.fill(arr, -1);
-        arr[0] = 0;
-        for(int i = 2; i < arr.length; i++){
-            if(arr[i - 2] != -1){
-                arr[i] = arr[i - 2] + 1;
-            }
-            if(i >= 5 && arr[i - 5] != -1){
-                arr[i] = arr[i - 5] + 1;
-            }
+    private void solution(Integer[] arr) {
+        long sum = 0;
+        Arrays.sort(arr, Comparator.reverseOrder());
+        for(int i = 0; i < arr.length; i++){
+            if((arr[i] - i) < 0) break;
+            sum += (arr[i] - i);
         }
-        System.out.println(arr[n]);
+        System.out.println(sum);
     }
 
     public static void main(String[] args) throws Exception {
-        new Main14916().input(new FastReader());
+        new Main1758().input(new FastReader());
     }
 
     static class FastReader {

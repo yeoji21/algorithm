@@ -10,7 +10,7 @@ public class Solution4 {
         solution(new String[]{"..FF", "###F", "###."}, 4);
     }
 
-    public static int solution(String[] grid, int k) {
+    private static int solution(String[] grid, int k) {
         char[][] map = new char[grid.length][grid[0].length()];
         boolean[][] checked = new boolean[grid.length][grid[0].length()];
 

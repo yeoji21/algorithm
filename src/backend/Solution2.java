@@ -22,7 +22,7 @@ public class Solution2 {
         Arrays.stream(solution).forEach(System.out::println);
     }
 
-    public static int[] solution(int[] periods, int[][] payments, int[] estimates) {
+    private static int[] solution(int[] periods, int[][] payments, int[] estimates) {
         int[] result = new int[2];
 
         List<Customer> customers = new ArrayList<>();

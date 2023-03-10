@@ -15,7 +15,7 @@ public class Solution3 {
     }
 
 
-    public static int[] solution(int n, String[] plans, String[] clients) {
+    private static int[] solution(int n, String[] plans, String[] clients) {
         int[] result = new int[clients.length];
 
         int[] additionalServices = new int[n + 1];

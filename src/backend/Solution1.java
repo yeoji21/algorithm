@@ -8,7 +8,7 @@ public class Solution1 {
         Arrays.stream(solution).forEach(System.out::println);
     }
 
-    public static int[] solution(int[] p) {
+    private static int[] solution(int[] p) {
         int[] result = new int[p.length];
         for (int i = 0; i < p.length; i++) {
             if (p[i] != i + 1) {
