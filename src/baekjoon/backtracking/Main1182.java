@@ -1,14 +1,37 @@
+package baekjoon.backtracking;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main1182 {
     private StringBuilder answer = new StringBuilder();
+    private int n, s;
+    private int[] arr;
+    private int count = 0;
     private void input(FastReader reader) throws Exception{
-        
+        n = reader.nextInt();
+        s = reader.nextInt();
+        arr = new int[n];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = reader.nextInt();
+        }
+        DFS(0, 0);
+        if(s == 0) System.out.println(count - 1);
+        else System.out.println(count);
     }
 
+    private void DFS(int depth, int sum) {
+        if(depth == n){
+            if(sum == s) count++;
+            return;
+        }
+        DFS(depth + 1, sum + arr[depth]);
+        DFS(depth + 1, sum);
+    }
+
+
     public static void main(String[] args) throws Exception {
-        new Main().input(new FastReader());
+        new Main1182().input(new FastReader());
     }
 
     static class FastReader {
