@@ -1,60 +1,80 @@
 package programmers_level2;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class 수식_최대화 {
-    private char[][] priorities = new char[][]{
-            {'*', '+', '-'},
-            {'+', '-', '*'},
-            {'+', '*', '-'},
-            {'-', '*', '+'},
-            {'-', '+', '*'},
-            {'*', '-', '+'}
-    };
+    private char[] ops = {'+', '-', '*'};
+    private long answer = 0;
 
-    public long solution(String expression) {
-        List<Long> numbers = new LinkedList<>();
-        List<Character> operators = new LinkedList<>();
-
-        for (String s : expression.split("\\D"))
-            numbers.add(Long.parseLong(s));
-
-        for (String s : expression.split("\\d+")) {
-            if(s.isBlank()) continue;
-            operators.add(s.charAt(0));
+    public long solution(String s) {
+        List<Long> nums = new ArrayList<>();
+        Map<Character, List<Integer>> op = new HashMap<>();
+        for(char ch : ops){
+            op.put(ch, new ArrayList<>());
         }
-
-        long maxValue = 0;
-        for (int i = 0; i < priorities.length; i++) {
-            long value = calculateExpression(priorities[i], new ArrayList<>(numbers), new ArrayList<>(operators));
-            maxValue = Math.max(Math.abs(value), maxValue);
-        }
-
-        return maxValue;
-    }
-
-    private long calculateExpression(char[] priority, List<Long> numbers, List<Character> operators) {
-        long sum = 0;
-
-        for (char op : priority) {
-            while (operators.contains(op)) {
-                int index = operators.indexOf(op);
-                long value = calc(op, numbers.get(index), numbers.get(index + 1));
-                sum = value;
-                numbers.set(index, value);
-                numbers.remove(index + 1);
-                operators.remove(index);
+        long num = 0;
+        int idx = 0;
+        for(int i = 0; i < s.length(); i++){
+            char ch = s.charAt(i);
+            if(Character.isDigit(ch)){
+                num = num * 10 + (ch - '0');
+            }else{
+                op.get(ch).add(idx++);
+                nums.add(num);
+                num = 0;
             }
         }
-
-        return sum;
+        nums.add(num);
+        DFS(nums, op, 0, new char[3]);
+        return answer;
     }
 
-    private long calc(char op, long x, long y) {
-        if(op == '+') return x + y;
-        else if (op == '-') return x - y;
-        else return x * y;
+    void DFS(List<Long> nums, Map<Character, List<Integer>> op, int level, char[] selected){
+        if(level == 3){
+            List<Long> copyNum = new ArrayList<>(nums);
+            Map<Character, List<Integer>> copyOp = new HashMap<>();
+            for(Map.Entry<Character, List<Integer>> e : op.entrySet()){
+                copyOp.put(e.getKey(), new ArrayList<>(e.getValue()));
+            }
+
+            long num =  calculate(copyNum, copyOp, selected);
+            answer = Math.max(answer, Math.abs(num));
+            return;
+        }
+
+        for(int i = 0; i < 3; i++){
+            if(ops[i] == 'X') continue;
+            char temp = ops[i];
+
+            selected[level] = temp;
+            ops[i] = 'X';
+            DFS(nums, op, level + 1, selected);
+            ops[i] = temp;
+        }
+    }
+
+    long calculate(List<Long> nums, Map<Character, List<Integer>> op, char[] selected){
+        for(char ch : selected){
+            List<Integer> idxs = op.get(ch);
+            if(idxs.size() == 0) continue;
+            for(int idx : idxs){
+                if(ch == '+'){
+                    nums.add(idx, nums.remove(idx) + nums.remove(idx));
+                }else if(ch == '-'){
+                    nums.add(idx, nums.remove(idx) - nums.remove(idx));
+                }else{
+                    nums.add(idx, nums.remove(idx) * nums.remove(idx));
+                }
+
+                for(Map.Entry<Character, List<Integer>> e : op.entrySet()){
+                    List<Integer> list = op.get(e.getKey());
+                    for(int i = 0; i < list.size(); i++){
+                        if(list.get(i) > idx)
+                            list.set(i, list.get(i) - 1);
+                    }
+                }
+            }
+        }
+        return nums.get(0);
     }
 }
